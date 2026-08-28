@@ -61153,6 +61153,23 @@
         }
       }
     },
+    "cloudTree.menu.renameTerminal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名称変更…"
+          }
+        }
+      }
+    },
     "cloudTree.menu.renameWorkspace": {
       "extractionState": "manual",
       "localizations": {
@@ -61166,6 +61183,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "名称変更…"
+          }
+        }
+      }
+    },
+    "cloudTree.operation.deleteWorkspace": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting %@…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を削除しています…"
+          }
+        }
+      }
+    },
+    "cloudTree.operation.renameTerminal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renaming %@…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ の名称を変更しています…"
           }
         }
       }
@@ -61200,6 +61251,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "名称変更"
+          }
+        }
+      }
+    },
+    "cloudTree.renameTerminal.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename “%@”"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」の名称変更"
           }
         }
       }
