@@ -15792,6 +15792,10 @@ struct CMUXCLI {
         let report = SSHPTYTerminalReadinessReport(
             socketPath: socketPath,
             explicitPassword: explicitPassword,
+            credentialResolver: credentialResolutionSession.resolver(
+                explicitPassword: explicitPassword,
+                socketPath: socketPath
+            ),
             params: params,
             attemptTimeout: Self.sshPTYTerminalConnectedResponseTimeoutSeconds,
             retryDelay: Self.sshPTYTerminalConnectedRetryDelaySeconds,
