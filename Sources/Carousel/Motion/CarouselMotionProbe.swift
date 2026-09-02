@@ -141,6 +141,9 @@ final class CarouselMotionProbe: NSObject {
         // centre entering and its neighbour leaving, three cards are still
         // holding c = 0.94 in every mid-switch frame.
         let centreSlot = Self.cardCount / 2
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        defer { CATransaction.commit() }
         for slot in 0..<Self.cardCount {
             let layer = CALayer()
             layer.bounds = CGRect(origin: .zero, size: cardSize)

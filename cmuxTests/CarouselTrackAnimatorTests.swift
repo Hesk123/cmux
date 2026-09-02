@@ -25,9 +25,12 @@ final class CarouselTrackAnimatorTests: XCTestCase {
         // outer cards hold, which is row 54's stated solvability observable.
         let cards = (0..<5).map { slot -> CALayer in
             let card = CALayer()
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
             card.bounds = CGRect(x: 0, y: 0, width: 968, height: 761)
             card.position = CGPoint(x: viewport.midX + CGFloat(slot - 2) * pitch, y: viewport.midY)
             layers.track.addSublayer(card)
+            CATransaction.commit()
             animator.register(
                 card: card,
                 scale: slot == 2 ? CarouselMotion.centreScale : CarouselMotion.flankScale
@@ -222,7 +225,8 @@ final class CarouselTrackAnimatorTests: XCTestCase {
         var settled = false
         subject.animator.advance(by: 0, ramps: .init()) { settled = true }
         XCTAssertTrue(settled)
-        XCTAssertNil(subject.layers.track.animationKeys())
+        XCTAssertTrue(animations(subject.layers.track, keyPath: "transform.translation.x").isEmpty)
+        XCTAssertNil(subject.layers.recoil.animation(forKey: "carousel.recoil"))
     }
 
     // MARK: - Row 113

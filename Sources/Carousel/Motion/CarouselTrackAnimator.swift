@@ -97,6 +97,15 @@ final class CarouselTrackAnimator {
     /// The anchor point is the whole point of the pair, so it is set in one
     /// place rather than restated in U1, in U6 and in the probe.
     static func makeLayers(viewport: CGRect) -> Layers {
+        // Every geometry write here is inside a disabled transaction. A
+        // standalone CALayer runs Core Animation's default actions, so setting
+        // bounds and position on a bare layer schedules implicit animations —
+        // the track would visibly slide and resize into place the first time it
+        // is built, and `animationKeys()` would carry entries nobody asked for.
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        defer { CATransaction.commit() }
+
         let recoil = CALayer()
         recoil.bounds = CGRect(origin: .zero, size: viewport.size)
         recoil.anchorPoint = CGPoint(x: 0.5, y: 0.5)
