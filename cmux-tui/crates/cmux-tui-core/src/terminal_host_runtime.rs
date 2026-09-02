@@ -3352,10 +3352,14 @@ mod unix {
         frames
     }
 
-    /// Persist only a local path in the adoption snapshot. A host can outlive
-    /// its daemon, so a raw OSC 7 URL here would become the next surface's
-    /// inherited spawn directory after reattachment.
-    fn snapshot_cwd(term: &Terminal, spawn_cwd: Option<&str>) -> Option<String> {
+    /// Persist a local spawn path with host-authenticated provenance. A host
+    /// can outlive its daemon, so a raw OSC 7 URL here would become the next
+    /// surface's inherited spawn directory after reattachment.
+    fn snapshot_cwd(
+        term: &Terminal,
+        spawn_cwd: Option<&str>,
+        owner_token: &CapabilityToken,
+    ) -> Option<String> {
         if let Some(path) =
             term.pwd().as_deref().and_then(crate::platform::terminal_pwd_to_local_path)
         {
@@ -3365,8 +3369,9 @@ mod unix {
         }
         let path = spawn_cwd.and_then(crate::platform::spawn_cwd_to_local_path)?;
         Some(format!(
-            "{}{}",
+            "{}{}:{}",
             crate::platform::SNAPSHOT_SPAWN_CWD_PREFIX,
+            encode_hex(owner_token.as_bytes()),
             path.to_string_lossy()
         ))
     }
@@ -5368,7 +5373,7 @@ mod unix {
                     colors: colors.clone(),
                     pid: host.pid,
                     command: host.command.clone(),
-                    cwd: snapshot_cwd(&term, host.cwd.as_deref()),
+                    cwd: snapshot_cwd(&term, host.cwd.as_deref(), &host.owner_token),
                 },
                 colors,
                 snapshot_sequence,
@@ -9094,14 +9099,21 @@ mod unix {
         #[test]
         fn late_snapshot_prefers_current_terminal_pwd_then_spawn_fallback() {
             let mut term = Terminal::new(80, 24, 0, Callbacks::default()).unwrap();
-            assert_eq!(snapshot_cwd(&term, Some("/spawn")), Some("cmux-tui:spawn-cwd:/spawn".into()));
+            let owner_token =
+                CapabilityToken::from_bytes([7; crate::terminal_host::CAPABILITY_TOKEN_LEN]);
+            let marker = format!(
+                "{}{}:/spawn",
+                crate::platform::SNAPSHOT_SPAWN_CWD_PREFIX,
+                encode_hex(owner_token.as_bytes())
+            );
+            assert_eq!(snapshot_cwd(&term, Some("/spawn"), &owner_token), Some(marker.clone()));
 
             term.vt_write(b"\x1b]7;file:///live\x1b\\");
-            assert_eq!(snapshot_cwd(&term, Some("/spawn")), Some("cmux-tui:spawn-cwd:/spawn".into()));
+            assert_eq!(snapshot_cwd(&term, Some("/spawn"), &owner_token), Some(marker.clone()));
 
             term.vt_write(b"\x1b]7;\x1b\\");
-            assert_eq!(snapshot_cwd(&term, Some("/spawn")), Some("cmux-tui:spawn-cwd:/spawn".into()));
-            assert_eq!(snapshot_cwd(&term, Some("file:///spawn")), None);
+            assert_eq!(snapshot_cwd(&term, Some("/spawn"), &owner_token), Some(marker));
+            assert_eq!(snapshot_cwd(&term, Some("file:///spawn"), &owner_token), None);
         }
 
         #[test]

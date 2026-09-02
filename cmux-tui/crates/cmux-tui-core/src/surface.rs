@@ -2817,13 +2817,12 @@ impl Surface {
         let supports_clear_history_key_fallback = attachment.supports_clear_history();
         let journal_capture_supported = attachment.supports_journal_detach_fence();
         // Snapshot CWD values are terminal-reported metadata, including for
-        // legacy protocol versions. Reject ambiguous plain paths and emit a
-        // diagnostic instead of silently inheriting the daemon default.
-        let snapshot_cwd =
-            snapshot.cwd.as_deref().and_then(platform::snapshot_cwd_to_local_path);
-        if snapshot.cwd.is_some() && snapshot_cwd.is_none() {
-            eprintln!("cmux-tui: discarded untrusted terminal-host snapshot cwd");
-        }
+        // legacy protocol versions. Reject ambiguous plain paths instead of
+        // silently inheriting them as a local spawn directory. A current host
+        // fallback carries its authenticated provenance token.
+        let snapshot_cwd = snapshot.cwd.as_deref().and_then(|cwd| {
+            platform::snapshot_cwd_to_local_path(cwd, Some(attachment.record.owner_token.as_str()))
+        });
         let render_state = RenderState::new()?;
         let (frame_requests, frame_rx) = sync_channel(1);
         #[cfg(test)]
