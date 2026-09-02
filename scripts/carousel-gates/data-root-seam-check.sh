@@ -75,7 +75,11 @@ fi
 
 # The allowlist is capped, not open. One resolution is a seam; several is a habit.
 if [ -f "$ALLOWLIST_FILE" ]; then
-  allow_uses=$(grep -Ec 'homeDirectoryForCurrentUser|NSHomeDirectory\(\)' "$ALLOWLIST_FILE" || true)
+  # Count CODE lines only. A doc comment naming the banned APIs -- which this file
+  # has, because it explains why they are banned -- cannot bypass a seam, and counting
+  # it would push the next author to delete the explanation to get under the cap.
+  allow_uses=$(grep -vE '^[[:space:]]*(//|\*|/\*)' "$ALLOWLIST_FILE" \
+                 | grep -Ec 'homeDirectoryForCurrentUser|NSHomeDirectory\(\)' || true)
   echo "allowlisted home-directory resolutions in $ALLOWLIST_FILE: $allow_uses (cap $ALLOWLIST_MAX)"
   if [ "$allow_uses" -gt "$ALLOWLIST_MAX" ]; then
     echo "ALLOWLIST EXCEEDED: $allow_uses uses in the provider, cap is $ALLOWLIST_MAX."

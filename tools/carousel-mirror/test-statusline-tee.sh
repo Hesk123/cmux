@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # cmux-carousel-ui CONTRACT row 76 verification.
-# Modified/created 2026-09-02 for the cmux carousel build.
+# Modified 2026-09-02 for the cmux carousel build (row 76 statusline tee verification).
 #
 # Proves that the statusline snapshot tee is byte-transparent:
 #   1. stdout is byte-identical to the unmodified script for 10 crafted inputs
