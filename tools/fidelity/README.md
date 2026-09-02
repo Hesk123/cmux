@@ -89,6 +89,31 @@ Assert both that the empty state renders **and** that no real session name appea
 provider that silently falls back to the real root passes every positive control and
 fails nothing without this.
 
+## Setting up a worktree that actually builds
+
+A fresh `git worktree` of this repo does **not** build. Two submodules are empty in it,
+and the fix for one breaks `git status` if you copy the other's approach.
+
+```
+git -C ~/code/cmux worktree add -b carousel/<unit> ~/code/cmux-<unit> <pinned-sha>
+cd ~/code/cmux-<unit>
+
+# ghostty: leave it an EMPTY REAL DIRECTORY. Symlinking it makes every git command
+# fail outright with "expected submodule path 'ghostty' not to be a symbolic link",
+# which blocks commits. The prebuilt framework is what the build needs:
+rm -rf ghostty && mkdir ghostty
+ln -sfn /Users/dawid/code/cmux/GhosttyKit.xcframework GhosttyKit.xcframework
+
+# vendor/bonsplit: COPY it, and delete the nested .git afterwards. Without this the
+# build dies in under a second with "the package manifest at vendor/bonsplit/
+# Package.swift cannot be accessed". The copied .git is a gitfile pointing into the
+# main clone's module store, and leaving it makes `git status` fail in the worktree.
+cp -R /Users/dawid/code/cmux/vendor/bonsplit/ vendor/bonsplit/
+rm -rf vendor/bonsplit/.git
+
+git status --short   # must succeed and be clean
+```
+
 ## Gotchas that cost real time here
 
 - `ssh mac '<cmd>'` does not source the profile, so Homebrew is off `PATH`. Export

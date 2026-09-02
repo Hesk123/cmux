@@ -29,15 +29,24 @@ XCCONFIG="$REPO_ROOT/scripts/carousel-gates/strict-concurrency.xcconfig"
 export PATH="/opt/homebrew/bin:/usr/local/bin:${HOME}/.cargo/bin:$PATH"
 
 build_warnings() {
-  local dd=$1 out=$2
+  local tag=$1 out=$2
   cd "$REPO_ROOT"
-  # Serialized through the shared build slot -- two xcodebuild runs against the same
-  # SwiftPM cache is the documented cause of the sparkle artifact failure.
-  "$REPO_ROOT/scripts/carousel-gates/build-lock.sh" with strict-concurrency-gate "$REPO_ROOT" "$(basename "$dd")" -- \
-    xcodebuild -project cmux.xcodeproj -scheme cmux -configuration Debug \
-      -destination "platform=macOS" -derivedDataPath "$dd" \
-      -xcconfig "$XCCONFIG" build 2>&1 | tee "$out.raw" | grep -E "warning:|error:" | sort -u > "$out" || true
-  echo "wrote $out ($(wc -l < "$out" | tr -d ' ') diagnostic lines)"
+  # Row 133 / AGENTS.md is binding: NEVER a bare `xcodebuild`. An untagged build shares
+  # the default debug socket and bundle id with every other agent on this Mac. An
+  # earlier revision of this gate called xcodebuild directly, which its own sweep
+  # caught -- recorded here rather than quietly corrected.
+  #
+  # reload.sh takes no --xcconfig flag, and adding one would mean editing a 2056-line
+  # script all seven units share. XCODE_XCCONFIG_FILE is Xcode's own documented
+  # environment override and applies the settings file to the build with no command
+  # line flag at all, so row 110's "injected by xcconfig" and row 133's "always the
+  # tagged path" are both satisfied without touching a shared script.
+  #
+  # --no-launch is deliberate: this is a measurement build and must not steal focus.
+  "$REPO_ROOT/scripts/carousel-gates/build-lock.sh" with strict-concurrency-gate "$REPO_ROOT" "$tag" -- \
+    env XCODE_XCCONFIG_FILE="$XCCONFIG" ./scripts/reload.sh --tag "$tag" \
+      2>&1 | tee "$out.raw" | grep -E "warning:|error:" | sort -u > "$out" || true
+  echo "wrote $out ($(wc -l < "$out" | tr -d ' ') diagnostic lines) via the tagged path, tag=$tag"
 }
 
 # A diagnostic line is "<path>:<line>:<col>: warning: <text>". Normalize to
@@ -50,8 +59,8 @@ normalize() {
 }
 
 case "${1:?usage: baseline|branch|diff}" in
-  baseline) build_warnings "${CMUX_STRICT_DD:-$HOME/Library/Developer/Xcode/DerivedData/cmux-strict-baseline}" "${2:?out file}" ;;
-  branch)   build_warnings "${CMUX_STRICT_DD:-$HOME/Library/Developer/Xcode/DerivedData/cmux-strict-branch}" "${2:?out file}" ;;
+  baseline) build_warnings "${CMUX_STRICT_TAG:-strict-baseline}" "${2:?out file}" ;;
+  branch)   build_warnings "${CMUX_STRICT_TAG:-strict-branch}" "${2:?out file}" ;;
   diff)
     BASE=${2:?baseline file}; BRANCH=${3:?branch file}; BASE_SHA=${4:?base sha}
     cd "$REPO_ROOT"
