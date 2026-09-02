@@ -311,6 +311,41 @@ def cmd_color(args):
     return rep.emit(args.json)
 
 
+def cmd_radius(args):
+    """Fit a corner radius at an explicit seed, and report the RMS beside it.
+
+    The RMS is the point. A radius quoted without its residual is not a measurement:
+    it is whatever the fitter returned. On this evidence a GOOD fit lands under
+    ~1.5 device px RMS (the card 0.48, the prompt bar 0.79) and a fit above that is
+    reported as UNRESOLVED rather than rounded into a number that looks measured.
+    Elements smaller than about 100 device px with a hairline border and interior
+    content do not resolve here -- the edge walk flips between the hairline's outer
+    edge, its inner edge, and the glyph inside.
+    """
+    lum = luma(Image.open(args.image))
+    info = {}
+    box = {"top": args.top, "left": args.left}
+    r = measure_radius(lum, box, rows=int(args.max_radius * 2.6), smooth=args.smooth,
+                       report=info)
+    rms = info.get("radius_fit_rms_device", float("nan"))
+    pts = info.get("radius_fit_points", 0)
+    css = r / args.backing_scale
+    good = rms == rms and rms <= args.max_rms
+    print("radius fit: r = %.2f device = %.2f CSS   RMS = %.3f device px over %d arc points"
+          % (r, css, rms, pts))
+    if args.expect is not None:
+        print("expected %.2f CSS -> delta %+.2f CSS" % (args.expect, css - args.expect))
+    if not good:
+        print("UNRESOLVED: RMS %.3f exceeds the %.2f px bar. This is NOT a measurement and "
+              "must not be quoted as one." % (rms, args.max_rms))
+        return 1
+    print("RESOLVED: RMS is within the %.2f px bar." % args.max_rms)
+    if args.expect is not None and abs(css - args.expect) > args.tolerance:
+        print("DISAGREES with the expected value by more than %.2f CSS." % args.tolerance)
+        return 1
+    return 0
+
+
 def cmd_selftest(args):
     """KNOWN-ANSWER PROOF against VIDEO-REVIEW 1.1-1.3, measured from hi/rest.png.
 
@@ -421,6 +456,17 @@ def main(argv=None):
     k.add_argument("--box", type=int, default=9)
     k.add_argument("--expect", default=None, help="#rrggbb")
     k.set_defaults(func=cmd_color)
+
+    rad = sub.add_parser("radius", help="fit a corner radius at an explicit seed, with its RMS")
+    rad.add_argument("image")
+    rad.add_argument("--left", type=float, required=True, help="device-px x of the straight left edge")
+    rad.add_argument("--top", type=float, required=True, help="device-px y of the straight top edge")
+    rad.add_argument("--max-radius", type=float, default=60.0)
+    rad.add_argument("--max-rms", type=float, default=1.5,
+                     help="above this the fit is reported UNRESOLVED, not rounded into a number")
+    rad.add_argument("--expect", type=float, default=None, help="expected radius in CSS px")
+    rad.add_argument("--tolerance", type=float, default=TOL_GEOMETRY_CSS)
+    rad.set_defaults(func=cmd_radius)
 
     t = sub.add_parser("selftest", help="known-answer proof against the reference frame")
     t.add_argument("reference", help="path to video/hi/rest.png")
