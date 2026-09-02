@@ -44,9 +44,10 @@ refresh_hz() {
 case "${1:?usage: record|analyse}" in
   record)
     TAG=${2:?tag}; OUT=${3:?output .trace path}
-    # The precondition is not optional. Recording on the wrong display mode produces a
-    # number that looks like a measurement and is not one.
-    "$SCRIPT_DIR/fidelity-display.sh" check
+    # The precondition is not optional, and it now covers the WINDOW as well as the
+    # display. Recording on the wrong display mode, or on a window macOS silently
+    # clamped to fit it, produces a number that looks like a measurement and is not one.
+    "$SCRIPT_DIR/fidelity-display.sh" check "cmux DEV $TAG"
     HZ=$(refresh_hz); HZ=${HZ:-60}
     echo "H4: recording against a ${HZ} Hz panel; budget $(python3 -c "print(round(1000.0/$HZ,3))") ms/frame"
     PID=$(pgrep -f "cmux DEV $TAG.app/Contents/MacOS" | head -1 || true)

@@ -8,6 +8,8 @@
 #   strict-concurrency-gate.sh baseline <out.txt>   build at the pinned sha, save warnings
 #   strict-concurrency-gate.sh branch   <out.txt>   build on this branch, save warnings
 #   strict-concurrency-gate.sh diff <baseline.txt> <branch.txt> <base-sha>
+#   strict-concurrency-gate.sh exemption <build.raw>   assert the ONE upstream error
+#                                                      is still present
 #
 # BASELINE PARTIALITY -- read before trusting a green from `diff`.
 # The provisioned baseline (PROVISION-baseline-warnings.txt) is PARTIAL: under
@@ -16,6 +18,25 @@
 # aborts the whole batch, so files the batch never reached emitted no diagnostics.
 # A changed file that is absent from the baseline therefore proves nothing: its
 # warnings look "new" whether they are new or merely unmeasured.
+#
+# THE SINGLE EXEMPTION, AND WHY IT IS ASSERTED PRESENT RATHER THAN JUST TOLERATED.
+# Under complete strict concurrency the build stops on ONE upstream error:
+#   Sources/Panels/BrowserWebAuthnSupport.swift ... does not conform to protocol
+#   'WKScriptMessageHandlerWithReply'
+# WebKit's reply closure gains @escaping @MainActor @Sendable under strict mode and the
+# existing signature no longer satisfies it. That is upstream's, not this build's, and it
+# is the only error this gate tolerates.
+#
+# It is tolerated ONLY while it still exists. `exemption` asserts the error is PRESENT
+# and FAILS if it has gone. That looks backwards and is not: an exemption that outlives
+# its cause is how a gate quietly stops gating. If upstream fixes that conformance, the
+# strict build no longer aborts, the baseline stops being partial, and this whole
+# carve-out must be deleted rather than left standing as a permanent hole nobody
+# re-examines. Failing loudly is what forces that re-examination.
+#
+# The build is run WARNINGS-ONLY in the sense that matters here: no
+# -warnings-as-errors is added, warnings are harvested from the log even though the
+# build exits non-zero, and the exit status of the build is deliberately NOT the gate.
 #
 # This gate refuses to launder that into either verdict. A changed file with no
 # baseline coverage is reported as UNKNOWN-BASELINE and FAILS the gate, because a
@@ -58,7 +79,40 @@ normalize() {
     | sort -u
 }
 
-case "${1:?usage: baseline|branch|diff}" in
+# The one tolerated upstream error, matched on file plus protocol so a DIFFERENT error
+# in the same file cannot pass as this one.
+EXEMPT_FILE='Sources/Panels/BrowserWebAuthnSupport.swift'
+EXEMPT_PROTOCOL='WKScriptMessageHandlerWithReply'
+
+check_exemption() {
+  local raw=${1:?usage: exemption <build.raw>}
+  [ -f "$raw" ] || { echo "no such build log: $raw" >&2; return 2; }
+  local errors exempt other
+  errors=$(grep -E ' error: ' "$raw" | sort -u || true)
+  exempt=$(printf '%s\n' "$errors" | grep -F "$EXEMPT_FILE" | grep -F "$EXEMPT_PROTOCOL" || true)
+  other=$(printf '%s\n' "$errors" | grep -v -F "$EXEMPT_FILE" | grep -v '^$' || true)
+
+  if [ -z "$exempt" ]; then
+    echo "ROW 110 EXEMPTION: FAIL -- the tolerated upstream error is GONE."
+    echo "  Expected in $EXEMPT_FILE: conformance to $EXEMPT_PROTOCOL."
+    echo "  If upstream fixed it, the strict build no longer aborts, the warning baseline"
+    echo "  is no longer partial, and this exemption must be DELETED rather than left"
+    echo "  standing. An exemption that outlives its cause is a hole nobody re-examines."
+    return 1
+  fi
+  echo "ROW 110 EXEMPTION: present, as required"
+  printf '%s\n' "$exempt" | sed 's/^/  /'
+  if [ -n "$other" ]; then
+    echo "ROW 110 EXEMPTION: FAIL -- error(s) beyond the single tolerated one:"
+    printf '%s\n' "$other" | sed 's/^/  /'
+    return 1
+  fi
+  echo "ROW 110 EXEMPTION: PASS -- exactly one error, and it is the stated upstream one"
+  return 0
+}
+
+case "${1:?usage: baseline|branch|diff|exemption}" in
+  exemption) shift; check_exemption "$@" ;;
   baseline) build_warnings "${CMUX_STRICT_TAG:-strict-baseline}" "${2:?out file}" ;;
   branch)   build_warnings "${CMUX_STRICT_TAG:-strict-branch}" "${2:?out file}" ;;
   diff)

@@ -19,13 +19,21 @@ report one so it cannot be quoted as one by accident.
 ## Before any H1 or H2 measurement — the row-119 precondition
 
 ```
-tools/fidelity/fidelity-display.sh set      # More Space mode, 1920x1243 logical @2x
-tools/fidelity/fidelity-display.sh check    # aborts non-zero if the mode is wrong
+tools/fidelity/fidelity-display.sh set                     # More Space, 1920x1243 @2x
+tools/fidelity/fidelity-display.sh check "cmux DEV <tag>"  # display AND window
 # ... measure ...
-tools/fidelity/fidelity-display.sh restore  # back to the machine's default mode
+tools/fidelity/fidelity-display.sh restore                 # back to the default mode
 ```
 
-`check` **aborts** rather than warning. Without it, roughly twenty-five absolute-pixel
+**Always pass the app name.** Without it only the display is asserted, and a display
+assertion cannot catch the failure that actually happens: macOS **silently clamps** a
+window that does not fit the current mode and reports no error. The Phase 0 spike lost
+a CALayer run to exactly that, measuring a window clamped to **1670 × 1033** while
+everything looked valid. With the app name, the window's own frame must be exactly
+1344 × 1080 or the run aborts. Window bounds are readable without any TCC grant.
+
+`check` **aborts** rather than warning, and **never falls back to ratio-only assertions
+silently**. Without it, roughly twenty-five absolute-pixel
 rows quietly become "n/a on this hardware" and a report full of silent exemptions
 reads like a pass. The default mode's `visibleFrame` is 1710 × 1073 — **seven logical
 pixels short** of the 1080 the fidelity window needs, which is the entire reason the

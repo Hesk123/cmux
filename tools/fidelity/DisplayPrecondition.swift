@@ -12,14 +12,20 @@
 // is in the wrong mode, and a fidelity report full of silent exemptions reads like
 // a pass. Aborting is the point.
 //
-// This program owns checks 1 and 2, which are display facts and can be asserted
-// before the app is even launched. Check 3 is a property of the window and is
-// asserted by the capture step, which reads pointPixelScale back from
-// SCStreamConfiguration's contentInfo (row 119's wording).
+// All three are asserted HERE. Checks 1 and 2 are display facts. Check 3 is the
+// window's own frame, read from CGWindowListCopyWindowInfo, and leaving it to "the
+// capture step" was a real hole: the Phase 0 spike ran its CALayer test on a window
+// macOS had SILENTLY CLAMPED to 1670 x 1033, because the display was not in More
+// Space. Nothing failed. The numbers looked valid and were not. A display assertion
+// alone cannot catch that -- only the window's actual size can.
+//
+// kCGWindowBounds is readable WITHOUT the Screen Recording grant; only window IMAGES
+// need it. So this check works from an ssh session, which is where the harness runs.
 //
 // Build: swiftc -O -parse-as-library -o display-precondition DisplayPrecondition.swift
 // Run:   ./display-precondition            # asserts, exit 0 or 1
 //        ./display-precondition --report   # prints state, always exit 0
+//        ./display-precondition --window "cmux DEV"   # also assert the WINDOW frame
 
 import AppKit
 
@@ -46,6 +52,28 @@ func readMainScreen() -> DisplayFacts? {
                         localizedName: screen.localizedName)
 }
 
+/// The on-screen bounds of the frontmost window whose owner name contains `match`.
+///
+/// Uses the window list rather than the accessibility API because window BOUNDS are
+/// permission-free, while driving another app through accessibility is not.
+func windowBounds(ownerMatching match: String) -> (owner: String, width: Double, height: Double)? {
+    let options: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
+    guard let raw = CGWindowListCopyWindowInfo(options, kCGNullWindowID) as? [[String: Any]] else {
+        return nil
+    }
+    for entry in raw {
+        guard let owner = entry[kCGWindowOwnerName as String] as? String,
+              owner.localizedCaseInsensitiveContains(match),
+              let boundsDict = entry[kCGWindowBounds as String] as? [String: Any],
+              let width = boundsDict["Width"] as? Double,
+              let height = boundsDict["Height"] as? Double else { continue }
+        // Skip menu-bar-sized slivers and other chrome windows the app also owns.
+        if width < 200 || height < 200 { continue }
+        return (owner, width, height)
+    }
+    return nil
+}
+
 @main
 struct DisplayPreconditionMain {
     static let requiredBackingScale = 2.0
@@ -54,7 +82,13 @@ struct DisplayPreconditionMain {
 
     @MainActor
     static func main() {
-        let reportOnly = CommandLine.arguments.contains("--report")
+        let args = CommandLine.arguments
+        let reportOnly = args.contains("--report")
+        // --window <owner-substring> adds check 3: the window's own frame.
+        var windowMatch: String?
+        if let i = args.firstIndex(of: "--window"), i + 1 < args.count {
+            windowMatch = args[i + 1]
+        }
         guard let facts = readMainScreen() else {
             FileHandle.standardError.write(Data("PRECONDITION ABORT: no main screen\n".utf8))
             exit(reportOnly ? 0 : 1)
@@ -87,6 +121,24 @@ struct DisplayPreconditionMain {
             failures.append("visibleFrame is \(facts.visibleWidth) x \(facts.visibleHeight), "
                             + "required at least \(requiredWidth) x \(requiredHeight). "
                             + "The fidelity window cannot be opened at its asserted size on this mode.")
+        }
+
+        // Check 3. The window, not the display. This is the one the spike needed.
+        if let match = windowMatch {
+            if let win = windowBounds(ownerMatching: match) {
+                print("window owner \"\(win.owner)\": \(win.width) x \(win.height) logical")
+                if abs(win.width - requiredWidth) > 0.5 || abs(win.height - requiredHeight) > 0.5 {
+                    failures.append("the window is \(win.width) x \(win.height), required exactly "
+                                    + "\(requiredWidth) x \(requiredHeight). macOS CLAMPS a window that "
+                                    + "does not fit the current mode and reports no error, so a "
+                                    + "measurement taken now would look valid and be wrong -- the Phase 0 "
+                                    + "spike lost a run to exactly this at 1670 x 1033.")
+                }
+            } else {
+                failures.append("no on-screen window found whose owner name contains \"\(match)\". "
+                                + "Launch the tagged app first; a measurement with no window is not a "
+                                + "measurement.")
+            }
         }
 
         if failures.isEmpty {

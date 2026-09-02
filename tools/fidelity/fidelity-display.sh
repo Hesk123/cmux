@@ -13,7 +13,11 @@
 #
 #   fidelity-display.sh set        switch to the More Space fidelity mode
 #   fidelity-display.sh restore    switch back to the machine's default mode
-#   fidelity-display.sh check      run the precondition assertions (exit 1 on failure)
+#   fidelity-display.sh check [app]  run the precondition assertions (exit 1 on failure).
+#                                    With an app-name substring it ALSO asserts that
+#                                    app's window is exactly 1344 x 1080 -- the check
+#                                    that catches a silently CLAMPED window, which the
+#                                    Phase 0 spike lost a run to at 1670 x 1033.
 #   fidelity-display.sh report     print the current display state, always exit 0
 set -euo pipefail
 
@@ -41,7 +45,8 @@ case "${1:-check}" in
     command -v displayplacer >/dev/null || { echo "displayplacer not installed (brew install displayplacer)" >&2; exit 2; }
     displayplacer "id:$SCREEN_ID $FIDELITY_MODE"
     sleep 1
-    ensure_bin; "$BIN"
+    ensure_bin
+    if [ -n "${2:-}" ]; then "$BIN" --window "$2"; else "$BIN"; fi
     ;;
   restore)
     command -v displayplacer >/dev/null || { echo "displayplacer not installed" >&2; exit 2; }
@@ -49,7 +54,11 @@ case "${1:-check}" in
     echo "restored to the default 1710x1107 mode"
     ;;
   check)
-    ensure_bin; "$BIN"
+    ensure_bin
+    # Never fall back to ratio-only assertions silently. Aborting is the point: about
+    # twenty-five absolute-pixel rows would otherwise void by exemption and a report
+    # full of silent exemptions reads like a pass.
+    if [ -n "${2:-}" ]; then "$BIN" --window "$2"; else "$BIN"; fi
     ;;
   report)
     ensure_bin; "$BIN" --report
