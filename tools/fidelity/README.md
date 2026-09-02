@@ -125,5 +125,14 @@ git status --short   # must succeed and be clean
   is rejected in a module that also has top-level code.
 - The `avfoundation` screen-capture device index on this machine is **3**
   ("Capture screen 0"). Machine-specific; re-list rather than assume it elsewhere.
+- **ffmpeg 9 removed `-vsync`.** Frame extraction is `-fps_mode passthrough`. The old
+  flag now aborts with `Unrecognized option 'vsync'` and yields **zero frames**, which
+  reads like a capture problem rather than a flag problem.
 - ffmpeg screen capture needs the Screen Recording TCC grant, which an ssh session does
   not have — see row 122 in MAKER-U7.md. H1 and the flank snapshots do **not** need it.
+  The encode and extract chain itself is proven: 2 s of a 2688 x 2160 synthetic source
+  at 60 fps produced exactly 120 frames, all 120 extracted and tracked. So a future
+  failure here is the grant, not the tool.
+- Both `python3` on this Mac carry numpy and Pillow: `/usr/bin/python3` is 3.9.6 and
+  `/opt/homebrew/bin/python3` is 3.14.7. The harness is written for 3.9, so it runs
+  under either.
