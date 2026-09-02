@@ -1,0 +1,11 @@
+// Modified 2026-09-02 for the cmux carousel build (cmux-carousel-ui CONTRACT row 110).
+//
+// Row 110 requires the setting to be injected BY XCCONFIG, never by a bare command.
+// The reason is row 133/AGENTS.md: a bare `xcodebuild` shares the default debug
+// socket and bundle id with every other agent on this Mac. Routing the setting
+// through a file means the tagged build path stays the only build path.
+//
+// The project builds at SWIFT_VERSION = 5.0 with no strict-concurrency setting
+// anywhere in project.pbxproj, so this raises a very large number of warnings. That
+// is exactly why the gate is a BASELINE DIFF over changed files and never a count.
+SWIFT_STRICT_CONCURRENCY = complete

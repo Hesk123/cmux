@@ -1,0 +1,17 @@
+# Modified 2026-09-02 for the cmux carousel build (cmux-carousel-ui CONTRACT row 134).
+#
+# Test files that ./scripts/lint-pbxproj-test-wiring.sh ALREADY flags as unwired at
+# the pinned baseline sha 57460cc83fced2b1c473eb48ae0d2990441ba7e3
+# (= upstream 86cb5ceaae76e6e84a8bc6c769dba50b2eed2b5d + the one-line cmux-cli fix).
+#
+# Recorded because the lint is RED upstream, before this build changes anything. A
+# gate that simply requires "lint is green" would therefore have been red on day one
+# for reasons this build did not cause, and the predictable outcome is that everyone
+# learns to wave it through -- which is precisely the habit row 134 exists to prevent.
+#
+# The gate is instead: NO NEW unwired file. Every name below is upstream's; anything
+# not on this list is this build's and blocks.
+#
+# Each of these is a real silently-skipped test in upstream cmux. Worth reporting
+# upstream separately; not this build's to fix.
+ClaudeHookSessionStorePersistenceTests.swift
