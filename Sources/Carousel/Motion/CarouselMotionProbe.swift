@@ -350,7 +350,10 @@ final class CarouselMotionProbe: NSObject {
     private func performSwitch(slots: Int, label: String) {
         note("switch.\(label).slots=\(slots)")
         let leaving = cards.indices.contains(centreIndex) ? cards[centreIndex] : nil
-        let nextIndex = centreIndex + slots
+        // Wrap, so every phase has a real entering and leaving card and the
+        // row-55 ramp evidence is not confined to the first switch. U1 owns
+        // real wrap (row 57); this is the stand-in track's version of it.
+        let nextIndex = ((centreIndex + slots) % Self.cardCount + Self.cardCount) % Self.cardCount
         let entering = cards.indices.contains(nextIndex) ? cards[nextIndex] : nil
         centreIndex = nextIndex
         animator.advance(

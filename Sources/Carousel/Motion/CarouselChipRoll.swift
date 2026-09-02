@@ -109,10 +109,6 @@ final class CarouselChipRoll {
         // pill's own anchoring in charge of which edge moves.
         let width = presentation(pill, keyPath: "bounds.size.width") ?? pill.bounds.width
         animate(pill, keyPath: "bounds.size.width", from: width, to: pillWidth, begin: begin, duration: CarouselMotion.chipRollDuration)
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        pill.bounds.size.width = pillWidth
-        CATransaction.commit()
     }
 
     /// Row 113: no translation and no width animation, opacity only.
@@ -164,12 +160,15 @@ final class CarouselChipRoll {
         // the roll starts, so the from-value is held backwards from beginTime.
         step.fillMode = .backwards
         layer.add(step, forKey: keyPath)
-        if keyPath == "opacity" {
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            layer.opacity = Float(to)
-            CATransaction.commit()
-        }
+
+        // The model has to end up at the target for EVERY key path, not just
+        // opacity. Core Animation removes a finished animation and then renders
+        // the model value, so a label whose model y is still its entry offset
+        // snaps back up the instant the roll completes.
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layer.setValue(to, forKeyPath: keyPath)
+        CATransaction.commit()
     }
 
     private func presentation(_ layer: CALayer, keyPath: String) -> CGFloat? {
