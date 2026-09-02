@@ -39,7 +39,13 @@ check_notices() {
       echo "MISSING 5(a) NOTICE  $path"
       missing=$((missing + 1))
     fi
-  done < <(git diff --name-status "$base"...HEAD)
+  done < <(
+    # Two-dot against the working tree, plus untracked files. A HEAD-only diff cannot
+    # see a file that is written but not yet committed, and that is precisely when a
+    # maker runs this. Proven by a positive control that a HEAD-only diff passed.
+    git diff --name-status "$base"
+    git ls-files --others --exclude-standard | sed 's/^/A\t/'
+  )
 
   echo
   echo "files checked: $checked   missing a notice: $missing"

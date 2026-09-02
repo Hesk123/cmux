@@ -46,13 +46,29 @@ echo "ban list:"; printf '  %s\n' "${BANNED[@]}"; echo
 # the seam is gone with no banned name anywhere in the diff.
 ALLOWLIST_FILE='Sources/Carousel/Data/CarouselDataRoot.swift'
 ALLOWLIST_MAX=1
-DIFF=$(git diff -U0 "$BASE"...HEAD -- '*.swift' ":(exclude)$ALLOWLIST_FILE" | grep -E '^\+' | grep -v '^+++' || true)
-if [ -z "$DIFF" ]; then
+# Two-dot against the WORKING TREE, not "$BASE...HEAD".
+# A positive control caught this: a file with a banned call, staged but not yet
+# committed, was invisible to a HEAD-only diff and the gate returned PASS. A maker
+# runs this before committing, which is exactly when the gate must be able to see the
+# violation, so the comparison covers the index and the working tree too.
+DIFF=$(git diff -U0 "$BASE" -- '*.swift' ":(exclude)$ALLOWLIST_FILE" | grep -E '^\+' | grep -v '^+++' || true)
+
+# Untracked files are in no diff at all. A new Swift file that has never been `git
+# add`ed would slip past every check here, so it is named rather than ignored.
+UNTRACKED=$(git ls-files --others --exclude-standard -- '*.swift' | grep -v "^$ALLOWLIST_FILE$" || true)
+if [ -n "$UNTRACKED" ]; then
+  echo "UNTRACKED Swift files -- not in any diff, so not covered by the ban below:"
+  printf '%s\n' "$UNTRACKED" | sed 's/^/  /'
+  echo "  git add them, or this gate is blind to them."
+  echo
+fi
+if [ -z "$DIFF" ] && [ -z "$UNTRACKED" ]; then
   echo "no added Swift lines vs $BASE -- check vacuous, and said so."
   exit 0
 fi
 
 hits=0
+[ -n "$UNTRACKED" ] && hits=$((hits + 1))
 for pat in "${BANNED[@]}"; do
   found=$(printf '%s\n' "$DIFF" | grep -E "$pat" || true)
   if [ -n "$found" ]; then
