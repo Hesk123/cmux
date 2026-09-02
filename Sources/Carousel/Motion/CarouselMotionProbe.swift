@@ -57,6 +57,7 @@ final class CarouselMotionProbe: NSObject {
     private var dots: [CALayer] = []
     private var working: CarouselWorkingIndicator?
 
+    private weak var hostLayer: CALayer?
     private var link: CADisplayLink?
     private var frameIndex = 0
     private var samples: [String] = []
@@ -67,6 +68,13 @@ final class CarouselMotionProbe: NSObject {
     /// Frame numbers at 60 Hz. Each phase gets a 90-frame (1.5 s) window so a
     /// keycap dwell plus fade fits inside its own phase.
     private enum Phase {
+        /// Row 119's clock alignment. The whole window flashes white for
+        /// exactly one frame, so an H2 screen recording can find frame zero by
+        /// a luminance spike instead of by the keycap — which would make row
+        /// 62's "visible within 1 frame of the event" assertion circular, since
+        /// the keycap is the thing under test.
+        static let markerOn = 18
+        static let markerOff = 19
         static let single = 30
         static let retargetA = 120
         static let retargetB = 126        // 100 ms in — genuinely mid-flight
@@ -116,6 +124,7 @@ final class CarouselMotionProbe: NSObject {
         host.layer?.backgroundColor = NSColor.black.cgColor
         window.contentView = host
         guard let hostLayer = host.layer else { return }
+        self.hostLayer = hostLayer
         hostLayer.addSublayer(trackLayers.recoil)
 
         buildCards(cardSize: card)
@@ -281,6 +290,12 @@ final class CarouselMotionProbe: NSObject {
 
     private func drive(frame: Int) {
         switch frame {
+        case Phase.markerOn:
+            setHostBackground(.white)
+            note("marker.on")
+        case Phase.markerOff:
+            setHostBackground(.black)
+            note("marker.off")
         case Phase.single:
             switchForward("single")
         case Phase.retargetA:
@@ -316,6 +331,13 @@ final class CarouselMotionProbe: NSObject {
         default:
             break
         }
+    }
+
+    private func setHostBackground(_ color: NSColor) {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        hostLayer?.backgroundColor = color.cgColor
+        CATransaction.commit()
     }
 
     private func switchForward(_ label: String) { performSwitch(slots: 1, label: label) }
