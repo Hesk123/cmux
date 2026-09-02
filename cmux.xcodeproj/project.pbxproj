@@ -541,6 +541,16 @@
 		CA52B0070000000000000000 /* CanvasPaneContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA52C0070000000000000000 /* CanvasPaneContent.swift */; };
 		852600010000000000000002 /* CanvasPaneContentMountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852600010000000000000001 /* CanvasPaneContentMountTests.swift */; };
 		C4A570030000000000000001 /* CanvasShortcutContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A570030000000000000002 /* CanvasShortcutContextTests.swift */; };
+		CA2002000000000000000001 /* CarouselChipRoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2002000000000000000002 /* CarouselChipRoll.swift */; };
+		CA2003000000000000000001 /* CarouselKeycapHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2003000000000000000002 /* CarouselKeycapHint.swift */; };
+		CA2000000000000000000001 /* CarouselMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* CarouselMotion.swift */; };
+		CA2009000000000000000001 /* CarouselMotionComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2009000000000000000002 /* CarouselMotionComponentTests.swift */; };
+		CA2007000000000000000001 /* CarouselMotionConstantsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2007000000000000000002 /* CarouselMotionConstantsTests.swift */; };
+		CA2006000000000000000001 /* CarouselMotionProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2006000000000000000002 /* CarouselMotionProbe.swift */; };
+		CA2004000000000000000001 /* CarouselSendFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2004000000000000000002 /* CarouselSendFeedback.swift */; };
+		CA2001000000000000000001 /* CarouselTrackAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2001000000000000000002 /* CarouselTrackAnimator.swift */; };
+		CA2008000000000000000001 /* CarouselTrackAnimatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2008000000000000000002 /* CarouselTrackAnimatorTests.swift */; };
+		CA2005000000000000000001 /* CarouselWorkingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2005000000000000000002 /* CarouselWorkingIndicator.swift */; };
 		081696D3A66545C50AD0598E /* ChecklistInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E449BD36EA0670CC7D75C /* ChecklistInputField.swift */; };
 		D78129DCAE6C4D919AE20FF9 /* ChecklistPopoverPointerTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9890AFCF5E5F4F3DA9F00CCC /* ChecklistPopoverPointerTracking.swift */; };
 		ED226C59A21547BB962DB2A5 /* ChecklistSummaryPopoverModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319C469164C74F2F8E41D2C3 /* ChecklistSummaryPopoverModifier.swift */; };
@@ -3673,6 +3683,16 @@
 		CA52C0070000000000000000 /* CanvasPaneContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CanvasPaneContent.swift"; sourceTree = "<group>"; };
 		852600010000000000000001 /* CanvasPaneContentMountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasPaneContentMountTests.swift; sourceTree = "<group>"; };
 		C4A570030000000000000002 /* CanvasShortcutContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasShortcutContextTests.swift; sourceTree = "<group>"; };
+		CA2002000000000000000002 /* CarouselChipRoll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselChipRoll.swift; sourceTree = "<group>"; };
+		CA2003000000000000000002 /* CarouselKeycapHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselKeycapHint.swift; sourceTree = "<group>"; };
+		CA2000000000000000000002 /* CarouselMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselMotion.swift; sourceTree = "<group>"; };
+		CA2009000000000000000002 /* CarouselMotionComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselMotionComponentTests.swift; sourceTree = "<group>"; };
+		CA2007000000000000000002 /* CarouselMotionConstantsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselMotionConstantsTests.swift; sourceTree = "<group>"; };
+		CA2006000000000000000002 /* CarouselMotionProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselMotionProbe.swift; sourceTree = "<group>"; };
+		CA2004000000000000000002 /* CarouselSendFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselSendFeedback.swift; sourceTree = "<group>"; };
+		CA2001000000000000000002 /* CarouselTrackAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselTrackAnimator.swift; sourceTree = "<group>"; };
+		CA2008000000000000000002 /* CarouselTrackAnimatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselTrackAnimatorTests.swift; sourceTree = "<group>"; };
+		CA2005000000000000000002 /* CarouselWorkingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselWorkingIndicator.swift; sourceTree = "<group>"; };
 		3E3E449BD36EA0670CC7D75C /* ChecklistInputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistInputField.swift; sourceTree = "<group>"; };
 		9890AFCF5E5F4F3DA9F00CCC /* ChecklistPopoverPointerTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistPopoverPointerTracking.swift"; sourceTree = "<group>"; };
 		319C469164C74F2F8E41D2C3 /* ChecklistSummaryPopoverModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistSummaryPopoverModifier.swift"; sourceTree = "<group>"; };
@@ -6601,6 +6621,13 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 		A5001041 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				CA2006000000000000000002 /* CarouselMotionProbe.swift */,
+				CA2005000000000000000002 /* CarouselWorkingIndicator.swift */,
+				CA2004000000000000000002 /* CarouselSendFeedback.swift */,
+				CA2003000000000000000002 /* CarouselKeycapHint.swift */,
+				CA2002000000000000000002 /* CarouselChipRoll.swift */,
+				CA2001000000000000000002 /* CarouselTrackAnimator.swift */,
+				CA2000000000000000000002 /* CarouselMotion.swift */,
 				986900010000000000000002 /* AppDelegate+BrowserActionRouting.swift */,
 				986900080000000000000002 /* BrowserAction.swift */,
 				986900020000000000000002 /* BrowserActionDispatcher.swift */,
@@ -8532,6 +8559,9 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 		F1000003A1B2C3D4E5F60718 /* cmuxTests */ = {
 			isa = PBXGroup;
 			children = (
+				CA2009000000000000000002 /* CarouselMotionComponentTests.swift */,
+				CA2008000000000000000002 /* CarouselTrackAnimatorTests.swift */,
+				CA2007000000000000000002 /* CarouselMotionConstantsTests.swift */,
 				CA20FF000000000000000002 /* ClaudeHookSessionStorePersistenceTests.swift */,
 				C11322A20000000000000001 /* CloudManualMirrorTransportTests.swift */,
 				9520B0019520B0019520B001 /* HermesFirstClassSupportTests.swift */,
@@ -10179,6 +10209,13 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CA52E0030000000000000000 /* CanvasInlineBrowserHostingEnvironment.swift in Sources */,
 				CA52B0060000000000000000 /* CanvasLayoutSettings.swift in Sources */,
 				CA52B0070000000000000000 /* CanvasPaneContent.swift in Sources */,
+				CA2002000000000000000001 /* CarouselChipRoll.swift in Sources */,
+				CA2003000000000000000001 /* CarouselKeycapHint.swift in Sources */,
+				CA2000000000000000000001 /* CarouselMotion.swift in Sources */,
+				CA2006000000000000000001 /* CarouselMotionProbe.swift in Sources */,
+				CA2004000000000000000001 /* CarouselSendFeedback.swift in Sources */,
+				CA2001000000000000000001 /* CarouselTrackAnimator.swift in Sources */,
+				CA2005000000000000000001 /* CarouselWorkingIndicator.swift in Sources */,
 				081696D3A66545C50AD0598E /* ChecklistInputField.swift in Sources */,
 				D78129DCAE6C4D919AE20FF9 /* ChecklistPopoverPointerTracking.swift in Sources */,
 				ED226C59A21547BB962DB2A5 /* ChecklistSummaryPopoverModifier.swift in Sources */,
@@ -12142,6 +12179,9 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				0A0F00580000000000000003 /* CampfireSupportTestSupport.swift in Sources */,
 				852600010000000000000002 /* CanvasPaneContentMountTests.swift in Sources */,
 				C4A570030000000000000001 /* CanvasShortcutContextTests.swift in Sources */,
+				CA2009000000000000000001 /* CarouselMotionComponentTests.swift in Sources */,
+				CA2007000000000000000001 /* CarouselMotionConstantsTests.swift in Sources */,
+				CA2008000000000000000001 /* CarouselTrackAnimatorTests.swift in Sources */,
 				F3000000A1B2C3D4E5F60718 /* CJKIMEInputTests.swift in Sources */,
 				D3571002A1B2C3D4E5F60718 /* CJKIMEMarkedSelectionTests.swift in Sources */,
 				A5D41232A1B2C3D4E5F60718 /* ClaudeBackgroundWorkNotifyTests.swift in Sources */,

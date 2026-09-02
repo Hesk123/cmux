@@ -10,6 +10,15 @@ extension TerminalController {
             return "ERROR: screenshot must run off the main thread"
         }
 
+        // U2's motion probe (CONTRACT rows 52-68, 112, 113, 115). Reached as
+        // `screenshot carousel [reduced]`, reusing this already-policy-listed
+        // verb exactly as the Phase 0 spike did, so it needs no change to
+        // `ControlCommandExecutionPolicy` and inherits the correct off-main
+        // lane. DEBUG-only, like the rest of this file.
+        if args.hasPrefix("carousel") {
+            return runCarouselMotionProbe(String(args.dropFirst("carousel".count)))
+        }
+
         // Parse optional label from args
         let label = WindowScreenshotLabel(args).value
 
@@ -537,6 +546,29 @@ extension TerminalController {
             current = candidate.superview
         }
         return 0
+    }
+}
+#endif
+
+#if DEBUG
+extension TerminalController {
+    /// Runs `CarouselMotionProbe` and returns its report. See that type for
+    /// what is measured and why it reads presentation values rather than pixels.
+    nonisolated func runCarouselMotionProbe(_ args: String) -> String {
+        let reduced = args.contains("reduced")
+        // 780 frames at 60 Hz is 13 s; the timeout leaves room for a slow start
+        // without letting a wedged display link hold the socket worker forever.
+        let report: String? = socketAwaitCallback(timeout: 60) { completion in
+            Task { @MainActor in
+                let probe = CarouselMotionProbe(reduced: reduced)
+                CarouselMotionProbe.retained = probe
+                probe.run { text in
+                    CarouselMotionProbe.retained = nil
+                    completion(text)
+                }
+            }
+        }
+        return report ?? "ERROR: carousel motion probe timed out"
     }
 }
 #endif
