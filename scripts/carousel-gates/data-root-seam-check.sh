@@ -89,6 +89,28 @@ elif ! grep -q 'CMUX_CAROUSEL_DATA_ROOT' "$PROVIDER"; then
   hits=$((hits + 1))
 fi
 
+# The provider must be COMPILED, not merely present. This gate greps the diff, and a
+# diff cannot see whether a file is in the build -- CarouselDataRoot.swift sat unwired
+# in project.pbxproj while this check reported PASS, so the seam it guards did not exist
+# in the running app at all. That is row 134's silent-skip mechanism on the source side.
+# A PBXSourcesBuildPhase entry is what decides whether a Swift file compiles.
+PBX=cmux.xcodeproj/project.pbxproj
+for f in "$PROVIDER" Sources/Carousel/Fidelity/CarouselFrameRecorder.swift; do
+  [ -f "$f" ] || continue
+  base=$(basename "$f")
+  n=$(grep -cE "^[[:space:]]+[0-9A-F]{24} /\* $base in Sources \*/,$" "$PBX" 2>/dev/null || true)
+  if [ "${n:-0}" -eq 0 ]; then
+    echo "NOT IN THE BUILD: $base has no PBXSourcesBuildPhase entry, so it is silently"
+    echo "  skipped and this gate would pass on a file that never compiles."
+    hits=$((hits + 1))
+  elif [ "${n:-0}" -gt 1 ]; then
+    echo "WIRED TWICE: $base appears $n times in the sources phase; it would compile twice."
+    hits=$((hits + 1))
+  else
+    echo "compiled: $base (1 sources-phase entry)"
+  fi
+done
+
 # The allowlist is capped, not open. One resolution is a seam; several is a habit.
 if [ -f "$ALLOWLIST_FILE" ]; then
   # Count CODE lines only. A doc comment naming the banned APIs -- which this file
