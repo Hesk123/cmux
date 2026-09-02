@@ -435,7 +435,7 @@ fn parse_layout(value: &Value) -> Option<Node> {
     }
 }
 
-fn parse_pane(value: &Value) -> Option<PaneView> {
+pub(super) fn parse_pane(value: &Value) -> Option<PaneView> {
     Some(PaneView {
         id: value.get("id")?.as_u64()?,
         resource_id: value
@@ -449,10 +449,14 @@ fn parse_pane(value: &Value) -> Option<PaneView> {
         tabs: value
             .get("tabs")
             .and_then(|v| v.as_array())
-            .map(|tabs| {
-                tabs.iter()
-                    .filter_map(|tab| {
-                        Some(TabView {
+            .map(|tabs| tabs.iter().filter_map(parse_tab).collect())
+            .unwrap_or_default(),
+    })
+}
+
+/// Parse one `Tab` entity as carried by `list-workspaces` and by tab deltas.
+pub(super) fn parse_tab(tab: &Value) -> Option<TabView> {
+    Some(TabView {
                             surface: tab.get("surface")?.as_u64()?,
                             public_id: tab
                                 .get("tab_resource_id")
@@ -504,11 +508,6 @@ fn parse_pane(value: &Value) -> Option<PaneView> {
                                 .and_then(Value::as_bool)
                                 .unwrap_or(false),
                             notification: tab.get("notification").and_then(parse_notification),
-                        })
-                    })
-                    .collect()
-            })
-            .unwrap_or_default(),
     })
 }
 
@@ -530,7 +529,7 @@ pub(super) struct TreeCapabilities {
     pub viewport_column_resize: bool,
 }
 
-fn parse_screen(value: &Value, capabilities: TreeCapabilities) -> Option<ScreenView> {
+pub(super) fn parse_screen(value: &Value, capabilities: TreeCapabilities) -> Option<ScreenView> {
     Some(ScreenView {
         id: value.get("id")?.as_u64()?,
         resource_id: value
@@ -608,31 +607,37 @@ pub(super) fn parse_tree_with_capabilities(
         if ws.get("active").and_then(|v| v.as_bool()) == Some(true) {
             tree.active_workspace = i;
         }
-        let mut view = WorkspaceView {
-            id: ws.get("id").and_then(|v| v.as_u64()).unwrap_or(0),
-            resource_id: ws
-                .get("resource_id")
-                .and_then(Value::as_str)
-                .and_then(|value| WorkspacePublicId::parse(value.to_string()).ok()),
-            key: ws.get("key").and_then(Value::as_str).unwrap_or_default().to_string(),
-            short_id: ws.get("short_id").and_then(|v| v.as_str()).unwrap_or_default().to_string(),
-            name: ws.get("name").and_then(|v| v.as_str()).unwrap_or_default().to_string(),
-            screens: Vec::new(),
-            active_screen: 0,
-        };
-        if let Some(screens) = ws.get("screens").and_then(|v| v.as_array()) {
-            for (s, screen) in screens.iter().enumerate() {
-                if screen.get("active").and_then(|v| v.as_bool()) == Some(true) {
-                    view.active_screen = s;
-                }
-                if let Some(parsed) = parse_screen(screen, capabilities) {
-                    view.screens.push(parsed);
-                }
-            }
-        }
-        tree.workspaces.push(view);
+        tree.workspaces.push(parse_workspace(ws, capabilities));
     }
     tree
+}
+
+/// Parse one `Workspace` entity as carried by `list-workspaces` and by
+/// workspace deltas. The caller decides whether it is the active workspace.
+pub(super) fn parse_workspace(ws: &Value, capabilities: TreeCapabilities) -> WorkspaceView {
+    let mut view = WorkspaceView {
+        id: ws.get("id").and_then(|v| v.as_u64()).unwrap_or(0),
+        resource_id: ws
+            .get("resource_id")
+            .and_then(Value::as_str)
+            .and_then(|value| WorkspacePublicId::parse(value.to_string()).ok()),
+        key: ws.get("key").and_then(Value::as_str).unwrap_or_default().to_string(),
+        short_id: ws.get("short_id").and_then(|v| v.as_str()).unwrap_or_default().to_string(),
+        name: ws.get("name").and_then(|v| v.as_str()).unwrap_or_default().to_string(),
+        screens: Vec::new(),
+        active_screen: 0,
+    };
+    if let Some(screens) = ws.get("screens").and_then(|v| v.as_array()) {
+        for (s, screen) in screens.iter().enumerate() {
+            if screen.get("active").and_then(|v| v.as_bool()) == Some(true) {
+                view.active_screen = s;
+            }
+            if let Some(parsed) = parse_screen(screen, capabilities) {
+                view.screens.push(parsed);
+            }
+        }
+    }
+    view
 }
 
 #[cfg(test)]
