@@ -3,6 +3,7 @@
 
 import AppKit
 import Observation
+import OSLog
 
 /// Owns the carousel's focus state and applies every key event's routing
 /// decision — CONTRACT rows 5, 61 and 114, under ruling D-1.
@@ -25,9 +26,16 @@ final class CarouselFocusCoordinator {
 
     private weak var centre: CarouselCentreProviding?
 
+    private static let log = Logger(subsystem: "com.cmuxterm.app", category: "carousel-focus")
+
     init(centre: CarouselCentreProviding, bindings: CarouselShortcutBindings) {
         self.centre = centre
         self.activeBindings = bindings
+        // Row 114's Ghostty-shadow clause: whichever chord set is live is
+        // observable in the log rather than silent. Rebinding through Settings
+        // (made visible to the conflict detector by the ShortcutAction
+        // registration) is the fallback mechanism; see `fallback`.
+        Self.log.info("carousel focus live bindings: \(String(describing: bindings), privacy: .public)")
     }
 
     // MARK: - Transitions
@@ -79,6 +87,27 @@ final class CarouselFocusCoordinator {
         }
 
         return routing
+    }
+
+    /// C1: entry point for the four registered shortcut actions. Menu and
+    /// key-equivalent delivery lands in the mode lifecycle owner (U1's routing
+    /// file), which forwards here. Navigation is owned and handled; the grid
+    /// and mode toggles belong to U6 and U1 and return false so the caller
+    /// routes them onward instead of dropping them silently.
+    @discardableResult
+    func performRegisteredAction(_ action: KeyboardShortcutSettings.Action) -> Bool {
+        switch action {
+        case .carouselNavigatePrevious:
+            navigate(.previous)
+            return true
+        case .carouselNavigateNext:
+            navigate(.next)
+            return true
+        case .carouselToggleGrid, .toggleCarouselLayout:
+            return false
+        default:
+            return false
+        }
     }
 
     /// Row 116: navigation is a no-op below two cards and must not animate.

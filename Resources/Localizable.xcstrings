@@ -215474,6 +215474,74 @@
         }
       }
     },
+    "carousel.promptBar.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask me anything"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "何でも聞いてください"
+          }
+        }
+      }
+    },
+    "carousel.promptBar.send": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送信"
+          }
+        }
+      }
+    },
+    "carousel.promptBar.voice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dictate"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音声入力"
+          }
+        }
+      }
+    },
+    "carousel.promptBar.sessionChip.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centred session: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中央のセッション: %@"
+          }
+        }
+      }
+    },
     "shortcut.attachTextBoxFile.label": {
       "extractionState": "manual",
       "localizations": {
@@ -226247,6 +226315,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "進入瀏覽器專注模式"
+          }
+        }
+      }
+    },
+    "shortcut.carouselNavigateNext.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carousel: Next Session"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カルーセル: 次のセッション"
+          }
+        }
+      }
+    },
+    "shortcut.carouselNavigatePrevious.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carousel: Previous Session"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カルーセル: 前のセッション"
+          }
+        }
+      }
+    },
+    "shortcut.carouselToggleGrid.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carousel: Toggle Grid"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カルーセル: グリッドの切り替え"
+          }
+        }
+      }
+    },
+    "shortcut.toggleCarouselLayout.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle Carousel Layout"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カルーセルレイアウトの切り替え"
           }
         }
       }

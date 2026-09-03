@@ -26,6 +26,20 @@ struct CarouselShortcutBindings: Equatable {
         )
     }
 
+    /// Row 114's fallback chord set, for a user whose Ghostty config shadows
+    /// the primary grid or mode chord. Navigation keeps its chords (nothing
+    /// shadows arrows); grid and mode move to Ctrl+Cmd+Y and Ctrl+Cmd+J, both
+    /// confirmed free in the default table and against macOS system bindings
+    /// (D-15's spare list). Selected by the user's Settings rebinding, which
+    /// the ShortcutAction registration makes visible to the conflict
+    /// detector; the coordinator logs whichever set is live at init.
+    static var fallback: CarouselShortcutBindings {
+        var bindings = CarouselShortcutBindings.contractDefaults
+        bindings.toggleGrid = StoredShortcut(key: "y", command: true, shift: false, option: false, control: true)
+        bindings.toggleCarouselMode = StoredShortcut(key: "j", command: true, shift: false, option: false, control: true)
+        return bindings
+    }
+
     /// The contract's defaults, independent of any persisted override. Used by
     /// the collision test so a user's local rebinding cannot make it pass.
     static var contractDefaults: CarouselShortcutBindings {

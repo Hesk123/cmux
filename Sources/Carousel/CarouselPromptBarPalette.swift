@@ -21,7 +21,12 @@ enum CarouselPromptBarPalette {
 
     /// Row 34: the action button is blue and never changes colour, size or
     /// position across the voice/send morph (VIDEO-REVIEW §2.4).
-    static let actionButtonFill = Color.accentColor
+    /// System blue #0A84FF (VIDEO-REVIEW §1.7 reads the reference's blue as
+    /// system blue composited on the card) as fixed components — never
+    /// `Color.accentColor`, which follows the user's macOS accent setting and
+    /// renders a non-blue button for red, orange, purple or graphite users.
+    static let actionButtonFillComponents: (red: Int, green: Int, blue: Int) = (10, 132, 255)
+    static var actionButtonFill: Color { color(actionButtonFillComponents) }
 
     private static func color(_ components: (red: Int, green: Int, blue: Int)) -> Color {
         Color(

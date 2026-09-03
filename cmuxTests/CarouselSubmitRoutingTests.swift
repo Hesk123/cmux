@@ -58,6 +58,9 @@ final class RecordingSubmitSurface: TextBoxSubmitSurfaceControlling {
 struct CarouselSubmitRoutingTests {
     @Test("Return goes to the centred surface and to no other")
     func sendReachesOnlyTheCentredSurface() {
+        // Both surfaces are attached to the stub in turn, so the sibling is a
+        // live object that could receive the line — asserting on a surface the
+        // stub never held proved nothing (the previous revision's defect).
         let gmail = RecordingSubmitSurface(sessionId: "gmail")
         let slack = RecordingSubmitSurface(sessionId: "slack")
         let stub = CarouselCentreStub(
@@ -69,8 +72,14 @@ struct CarouselSubmitRoutingTests {
 
         #expect(controller.sendText("canary-one"))
 
+        stub.centredSessionId = "slack"
+        stub.centredSessionDisplayName = "Slack"
+        stub.centredSubmitSurface = slack
+
+        #expect(controller.sendText("canary-two"))
+
         #expect(gmail.sentText == ["canary-one"])
-        #expect(slack.sentText.isEmpty, "a sibling session received the line")
+        #expect(slack.sentText == ["canary-two"])
     }
 
     /// The failure this type exists to prevent: a controller that captured its

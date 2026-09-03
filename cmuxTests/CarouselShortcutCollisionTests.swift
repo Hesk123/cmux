@@ -2,6 +2,7 @@
 // Added 2026-09-02 for the cmux carousel UI (unit U3, prompt bar / focus / pty routing).
 
 import AppKit
+import CmuxSettings
 import Testing
 
 #if canImport(cmux_DEV)
@@ -116,5 +117,61 @@ struct CarouselShortcutCollisionTests {
             .filter { Self.collides(controlCommandLeft, $0.defaultShortcut) }
 
         #expect(takenByOthers.isEmpty, "Ctrl+Cmd+Left is claimed by \(takenByOthers)")
+    }
+
+    /// H1: the four actions exist in the Settings table with the same chords,
+    /// so the shortcut editor, rebinding and conflict detector can see them.
+    /// Without this, a user rebinding Ctrl+Cmd+M in Settings is told there is
+    /// no conflict while silently shadowing the grid chord.
+    @Test("The Settings table mirrors the app table for all four actions")
+    func settingsTableMirrorsTheAppTable() {
+        let pairs: [(KeyboardShortcutSettings.Action, ShortcutAction)] = [
+            (.toggleCarouselLayout, .toggleCarouselLayout),
+            (.carouselNavigatePrevious, .carouselNavigatePrevious),
+            (.carouselNavigateNext, .carouselNavigateNext),
+            (.carouselToggleGrid, .carouselToggleGrid),
+        ]
+        for (app, settings) in pairs {
+            let a = app.defaultShortcut
+            guard let d = settings.defaultShortcut else {
+                Issue.record("\(settings) has no default in the Settings table")
+                continue
+            }
+            #expect(
+                a.key.lowercased() == d.key.lowercased()
+                    && a.command == d.command && a.shift == d.shift
+                    && a.option == d.option && a.control == d.control,
+                "\(settings) default \(d.key) does not match the app table")
+        }
+    }
+
+    /// Row 114's fallback set: grid and mode move, navigation stays, and every
+    /// fallback chord is free in both tables.
+    @Test("The fallback chords differ where they must and are free in both tables")
+    func fallbackChordsAreFree() {
+        let fallback = CarouselShortcutBindings.fallback
+        let primary = CarouselShortcutBindings.contractDefaults
+        #expect(fallback.navigatePrevious == primary.navigatePrevious)
+        #expect(fallback.navigateNext == primary.navigateNext)
+        #expect(fallback.toggleGrid != primary.toggleGrid)
+        #expect(fallback.toggleCarouselMode != primary.toggleCarouselMode)
+
+        for stroke in [fallback.toggleGrid, fallback.toggleCarouselMode] {
+            for other in KeyboardShortcutSettings.Action.allCases
+                where !Self.carouselActions.contains(other)
+            {
+                #expect(
+                    !Self.collides(stroke, other.defaultShortcut),
+                    "fallback chord \(stroke.key) collides with \(other.rawValue)")
+            }
+            for other in ShortcutAction.allCases {
+                guard let d = other.defaultShortcut else { continue }
+                #expect(
+                    !(stroke.key.lowercased() == d.key.lowercased()
+                        && stroke.command == d.command && stroke.shift == d.shift
+                        && stroke.option == d.option && stroke.control == d.control),
+                    "fallback chord \(stroke.key) collides with Settings \(other)")
+            }
+        }
     }
 }

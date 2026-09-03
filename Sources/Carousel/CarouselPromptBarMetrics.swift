@@ -56,6 +56,17 @@ struct CarouselPromptBarMetrics: Equatable {
         originY(inContainerOfHeight: containerHeight)
     }
 
+    /// Origin y of the bar in a top-left coordinate space (SwiftUI), for a
+    /// container of the given height. Unlike `originY`, this genuinely varies
+    /// with the container: the bar hangs `bottomInset` above the bottom edge,
+    /// so its distance from the top is the container height minus the bar's
+    /// own height minus that gap. The two functions pin opposite halves of
+    /// row 33 — this one that placement is computed from the container at
+    /// all, `distanceToContainerBottom` that the gap never changes.
+    func originYFromTop(inContainerOfHeight containerHeight: Double) -> Double {
+        containerHeight - bottomInset - height
+    }
+
     /// The action button is vertically centred in the bar (row 34).
     var actionButtonCentreY: Double { height / 2 }
 

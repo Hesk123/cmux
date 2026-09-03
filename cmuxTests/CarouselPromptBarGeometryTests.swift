@@ -73,6 +73,23 @@ struct CarouselPromptBarGeometryTests {
         }
     }
 
+    @Test("The bar's top-space origin is computed from the container height")
+    func barTopOriginMovesWithTheContainer() {
+        // The other half of row 33: `distanceToContainerBottom` pins the gap,
+        // this pins that placement is computed from the container at all. A
+        // constant origin would pass the gap test while welded in place.
+        let metrics = CarouselPromptBarMetrics(windowWidth: 1344)
+        for height in [900.0, 1080.0, 1400.0] {
+            #expect(
+                Self.isClose(
+                    metrics.originYFromTop(inContainerOfHeight: height),
+                    height - 34.5 - metrics.height))
+        }
+        #expect(
+            metrics.originYFromTop(inContainerOfHeight: 1400)
+                > metrics.originYFromTop(inContainerOfHeight: 900))
+    }
+
     @Test("The bar is narrower than the card it sits under")
     func barIsNarrowerThanTheCard() {
         // CONTRACT row 9: the card is 72 % of W. The bar is 46.2 %.
@@ -111,11 +128,17 @@ struct CarouselPromptBarGeometryTests {
             "a fixed-width chip would pass every other row and fail only here"
         )
 
-        // Row 35's tolerance: each width hugs its label within +/- 6 CSS px of
-        // the label plus the chip's own constant chrome.
-        for label in ["Slack", "Calendar", "Notion", "Figma", "Lovable"] {
-            let expected = metrics.labelWidth(for: label) + metrics.chromeWidth
-            #expect(Self.isClose(metrics.chipWidth(for: label), expected, within: 6))
+        // Row 35's hug property, stated without restating the definition:
+        // the chrome cancels out of a width difference, so the gap between two
+        // chips equals the gap between their labels. A pinned or clamped width
+        // fails here while passing the ordering check above.
+        let pairs = [("Slack", "Calendar"), ("Notion", "Lovable"), ("Figma", "Calendar")]
+        for (short, long) in pairs {
+            let chipGap = metrics.chipWidth(for: long) - metrics.chipWidth(for: short)
+            let labelGap = metrics.labelWidth(for: long) - metrics.labelWidth(for: short)
+            #expect(
+                Self.isClose(chipGap, labelGap, within: 1),
+                "chrome must cancel out of a width difference")
         }
     }
 
@@ -141,5 +164,8 @@ struct CarouselPromptBarGeometryTests {
         #expect(CarouselPromptBarPalette.barFillComponents == (11, 21, 29))
         #expect(CarouselPromptBarPalette.sessionChipFillComponents == (38, 46, 55))
         #expect(CarouselPromptBarPalette.barFillOpacity < 1, "row 32 says translucent")
+        #expect(
+            CarouselPromptBarPalette.actionButtonFillComponents == (10, 132, 255),
+            "row 34 is system blue #0A84FF, never the user's accent colour")
     }
 }

@@ -24,14 +24,17 @@ struct CarouselSendSequenceTests {
     @Test("The input clears exactly one frame after Return")
     func inputClearsOneFrameLater() {
         // Ruling D-6: the target panel has no ProMotion, so a frame is 1/60 s.
-        #expect(CarouselSendSequence.inputClearDelay == CarouselSendSequence.frameDuration)
+        // Pinned as the measured value, not as the constant's own name.
+        #expect(CarouselSendSequence.inputClearDelay == .nanoseconds(16_666_667))
         #expect(CarouselSendSequence.inputClearDelay < CarouselSendSequence.sendWindow)
     }
 
     @Test("The button glyph crosses over in about 120 ms")
     func buttonMorphDuration() {
-        #expect(CarouselSendSequence.buttonMorphDuration == .milliseconds(120))
-        #expect(CarouselSendSequence.buttonRevertDelay == .milliseconds(120))
+        // VIDEO-REVIEW §2.4: the morph and the revert are both ~120 ms, and
+        // both sit inside row 65's send window rather than after it.
+        #expect(CarouselSendSequence.buttonMorphDuration == CarouselSendSequence.buttonRevertDelay)
+        #expect(CarouselSendSequence.buttonMorphDuration <= CarouselSendSequence.sendWindow)
     }
 
     @Test("The glyph follows emptiness and nothing else")

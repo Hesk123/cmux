@@ -53,6 +53,32 @@ struct CarouselFocusRoutingTests {
         return (coordinator, stub)
     }
 
+    // MARK: - C1: registered-action dispatch
+
+    @Test("Registered navigation actions reach the track")
+    func registeredNavigationActionsDispatch() {
+        let (coordinator, stub) = makeCoordinator()
+        #expect(coordinator.performRegisteredAction(.carouselNavigateNext) == true)
+        #expect(coordinator.performRegisteredAction(.carouselNavigatePrevious) == true)
+        #expect(stub.navigations == [.next, .previous])
+    }
+
+    @Test("Grid and mode toggles are reported, not absorbed")
+    func registeredTogglesAreNotAbsorbed() {
+        // Owned by U6 (grid presenter) and U1 (mode toggle). The coordinator
+        // returns false so the mode-lifecycle call site routes them onward.
+        let (coordinator, _) = makeCoordinator()
+        #expect(coordinator.performRegisteredAction(.carouselToggleGrid) == false)
+        #expect(coordinator.performRegisteredAction(.toggleCarouselLayout) == false)
+    }
+
+    @Test("Unrelated actions are refused")
+    func unrelatedActionsAreRefused() {
+        let (coordinator, stub) = makeCoordinator()
+        #expect(coordinator.performRegisteredAction(.toggleCanvasLayout) == false)
+        #expect(stub.navigations.isEmpty)
+    }
+
     // MARK: - Row 114: the five transitions
 
     @Test("Entering carousel mode gives the prompt bar focus")
@@ -192,31 +218,11 @@ struct CarouselFocusRoutingTests {
         }
     }
 
-    /// Emptiness is never a mode. The router takes no text, so this is true by
-    /// construction; the test exists so that adding an emptiness parameter and
-    /// branching on it fails here rather than shipping.
-    @Test("Routing does not vary with what the field contains")
-    func emptinessIsNotAMode() {
-        let (coordinator, stub) = makeCoordinator()
-        coordinator.enterCarouselMode()
-
-        let onEmptyField = coordinator.handleKeyEvent(
-            keyCode: CarouselKeyRouter.KeyCode.leftArrow,
-            modifierFlags: [],
-            eventCharacter: nil
-        )
-        // Simulate the user having typed: nothing about the coordinator's key
-        // handling may consult the composed line.
-        let onFilledField = coordinator.handleKeyEvent(
-            keyCode: CarouselKeyRouter.KeyCode.leftArrow,
-            modifierFlags: [],
-            eventCharacter: nil
-        )
-
-        #expect(onEmptyField == onFilledField)
-        #expect(onEmptyField == .promptBarField)
-        #expect(stub.navigations.isEmpty)
-    }
+    /// Emptiness is never a mode: the router takes no text, so there is no
+    /// input to vary and `bareArrowsNeverNavigateInEitherState` above is the
+    /// assertion that bites. (A previous revision called the router twice with
+    /// identical arguments under a "simulated typing" comment; identical inputs
+    /// cannot produce different outputs, so it proved nothing and was deleted.)
 
     // MARK: - Mode chords
 

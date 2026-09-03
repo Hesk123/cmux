@@ -132,6 +132,14 @@ extension ShortcutAction {
             return String(localized: "shortcut.fileExplorerOpenSelection.label", defaultValue: "File Explorer: Open Selection")
         case .fileExplorerOpenSelectionFinderAlias:
             return String(localized: "shortcut.fileExplorerOpenSelectionFinderAlias.label", defaultValue: "File Explorer: Open Selection (Finder Alias)")
+        case .toggleCarouselLayout:
+            return String(localized: "shortcut.toggleCarouselLayout.label", defaultValue: "Toggle Carousel Layout")
+        case .carouselNavigatePrevious:
+            return String(localized: "shortcut.carouselNavigatePrevious.label", defaultValue: "Carousel: Previous Session")
+        case .carouselNavigateNext:
+            return String(localized: "shortcut.carouselNavigateNext.label", defaultValue: "Carousel: Next Session")
+        case .carouselToggleGrid:
+            return String(localized: "shortcut.carouselToggleGrid.label", defaultValue: "Carousel: Toggle Grid")
         case .toggleCanvasLayout:
             return String(localized: "shortcut.toggleCanvasLayout.label", defaultValue: "Toggle Canvas Layout")
         case .canvasRevealFocusedPane:
