@@ -27,6 +27,12 @@ final class CarouselWorkingIndicator {
 
     private(set) var isRunning = false
 
+    /// Accessibility floor (contract rows 108-113 annotation): VoiceOver label
+    /// and value, published by U1's card element. The dots are raw CALayers
+    /// and carry no accessibility information themselves.
+    static let accessibilityLabel = "Agent activity"
+    var accessibilityValue: String { isRunning ? "working" : "idle" }
+
     /// One full loop. Three dots at row 66's 220 ms phase means the cascade
     /// repeats every 660 ms — 1.5 Hz, comfortably clear of the slow-oscillation
     /// band `apple-design` warns about for looping motion.

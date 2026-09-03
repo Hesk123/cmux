@@ -40,7 +40,11 @@ final class CarouselChipRoll {
     private let reduceMotion: CarouselReduceMotion
 
     private var currentLabel: CALayer?
-    private var retiring: [CALayer] = []
+
+    /// The settled label text for the accessibility floor. Set to the incoming
+    /// text at roll time — never a mid-roll frame — so U1's card publishes a
+    /// stable value while the pixels are still travelling.
+    private(set) var currentText: String?
 
     /// - Parameters:
     ///   - pill: the chip background. Must have `masksToBounds` true so the
@@ -61,6 +65,7 @@ final class CarouselChipRoll {
 
     /// Places the first label with no animation, for the initial paint.
     func setInitial(_ text: String, pillWidth: CGFloat) {
+        currentText = text
         currentLabel?.removeFromSuperlayer()
         let label = makeLabel(text)
         CATransaction.begin()
@@ -73,6 +78,7 @@ final class CarouselChipRoll {
 
     /// Rolls to `text`, settling on the same frame as the card translate.
     func roll(to text: String, pillWidth: CGFloat, direction: Direction) {
+        currentText = text
         let outgoing = currentLabel
         let incoming = makeLabel(text)
         pill.addSublayer(incoming)
@@ -85,60 +91,46 @@ final class CarouselChipRoll {
 
         let travel = pill.bounds.height * direction.entryOffsetSign
         let begin = CACurrentMediaTime() + CarouselMotion.chipRollDelay
+        let outgoingLayer = outgoing
 
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        incoming.setValue(travel, forKeyPath: "transform.translation.y")
-        incoming.opacity = 0
-        CATransaction.commit()
+        // The outgoing label is removed when its own animation ends, not on a
+        // timer that has to be told how long the roll was.
+        carouselCommit(completion: { outgoingLayer?.removeFromSuperlayer() }) {
+            incoming.setValue(travel, forKeyPath: "transform.translation.y")
+            incoming.opacity = 0
+            animate(incoming, keyPath: "transform.translation.y", from: travel, to: 0, begin: begin, duration: CarouselMotion.chipRollDuration)
+            animate(incoming, keyPath: "opacity", from: 0, to: 1, begin: begin, duration: CarouselMotion.chipRollDuration)
 
-        animate(incoming, keyPath: "transform.translation.y", from: travel, to: 0, begin: begin, duration: CarouselMotion.chipRollDuration)
-        animate(incoming, keyPath: "opacity", from: 0, to: 1, begin: begin, duration: CarouselMotion.chipRollDuration)
+            if let outgoing {
+                // Start from what is on screen, not from rest: a second press
+                // during a roll must not snap the half-rolled label back first.
+                let y = presentation(outgoing, keyPath: "transform.translation.y") ?? 0
+                let alpha = presentation(outgoing, keyPath: "opacity") ?? 1
+                animate(outgoing, keyPath: "transform.translation.y", from: y, to: -travel, begin: begin, duration: CarouselMotion.chipRollDuration)
+                animate(outgoing, keyPath: "opacity", from: alpha, to: 0, begin: begin, duration: CarouselMotion.chipRollDuration)
+            }
 
-        if let outgoing {
-            // Start from what is on screen, not from rest: a second press
-            // during a roll must not snap the half-rolled label back first.
-            let y = presentation(outgoing, keyPath: "transform.translation.y") ?? 0
-            let alpha = presentation(outgoing, keyPath: "opacity") ?? 1
-            animate(outgoing, keyPath: "transform.translation.y", from: y, to: -travel, begin: begin, duration: CarouselMotion.chipRollDuration)
-            animate(outgoing, keyPath: "opacity", from: alpha, to: 0, begin: begin, duration: CarouselMotion.chipRollDuration)
-            retire(outgoing, after: CarouselMotion.chipRollDelay + CarouselMotion.chipRollDuration)
+            // Row 60. Animating `bounds.size.width` rather than the frame keeps
+            // the pill's own anchoring in charge of which edge moves.
+            let width = presentation(pill, keyPath: "bounds.size.width") ?? pill.bounds.width
+            animate(pill, keyPath: "bounds.size.width", from: width, to: pillWidth, begin: begin, duration: CarouselMotion.chipRollDuration)
         }
-
-        // Row 60. Animating `bounds.size.width` rather than the frame keeps the
-        // pill's own anchoring in charge of which edge moves.
-        let width = presentation(pill, keyPath: "bounds.size.width") ?? pill.bounds.width
-        animate(pill, keyPath: "bounds.size.width", from: width, to: pillWidth, begin: begin, duration: CarouselMotion.chipRollDuration)
     }
 
     /// Row 113: no translation and no width animation, opacity only.
     private func crossFadeOnly(incoming: CALayer, outgoing: CALayer?, pillWidth: CGFloat) {
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        incoming.setValue(0, forKeyPath: "transform.translation.y")
-        incoming.opacity = 0
-        pill.bounds.size.width = pillWidth
-        CATransaction.commit()
-
-        animate(
-            incoming,
-            keyPath: "opacity",
-            from: 0,
-            to: 1,
-            begin: CACurrentMediaTime(),
-            duration: CarouselMotion.reducedMotionCrossfade
-        )
-        if let outgoing {
-            let alpha = presentation(outgoing, keyPath: "opacity") ?? 1
-            animate(
-                outgoing,
-                keyPath: "opacity",
-                from: alpha,
-                to: 0,
-                begin: CACurrentMediaTime(),
-                duration: CarouselMotion.reducedMotionCrossfade
-            )
-            retire(outgoing, after: CarouselMotion.reducedMotionCrossfade)
+        let outgoingLayer = outgoing
+        carouselCommit(completion: { outgoingLayer?.removeFromSuperlayer() }) {
+            incoming.setValue(0, forKeyPath: "transform.translation.y")
+            incoming.opacity = 0
+            pill.bounds.size.width = pillWidth
+            animate(incoming, keyPath: "opacity", from: 0, to: 1,
+                    begin: CACurrentMediaTime(), duration: CarouselMotion.reducedMotionCrossfade)
+            if let outgoing {
+                let alpha = presentation(outgoing, keyPath: "opacity") ?? 1
+                animate(outgoing, keyPath: "opacity", from: alpha, to: 0,
+                        begin: CACurrentMediaTime(), duration: CarouselMotion.reducedMotionCrossfade)
+            }
         }
     }
 
@@ -165,10 +157,8 @@ final class CarouselChipRoll {
         // the model value, so a label whose model y is still its entry offset
         // snaps back up the instant the roll completes. Both go in one
         // transaction so the model-only state is never committed alone.
-        carouselCommit {
-            layer.add(step, forKey: keyPath)
-            layer.setValue(to, forKeyPath: keyPath)
-        }
+        layer.add(step, forKey: keyPath)
+        layer.setValue(to, forKeyPath: keyPath)
     }
 
     private func presentation(_ layer: CALayer, keyPath: String) -> CGFloat? {
@@ -178,12 +168,4 @@ final class CarouselChipRoll {
         return CGFloat(number.doubleValue)
     }
 
-    private func retire(_ layer: CALayer, after delay: CFTimeInterval) {
-        retiring.append(layer)
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(Int(delay * 1000)))
-            layer.removeFromSuperlayer()
-            self?.retiring.removeAll { $0 === layer }
-        }
-    }
 }

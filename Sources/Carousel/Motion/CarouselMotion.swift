@@ -186,3 +186,23 @@ func carouselCommit(_ body: () -> Void) {
     body()
     CATransaction.commit()
 }
+
+/// The same, plus a completion that fires when **the animations added inside
+/// `body` have finished** — not when a wall-clock timer says they should have.
+///
+/// This is what row 115's settle hangs off. A timer racing the compositor was
+/// measurably wrong in both directions against U2's own probe data (3.7 ms late
+/// on a single switch, 14.3 ms early on a five-press burst), and the thing it
+/// gates is mounting a live libghostty terminal. Core Animation already knows
+/// exactly when its own animations end; ask it instead of guessing.
+///
+/// `setCompletionBlock` fires immediately at commit when the transaction added
+/// no animations, which is the correct behaviour for a no-op switch.
+@MainActor
+func carouselCommit(completion: @escaping @MainActor () -> Void, _ body: () -> Void) {
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    CATransaction.setCompletionBlock { MainActor.assumeIsolated { completion() } }
+    body()
+    CATransaction.commit()
+}

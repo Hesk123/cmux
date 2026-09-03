@@ -29,7 +29,31 @@ final class CarouselKeycapHint {
         static let next = Chord(caps: ["\u{2303}", "\u{2318}", "\u{2192}"])
         static let grid = Chord(caps: ["\u{2303}", "\u{2318}", "M"])
         static let modeToggle = Chord(caps: ["\u{2303}", "\u{2318}", "K"])
+
+        /// Spoken form of the chord for the accessibility floor (contract rows
+        /// 108-113 annotation): a bare CALayer is invisible to VoiceOver, so
+        /// U1's card publishes this string on its own accessibility element.
+        var accessibilityValue: String {
+            caps.map(Self.spokenCap).joined(separator: " ")
+        }
+
+        private static func spokenCap(_ cap: String) -> String {
+            switch cap {
+            case "\u{2303}": return "Control"
+            case "\u{2318}": return "Command"
+            case "\u{2190}": return "Left Arrow"
+            case "\u{2192}": return "Right Arrow"
+            default: return cap
+            }
+        }
     }
+
+    /// Accessibility floor: the hint's label, published by U1's card element
+    /// alongside `accessibilityValue` below.
+    static let accessibilityLabel = "Carousel keyboard shortcuts"
+
+    /// The shown chord's spoken form, if a chord is shown.
+    var accessibilityValue: String? { shownChord?.accessibilityValue }
 
     private let container: CALayer
     private let makeCap: @MainActor (String, CGSize, CGFloat) -> CALayer

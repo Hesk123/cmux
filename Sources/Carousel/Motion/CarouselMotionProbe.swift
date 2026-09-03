@@ -89,6 +89,15 @@ final class CarouselMotionProbe: NSObject {
         static let total = 780
     }
 
+    /// Row 119's four values, read from the live screen and carried into the
+    /// report so the evidence artefact states them rather than the prose.
+    struct Precondition {
+        var lines: [String]
+        var passed: Bool
+    }
+
+    private(set) var precondition = Precondition(lines: [], passed: false)
+
     init(reduced: Bool) {
         self.reduced = reduced
         outputDirectory = FileManager.default.temporaryDirectory
@@ -104,6 +113,21 @@ final class CarouselMotionProbe: NSObject {
         let visible = NSScreen.main?.visibleFrame.size ?? CGSize(width: 1344, height: 1080)
         let size = CGSize(width: min(1344, visible.width - 40), height: min(1080, visible.height - 40))
         viewport = CGRect(origin: .zero, size: size)
+
+        let scale = NSScreen.main?.backingScaleFactor ?? 0
+        let visible = NSScreen.main?.visibleFrame.size ?? .zero
+        let scaleOK = scale == 2.0
+        let visibleOK = visible.width >= 1344 && visible.height >= 1080
+        let windowOK = size.width == 1344 && size.height == 1080
+        precondition = Precondition(
+            lines: [
+                "backingScaleFactor=\(scale) required=2.0 \(scaleOK ? "OK" : "FAIL")",
+                "visibleFrame=\(Int(visible.width))x\(Int(visible.height)) required>=1344x1080 \(visibleOK ? "OK" : "FAIL")",
+                "window=\(Int(size.width))x\(Int(size.height)) required=1344x1080 \(windowOK ? "OK" : "FAIL")",
+                "backingStore=\(Int(size.width * scale))x\(Int(size.height * scale)) expected=2688x2160",
+            ],
+            passed: scaleOK && visibleOK && windowOK
+        )
 
         window = NSWindow(
             contentRect: NSRect(origin: CGPoint(x: 20, y: 20), size: size),
@@ -254,6 +278,16 @@ final class CarouselMotionProbe: NSObject {
     // MARK: - Run
 
     func run(_ completion: @escaping (String) -> Void) {
+        guard precondition.passed else {
+            // Row 119: "aborts loudly if any fails", rather than letting the
+            // absolute-value rows void by exemption.
+            completion(
+                "ERROR: row 119 precondition FAILED - refusing to measure.\n"
+                + precondition.lines.joined(separator: "\n")
+                + "\nSet the display first: displayplacer \"id:<built-in> res:1920x1243 scaling:on\""
+            )
+            return
+        }
         finish = completion
         window.orderFrontRegardless()
         guard let host = window.contentView else {
@@ -435,8 +469,15 @@ final class CarouselMotionProbe: NSObject {
 
         var out: [String] = []
         out.append("=== carousel motion probe (\(pass)) ===")
-        out.append("frames=\(samples.count - 1) pitch=\(String(format: "%.2f", pitch)) viewport=\(viewport.size)")
-        out.append("screen backingScale=\(NSScreen.main?.backingScaleFactor ?? 0) visibleFrame=\(NSScreen.main?.visibleFrame.size ?? .zero)")
+        // ROW 119 PRECONDITION, recorded in the artefact rather than asserted in
+        // prose. The critic's point stands: a claim in a report is not a
+        // recorded assertion, and at the panel's default mode this window
+        // silently clamps to 1670x1033 and every number below it is wrong.
+        out.append("--- row 119 precondition ---")
+        out.append(precondition.lines.joined(separator: "\n"))
+        out.append("row119=\(precondition.passed ? "PASS" : "FAIL")")
+        out.append("--- measurement ---")
+        out.append("frames=\(samples.count - 1) pitch=\(String(format: "%.2f", pitch))")
         out.append("frames_csv=\(framesURL.path)")
         out.append("events_csv=\(eventsURL.path)")
         out.append("=== end probe ===")

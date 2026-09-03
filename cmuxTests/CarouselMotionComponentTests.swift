@@ -2,7 +2,11 @@ import AppKit
 import QuartzCore
 import XCTest
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT rows 36, 58, 59, 60, 62, 63, 64, 65, 66, 79, 82 and 113.
 @MainActor
@@ -304,6 +308,32 @@ final class CarouselMotionComponentTests: XCTestCase {
         subject.feedback.didSend {}
         XCTAssertNil(subject.press.animation(forKey: "press"))
         XCTAssertEqual(subject.chips[0].opacity, 0.4, accuracy: 0.0001)
+    }
+
+    func testAccessibilityFloorStrings() {
+        // Contract rows 108-113 annotation: every new status element ships
+        // label, role and value, owned here and published by U1's card.
+        XCTAssertEqual(CarouselKeycapHint.accessibilityLabel, "Carousel keyboard shortcuts")
+        XCTAssertEqual(CarouselKeycapHint.Chord.previous.accessibilityValue, "Control Command Left Arrow")
+        XCTAssertEqual(CarouselKeycapHint.Chord.next.accessibilityValue, "Control Command Right Arrow")
+        XCTAssertEqual(CarouselKeycapHint.Chord.grid.accessibilityValue, "Control Command M")
+        XCTAssertEqual(CarouselKeycapHint.Chord.modeToggle.accessibilityValue, "Control Command K")
+
+        XCTAssertEqual(CarouselWorkingIndicator.accessibilityLabel, "Agent activity")
+        let dots = makeDots()
+        XCTAssertEqual(dots.indicator.accessibilityValue, "idle")
+        dots.indicator.setRunning(true)
+        XCTAssertEqual(dots.indicator.accessibilityValue, "working")
+        dots.indicator.setRunning(false)
+        XCTAssertEqual(dots.indicator.accessibilityValue, "idle")
+
+        // The chip publishes the settled text, never a mid-roll frame: the
+        // value is already the incoming label while the pixels travel.
+        let chip = makeChip()
+        chip.roll.setInitial("Calendar", pillWidth: 120)
+        XCTAssertEqual(chip.roll.currentText, "Calendar")
+        chip.roll.roll(to: "Notion", pillWidth: 96, direction: .forward)
+        XCTAssertEqual(chip.roll.currentText, "Notion")
     }
 
     // MARK: - Working indicator, row 66

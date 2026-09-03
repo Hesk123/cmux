@@ -1,7 +1,11 @@
 import QuartzCore
 import XCTest
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT rows 52, 54, 55, 59, 63, 64, 66, 82, 113, 115 — the constants, and
 /// the arithmetic the contract derives them from.

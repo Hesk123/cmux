@@ -1,7 +1,11 @@
 import QuartzCore
 import XCTest
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT rows 52, 53, 54, 55, 56, 113, 115 and ruling D-14.
 @MainActor

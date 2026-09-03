@@ -39,10 +39,16 @@ import QuartzCore
 /// hard cut creates at a reversal, and it is Core Animation's own form of the
 /// additive animations that ruling cites from iOS.
 ///
-/// Two properties fall out of it that a replace-from-presentation scheme does
-/// not give: the endpoint is exact (every additive decays to zero on top of a
-/// model value that is already the target, so row 56's "two pitches +/- 2 px"
-/// cannot drift), and no presentation read is needed on the keypress frame.
+/// The property that falls out of it, and that a replace-from-presentation
+/// scheme does not give, is that **the endpoint is exact**: every additive
+/// decays to zero on top of a model value that is already the target, so row
+/// 56's "two pitches +/- 2 px" cannot drift across a burst.
+///
+/// One presentation read does remain on the keypress frame, and it is
+/// deliberate: `applyRecoil()` reads the recoil layer's live scale because
+/// ruling U2-D3 makes the recoil replaced rather than additive, and a
+/// replacement has to start from what is on screen. That is one read of one
+/// scalar, not the per-card sweep additivity exists to avoid.
 @MainActor
 final class CarouselTrackAnimator {
 
@@ -84,6 +90,10 @@ final class CarouselTrackAnimator {
     private var cardScaleTargets: [ObjectIdentifier: CGFloat] = [:]
 
     /// Invalidates the settle callback of a switch that a later press replaced.
+    ///
+    /// Still needed with an animation-driven settle: a re-target does not remove
+    /// the in-flight additive animations (that is the point of additivity), so
+    /// the superseded transaction's completion block still fires at its own end.
     private var generation: Int = 0
 
     init(layers: Layers, pitch: CGFloat, reduceMotion: CarouselReduceMotion) {
@@ -163,25 +173,32 @@ final class CarouselTrackAnimator {
             return
         }
 
-        layers.recoil.removeAnimation(forKey: Self.reducedMotionKey)
+        // ONE transaction for the whole switch, so its completion block fires
+        // when Core Animation says these animations ended rather than when a
+        // timer guesses. Row 115 mounts the live centre from here.
+        carouselCommit(completion: { [weak self] in
+            guard let self, self.generation == thisGeneration else { return }
+            onSettle()
+        }) {
+            layers.recoil.removeAnimation(forKey: Self.reducedMotionKey)
 
-        retargetAdditively(
-            keyPath: "transform.translation.x",
-            on: layers.track,
-            from: translationTarget,
-            to: newTranslation
-        )
-        translationTarget = newTranslation
+            retargetAdditively(
+                keyPath: "transform.translation.x",
+                on: layers.track,
+                from: translationTarget,
+                to: newTranslation
+            )
+            translationTarget = newTranslation
 
-        if let entering = ramps.entering {
-            rampCard(entering, to: CarouselMotion.centreScale)
+            if let entering = ramps.entering {
+                rampCard(entering, to: CarouselMotion.centreScale)
+            }
+            if let leaving = ramps.leaving {
+                rampCard(leaving, to: CarouselMotion.flankScale)
+            }
+
+            applyRecoil()
         }
-        if let leaving = ramps.leaving {
-            rampCard(leaving, to: CarouselMotion.flankScale)
-        }
-
-        applyRecoil()
-        scheduleSettle(after: CarouselMotion.switchDuration, generation: thisGeneration, onSettle: onSettle)
     }
 
     /// Row 113. Zero translation animation and zero scale animation: the whole
@@ -209,28 +226,28 @@ final class CarouselTrackAnimator {
         fade.type = .fade
         fade.duration = CarouselMotion.reducedMotionCrossfade
         fade.timingFunction = CarouselMotion.switchCurve
-        layers.recoil.add(fade, forKey: Self.reducedMotionKey)
 
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        setModel(newTranslation, forKeyPath: "transform.translation.x", on: layers.track)
-        setModel(CarouselMotion.centreScale, forKeyPath: "transform.scale", on: layers.recoil)
-        if let entering = ramps.entering {
-            cardScaleTargets[ObjectIdentifier(entering)] = CarouselMotion.centreScale
-            setModel(CarouselMotion.centreScale, forKeyPath: "transform.scale", on: entering)
+        carouselCommit(completion: { [weak self] in
+            guard let self, self.generation == thisGeneration else { return }
+            onSettle()
+        }) {
+            // The jump happens in the same disabled-action transaction as the
+            // transition, and BEFORE it in program order, so across the whole
+            // animated window every geometric property is already constant.
+            layers.track.setValue(newTranslation, forKeyPath: "transform.translation.x")
+            layers.recoil.setValue(CarouselMotion.centreScale, forKeyPath: "transform.scale")
+            if let entering = ramps.entering {
+                cardScaleTargets[ObjectIdentifier(entering)] = CarouselMotion.centreScale
+                entering.setValue(CarouselMotion.centreScale, forKeyPath: "transform.scale")
+            }
+            if let leaving = ramps.leaving {
+                cardScaleTargets[ObjectIdentifier(leaving)] = CarouselMotion.flankScale
+                leaving.setValue(CarouselMotion.flankScale, forKeyPath: "transform.scale")
+            }
+            layers.recoil.add(fade, forKey: Self.reducedMotionKey)
         }
-        if let leaving = ramps.leaving {
-            cardScaleTargets[ObjectIdentifier(leaving)] = CarouselMotion.flankScale
-            setModel(CarouselMotion.flankScale, forKeyPath: "transform.scale", on: leaving)
-        }
-        CATransaction.commit()
 
         translationTarget = newTranslation
-        scheduleSettle(
-            after: CarouselMotion.reducedMotionCrossfade,
-            generation: thisGeneration,
-            onSettle: onSettle
-        )
     }
 
     // MARK: - Row 54, the track recoil
@@ -271,10 +288,8 @@ final class CarouselTrackAnimator {
             CarouselMotion.linearCurve,
         ]
         dip.duration = CarouselMotion.switchDuration
-        carouselCommit {
-            layers.recoil.removeAnimation(forKey: Self.recoilKey)
-            layers.recoil.add(dip, forKey: Self.recoilKey)
-        }
+        layers.recoil.removeAnimation(forKey: Self.recoilKey)
+        layers.recoil.add(dip, forKey: Self.recoilKey)
     }
 
     // MARK: - Row 55, the per-card ramp
@@ -307,10 +322,8 @@ final class CarouselTrackAnimator {
         // own and the track snaps a full pitch for a frame. A nil key
         // accumulates; naming it would replace the in-flight animation, which
         // is the very thing additivity exists to avoid.
-        carouselCommit {
-            layer.setValue(newTarget, forKeyPath: keyPath)
-            layer.add(move, forKey: nil)
-        }
+        layer.setValue(newTarget, forKeyPath: keyPath)
+        layer.add(move, forKey: nil)
     }
 
     private func setModel(_ value: CGFloat, forKeyPath keyPath: String, on layer: CALayer) {
@@ -324,15 +337,4 @@ final class CarouselTrackAnimator {
         return CGFloat(number.doubleValue)
     }
 
-    private func scheduleSettle(
-        after delay: CFTimeInterval,
-        generation thisGeneration: Int,
-        onSettle: @escaping () -> Void
-    ) {
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .milliseconds(Int(delay * 1000)))
-            guard let self, self.generation == thisGeneration else { return }
-            onSettle()
-        }
-    }
 }

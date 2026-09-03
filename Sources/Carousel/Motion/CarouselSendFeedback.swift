@@ -27,6 +27,10 @@ final class CarouselSendFeedback {
 
     private var mode: Mode = .voice
 
+    /// Held so a second send cancels the first one's pending clear rather than
+    /// leaving it to fire against a field the user has since typed into.
+    private var pendingClear: Task<Void, Never>?
+
     /// Row 47's chips at rest, so a dim can be undone without a second constant.
     private let chipRestingOpacity: Float
     private let chipDimmedOpacity: Float
@@ -111,10 +115,21 @@ final class CarouselSendFeedback {
         for chip in suggestionChips {
             fade(chip, to: chipDimmedOpacity, duration: CarouselMotion.sendEffectsDuration)
         }
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(Int(CarouselMotion.oneFrame * 1000)))
+        pendingClear?.cancel()
+        pendingClear = Task { @MainActor [weak self] in
+            // Nanoseconds, not milliseconds: `Int(oneFrame * 1000)` truncates a
+            // 16.67 ms frame to 16 ms, which is a rounding nobody chose.
+            try? await Task.sleep(for: .nanoseconds(Int(CarouselMotion.oneFrame * 1_000_000_000)))
+            guard !Task.isCancelled else { return }
+            self?.pendingClear = nil
             clearInput()
         }
+    }
+
+    /// Cancels a pending input clear. Call from teardown.
+    func cancelPendingWork() {
+        pendingClear?.cancel()
+        pendingClear = nil
     }
 
     /// The generation finished: row 47's chips come back.
