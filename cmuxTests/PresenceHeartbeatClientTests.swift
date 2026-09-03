@@ -128,6 +128,9 @@ import Testing
         )
         #expect(JSONSerialization.isValidJSONObject(body))
     }
+    // PresenceHeartbeatClient is @MainActor, so resolvedServiceURL is too. Swift 6.3
+    // checks that isolation inside a macro expansion, which earlier compilers did not.
+    @MainActor
     @Test func productionPresenceIgnoresStagingEnvironment() {
         let defaults = UserDefaults(suiteName: "presence-prod-origin-\(UUID().uuidString)")!
         #expect(PresenceHeartbeatClient.resolvedServiceURL(

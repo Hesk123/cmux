@@ -401,10 +401,11 @@ struct TextBoxPendingPasteReservationTests {
             [attachment],
             replacementRange: textView.selectedRange()
         )
+        // U+FFFC OBJECT REPLACEMENT CHARACTER — the value NSTextAttachment.character
+        // returned before AppKit removed it in the macOS 26.4 SDK. Spelling the scalar
+        // literally also drops a force unwrap.
         let detectedAttachmentRange = (textView.string as NSString).range(
-            of: String(
-                UnicodeScalar(NSTextAttachment.character)!
-            )
+            of: "\u{FFFC}"
         )
         let attachmentRange = try #require(
             detectedAttachmentRange.location == NSNotFound
