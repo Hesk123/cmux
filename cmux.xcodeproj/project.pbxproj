@@ -549,6 +549,7 @@
 		CAE20000000000000000000001 /* CarouselFocusRoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000002 /* CarouselFocusRoutingTests.swift */; };
 		CAE10000000000000000000011 /* CarouselKeyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000012 /* CarouselKeyRouter.swift */; };
 		CAE10000000000000000000013 /* CarouselKeyRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000014 /* CarouselKeyRouting.swift */; };
+		CAE5000000000000000000001 /* CarouselNavigationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE5000000000000000000002 /* CarouselNavigationDirection.swift */; };
 		CAE10000000000000000000017 /* CarouselPromptBarAccessibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000018 /* CarouselPromptBarAccessibility.swift */; };
 		CAE20000000000000000000003 /* CarouselPromptBarGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000004 /* CarouselPromptBarGeometryTests.swift */; };
 		CAE10000000000000000000019 /* CarouselPromptBarMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000020 /* CarouselPromptBarMetrics.swift */; };
@@ -3703,6 +3704,7 @@
 		CAE20000000000000000000002 /* CarouselFocusRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselFocusRoutingTests.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000012 /* CarouselKeyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselKeyRouter.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000014 /* CarouselKeyRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselKeyRouting.swift; sourceTree = "<group>"; };
+		CAE5000000000000000000002 /* CarouselNavigationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselNavigationDirection.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000018 /* CarouselPromptBarAccessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPromptBarAccessibility.swift; sourceTree = "<group>"; };
 		CAE20000000000000000000004 /* CarouselPromptBarGeometryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPromptBarGeometryTests.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000020 /* CarouselPromptBarMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPromptBarMetrics.swift; sourceTree = "<group>"; };
@@ -8422,6 +8424,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CAE10000000000000000000006 /* CarouselComposeButtonMode.swift */,
 				CAE10000000000000000000008 /* CarouselFocusCoordinator.swift */,
 				CAE10000000000000000000010 /* CarouselFocusOwner.swift */,
+				CAE5000000000000000000002 /* CarouselNavigationDirection.swift */,
 				CAE10000000000000000000012 /* CarouselKeyRouter.swift */,
 				CAE10000000000000000000014 /* CarouselKeyRouting.swift */,
 				CAE10000000000000000000018 /* CarouselPromptBarAccessibility.swift */,
@@ -10260,6 +10263,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CAE10000000000000000000009 /* CarouselFocusOwner.swift in Sources */,
 				CAE10000000000000000000011 /* CarouselKeyRouter.swift in Sources */,
 				CAE10000000000000000000013 /* CarouselKeyRouting.swift in Sources */,
+				CAE5000000000000000000001 /* CarouselNavigationDirection.swift in Sources */,
 				CAE10000000000000000000017 /* CarouselPromptBarAccessibility.swift in Sources */,
 				CAE10000000000000000000019 /* CarouselPromptBarMetrics.swift in Sources */,
 				CAE10000000000000000000021 /* CarouselPromptBarPalette.swift in Sources */,
