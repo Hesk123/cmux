@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import SwiftUI
 
 /// Row 127's signal, rendered. `.unknown` is a distinct appearance from `.idle`,

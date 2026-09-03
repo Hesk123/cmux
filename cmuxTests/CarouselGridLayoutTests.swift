@@ -1,4 +1,4 @@
-// Added 2026-09-02 for the cmux carousel UI build, unit U6.
+// Modified 2026-09-02 for the cmux carousel UI build, unit U6.
 // CONTRACT rows 37, 38, 39, 40, 73 (toast half), 123 (toast half).
 // Modified files in this build carry this notice per GPL-3.0 section 5(a).
 

@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import SwiftUI
 
 /// CONTRACT row 73 — the centred floating pill carrying rows 12, 13, 15, 74, 75,

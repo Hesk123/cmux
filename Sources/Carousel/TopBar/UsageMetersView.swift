@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import SwiftUI
 
 /// Row 75 — both usage meters at the right end of the pill, with their reset

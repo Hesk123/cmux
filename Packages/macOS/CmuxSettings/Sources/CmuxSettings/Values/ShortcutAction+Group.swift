@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 extension ShortcutAction {
     /// Which group this action belongs to in the settings pane.
     public var group: Group {

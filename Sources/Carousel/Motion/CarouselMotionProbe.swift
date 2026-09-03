@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 #if DEBUG
 import AppKit
 import QuartzCore

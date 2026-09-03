@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// Accessibility identifiers the H3 (XCUITest) rows address. cmux already uses

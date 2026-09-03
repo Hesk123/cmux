@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// The sibling `agent-<id>.meta.json` Claude Code writes beside every sub-agent

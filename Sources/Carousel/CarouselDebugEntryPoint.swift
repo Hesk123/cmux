@@ -1,5 +1,5 @@
 // GPL-3.0-or-later modified-file notice (CONTRACT row 129):
-// Added 2026-09-03 for the cmux carousel UI (unit U1: debug entry point for the
+// Modified 2026-09-03 for the cmux carousel UI (unit U1: debug entry point for the
 // carousel mode toggle, pending U3's KeyboardShortcutSettings registration).
 
 import AppKit

@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// One sub-agent of a Claude Code session, as read from its transcript and the

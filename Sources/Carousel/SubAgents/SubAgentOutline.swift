@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// One line of the popover's list: a record plus how far it is indented.

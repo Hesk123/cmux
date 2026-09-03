@@ -1,5 +1,5 @@
 // GPL-3.0-or-later modified-file notice (CONTRACT row 129):
-// Added 2026-09-03 for the cmux carousel UI (unit U1: row 28 capture-and-restore).
+// Modified 2026-09-03 for the cmux carousel UI (unit U1: row 28 capture-and-restore).
 
 import AppKit
 import Foundation

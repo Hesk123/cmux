@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import SwiftUI
 
 /// One sub-agent in the popover: activity dot, name, task, and indentation for

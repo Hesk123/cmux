@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import SwiftUI
 
 /// The `⚙ N agents` control that sits in the card header, left of the status

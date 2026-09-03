@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// Identifies the Claude Code session whose sub-agents a card shows.

@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// CONTRACT row 127 — the agent-running signal, with a named mechanism and a

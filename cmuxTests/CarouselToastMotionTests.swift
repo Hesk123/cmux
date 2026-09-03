@@ -1,4 +1,4 @@
-// Added 2026-09-02 for the cmux carousel UI build, unit U6.
+// Modified 2026-09-02 for the cmux carousel UI build, unit U6.
 // CONTRACT rows 14 (second terminal-native addition), 45, 67, 68, 78, 83, 113.
 // Modified files in this build carry this notice per GPL-3.0 section 5(a).
 

@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import SwiftUI
 
 /// The one bar primitive both meters use, so row 74's 120 × 4 and row 75's

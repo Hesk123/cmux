@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// Reads one session's `subagents/` directory into a `SubAgentScan`.

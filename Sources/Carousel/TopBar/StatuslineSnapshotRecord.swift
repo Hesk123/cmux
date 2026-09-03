@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// One parsed snapshot plus the capture time row 76's staleness bound is measured against.

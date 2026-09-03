@@ -1,4 +1,4 @@
-// Added 2026-09-02 for the cmux carousel UI build, unit U6.
+// Modified 2026-09-02 for the cmux carousel UI build, unit U6.
 // CONTRACT rows 77, 80, 83, 112 (grid-toggle half), 113 (grid half).
 // Modified files in this build carry this notice per GPL-3.0 section 5(a).
 

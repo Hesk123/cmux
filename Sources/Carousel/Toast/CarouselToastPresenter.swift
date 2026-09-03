@@ -1,4 +1,4 @@
-// Added 2026-09-02 for the cmux carousel UI build, unit U6 (grid mode, toast,
+// Modified 2026-09-02 for the cmux carousel UI build, unit U6 (grid mode, toast,
 // exceeds-source transitions). CONTRACT rows 37, 67, 68, 78, 83, 113, 123.
 // Modified files in this build carry this notice per GPL-3.0 section 5(a).
 

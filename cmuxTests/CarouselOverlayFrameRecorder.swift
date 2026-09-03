@@ -1,4 +1,4 @@
-// Added 2026-09-02 for the cmux carousel UI build, unit U6.
+// Modified 2026-09-02 for the cmux carousel UI build, unit U6.
 // Test-support only. CONTRACT rows 67, 77, 78, 112, 113.
 // Modified files in this build carry this notice per GPL-3.0 section 5(a).
 

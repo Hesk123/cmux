@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// The statusline-snapshot half of the row-118 seam, added beside U7's provider

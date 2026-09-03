@@ -1,5 +1,5 @@
 // GPL-3.0-or-later modified-file notice (CONTRACT row 129):
-// Added 2026-09-02 for the cmux carousel UI (unit U1: track geometry, card shell,
+// Modified 2026-09-02 for the cmux carousel UI (unit U1: track geometry, card shell,
 // session data source, live/snapshot swap, and the window-scoped mode seam).
 
 import AppKit

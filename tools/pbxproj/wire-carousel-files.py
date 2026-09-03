@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 #!/usr/bin/env python3
 """Wire the U5 carousel files into cmux.xcodeproj/project.pbxproj.
 

@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// Reads `<dataRoot>/sessions/*.json`, Claude Code's own per-process session

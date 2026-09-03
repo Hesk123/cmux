@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
 /// CONTRACT rows 73, 74, 75 and 123, expressed the way the contract's
