@@ -1,3 +1,6 @@
+// GPL-3.0-or-later modified-file notice (CONTRACT row 129):
+// Modified 2026-09-03 for the cmux carousel UI (unit U3: four carousel
+// shortcut actions registered beside the canvas-layout family).
 import AppKit
 import Bonsplit
 import Carbon
@@ -150,6 +153,12 @@ enum KeyboardShortcutSettings {
         case equalizeSplits
         case splitBrowserRight
         case splitBrowserDown
+
+        // Carousel layout (cmux carousel UI, 2026-09-02)
+        case toggleCarouselLayout
+        case carouselNavigatePrevious
+        case carouselNavigateNext
+        case carouselToggleGrid
 
         // Canvas layout
         case toggleCanvasLayout
@@ -318,6 +327,10 @@ enum KeyboardShortcutSettings {
             case .equalizeSplits: return String(localized: "shortcut.equalizeSplits.label", defaultValue: "Equalize Splits")
             case .splitBrowserRight: return String(localized: "shortcut.splitBrowserRight.label", defaultValue: "Split Browser Right")
             case .splitBrowserDown: return String(localized: "shortcut.splitBrowserDown.label", defaultValue: "Split Browser Down")
+            case .toggleCarouselLayout: return String(localized: "shortcut.toggleCarouselLayout.label", defaultValue: "Toggle Carousel Layout")
+            case .carouselNavigatePrevious: return String(localized: "shortcut.carouselNavigatePrevious.label", defaultValue: "Carousel: Previous Session")
+            case .carouselNavigateNext: return String(localized: "shortcut.carouselNavigateNext.label", defaultValue: "Carousel: Next Session")
+            case .carouselToggleGrid: return String(localized: "shortcut.carouselToggleGrid.label", defaultValue: "Carousel: Toggle Grid")
             case .toggleCanvasLayout: return String(localized: "shortcut.toggleCanvasLayout.label", defaultValue: "Toggle Canvas Layout")
             case .canvasRevealFocusedPane: return String(localized: "shortcut.canvasRevealFocusedPane.label", defaultValue: "Canvas: Reveal Focused Pane")
             case .canvasOverview: return String(localized: "shortcut.canvasOverview.label", defaultValue: "Canvas: Toggle Overview")
@@ -532,6 +545,23 @@ enum KeyboardShortcutSettings {
                 return StoredShortcut(key: "d", command: true, shift: false, option: true, control: false)
             case .splitBrowserDown:
                 return StoredShortcut(key: "d", command: true, shift: true, option: true, control: false)
+            case .toggleCarouselLayout:
+                // Ctrl+Cmd+K. Follows the Ctrl+Cmd layout-verb family that
+                // toggleCanvasLayout established; confirmed free against the
+                // whole default table and against macOS system shortcuts.
+                return StoredShortcut(key: "k", command: true, shift: false, option: false, control: true)
+            case .carouselNavigatePrevious:
+                // Ctrl+Cmd+Left. NOT Cmd+Shift+Left: AppKit binds that to
+                // select-to-beginning-of-line in a text field, and the carousel
+                // prompt bar owns focus by default, so the chord would have been
+                // stolen on the one surface it is used from most.
+                return StoredShortcut(key: "\u{2190}", command: true, shift: false, option: false, control: true)
+            case .carouselNavigateNext:
+                return StoredShortcut(key: "\u{2192}", command: true, shift: false, option: false, control: true)
+            case .carouselToggleGrid:
+                // Ctrl+Cmd+M, not Ctrl+Cmd+G: newWorkspaceGroup already owns
+                // Ctrl+Cmd+G in this same table.
+                return StoredShortcut(key: "m", command: true, shift: false, option: false, control: true)
             case .toggleCanvasLayout:
                 return StoredShortcut(key: "c", command: true, shift: false, option: false, control: true)
             case .canvasRevealFocusedPane:

@@ -135,6 +135,14 @@ public enum ShortcutAction: String, CaseIterable, Sendable, Hashable, SettingCod
     /// Mirrors Finder's Command-Down open-selection shortcut from File Explorer focus.
     case fileExplorerOpenSelectionFinderAlias
 
+    // MARK: Carousel (cmux carousel UI, 2026-09-03 — mirrors the four cases
+    // in KeyboardShortcutSettings.Action so the Settings editor and its
+    // conflict detector can see them; row 114)
+    case toggleCarouselLayout
+    case carouselNavigatePrevious
+    case carouselNavigateNext
+    case carouselToggleGrid
+
     // MARK: Canvas
     case toggleCanvasLayout
     case canvasRevealFocusedPane

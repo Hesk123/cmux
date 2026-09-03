@@ -1,3 +1,6 @@
+// GPL-3.0-or-later modified-file notice (CONTRACT row 129):
+// Modified 2026-09-03 for the cmux carousel UI (unit U3: four carousel
+// shortcut actions registered beside the canvas-layout family).
 import AppKit
 import Bonsplit
 import CmuxPanes
@@ -98,6 +101,9 @@ extension KeyboardShortcutSettings.Action {
              .increaseWorkspaceTerminalFontSize,
              .decreaseWorkspaceTerminalFontSize,
              .resetWorkspaceTerminalFontSize,
+             .toggleCarouselLayout,
+             .carouselNavigatePrevious, .carouselNavigateNext,
+             .carouselToggleGrid,
              .toggleCanvasLayout,
              .canvasRevealFocusedPane, .canvasOverview,
              .canvasZoomIn, .canvasZoomOut, .canvasZoomReset,
