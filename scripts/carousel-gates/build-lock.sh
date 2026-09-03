@@ -342,8 +342,57 @@ case "${1:-status}" in
     unit=${1:?usage: run <unit> -- <command...>}; shift
     [ "${1:-}" = "--" ] && shift
     [ $# -gt 0 ] || { echo "usage: run <unit> -- <command...>" >&2; exit 2; }
-    acquire "$unit" "${CMUX_LOCK_TIMEOUT:-7200}" || exit $?
-    trap 'release "'"$unit"'" >/dev/null 2>&1' EXIT INT TERM HUP
+    # --- untagged-build guard --------------------------------------------------
+    # An xcodebuild with no -derivedDataPath writes to Xcode's DEFAULT location, a tree
+    # named by a hash of the project path. Those trees are invisible to every per-unit
+    # cleanup, they reappear after deletion because the hash is deterministic, and they
+    # are what filled the disk. reload.sh --tag always sets one, so only a bare or
+    # untagged call trips this.
+    #
+    # Two layers, because one is not enough. The argv check catches a direct call. It
+    # CANNOT see an xcodebuild nested inside `bash -c` or inside a script, which is the
+    # common shape here -- so a PATH shim catches those, wherever they are nested.
+    for a in "$@"; do
+      case "$a" in
+        *xcodebuild*)
+          case " $* " in
+            *" -derivedDataPath "*|*"--derived-data"*|*-showBuildSettings*|*-list*|*-version*) ;;
+            *)
+              echo "REFUSED: xcodebuild without -derivedDataPath." >&2
+              echo "  It would write to Xcode's default DerivedData, a tree named by a hash of" >&2
+              echo "  the project path. Those are invisible to per-unit cleanup and reappear" >&2
+              echo "  after deletion, and they are what filled this disk." >&2
+              echo "  Use ./scripts/reload.sh --tag <slug>, which always sets one." >&2
+              log "REFUSE-UNTAGGED unit=$unit cmd=$*"
+              exit 5 ;;
+          esac ;;
+      esac
+    done
+
+    SHIM=$(mktemp -d)
+    cat > "$SHIM/xcodebuild" <<'SHIMEOF'
+#!/bin/bash
+# Installed by cmux-build-lock.sh for the duration of one `run`. Refuses a build or
+# test that names no -derivedDataPath, at any nesting depth, since the argv check in
+# the lock script cannot see inside `bash -c` or a called script.
+for arg in "$@"; do
+  case "$arg" in
+    -derivedDataPath) exec /usr/bin/xcodebuild "$@" ;;
+    -showBuildSettings|-list|-version|-showsdks|-checkFirstLaunchStatus) exec /usr/bin/xcodebuild "$@" ;;
+  esac
+done
+echo "REFUSED by cmux-build-lock: xcodebuild without -derivedDataPath" >&2
+echo "  args: $*" >&2
+echo "  Untagged builds land in Xcode's default DerivedData, a hash-named tree that is" >&2
+echo "  invisible to per-unit cleanup and reappears after deletion. Use" >&2
+echo "  ./scripts/reload.sh --tag <slug>, or pass -derivedDataPath explicitly." >&2
+exit 5
+SHIMEOF
+    chmod +x "$SHIM/xcodebuild"
+    export PATH="$SHIM:$PATH"
+
+    acquire "$unit" "${CMUX_LOCK_TIMEOUT:-7200}" || { rm -rf "$SHIM"; exit $?; }
+    trap 'release "'"$unit"'" >/dev/null 2>&1; rm -rf "'"$SHIM"'" 2>/dev/null' EXIT INT TERM HUP
     "$@"
     exit $?
     ;;
