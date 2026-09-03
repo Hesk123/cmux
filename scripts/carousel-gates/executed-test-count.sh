@@ -14,7 +14,15 @@
 #
 #   executed-test-count.sh lint
 #   executed-test-count.sh parse <test-log>              print the executed count
+#   executed-test-count.sh failures <test-log>           list failing suite names
+#   executed-test-count.sh delta <test-log>              failures vs the recorded baseline
 #   executed-test-count.sh assert <test-log> <min> [<expected-increase> <baseline>]
+#
+# A UNIT OWNS ONLY ITS DELTA. 22 suites already fail on the fork's main with no feature
+# work present, so a raw failure count cannot distinguish a regression this build caused
+# from noise the fork already had. `delta` answers the question row 84 actually asks --
+# did anything that passed at the baseline start failing -- and it is the number a unit
+# reports, alongside the executed count.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -34,7 +42,42 @@ parse_count() {
   echo "${n:-0}"
 }
 
-case "${1:?usage: lint|parse|assert}" in
+BASELINE_FAILURES="$REPO_ROOT/scripts/carousel-gates/test-failure-baseline.txt"
+
+# Suite names from xcodebuild's failure lines, deduplicated.
+list_failures() {
+  local log=${1:?log}
+  [ -f "$log" ] || { echo "no such log: $log" >&2; exit 2; }
+  {
+    grep -oE "Test Suite '[^']+' failed" "$log" | sed -E "s/Test Suite '([^']+)' failed/\1/"
+    grep -oE "Suite \"[^\"]+\" failed" "$log" | sed -E 's/Suite "([^"]+)" failed/\1/'
+    grep -oE "^[A-Za-z0-9_]+Tests\b.*failed" "$log" | awk '{print $1}'
+  } 2>/dev/null | sed 's/\.xctest$//' | sort -u | grep -v '^$' || true
+}
+
+case "${1:?usage: lint|parse|failures|delta|assert}" in
+  failures) shift; list_failures "$@" ;;
+  delta)
+    LOG=${2:?log}
+    NOW=$(mktemp); BASE=$(mktemp)
+    trap 'rm -f "$NOW" "$BASE"' EXIT
+    list_failures "$LOG" > "$NOW"
+    grep -v '^#' "$BASELINE_FAILURES" 2>/dev/null | grep -v '^[[:space:]]*$' | sort -u > "$BASE"
+    NEW=$(comm -13 "$BASE" "$NOW" | grep -v '^$' || true)
+    FIXED=$(comm -23 "$BASE" "$NOW" | grep -v '^$' || true)
+    echo "executed tests      : $(parse_count "$LOG")"
+    echo "failing suites now  : $(grep -c . "$NOW" || echo 0)"
+    echo "baseline failures   : $(grep -c . "$BASE" || echo 0)  (fork main, no feature work)"
+    if [ -n "$FIXED" ]; then
+      echo "no longer failing (baseline can shrink):"; printf '%s\n' "$FIXED" | sed 's/^/  /'
+    fi
+    if [ -n "$NEW" ]; then
+      echo "NEW FAILURES -- THIS UNIT OWNS THESE:"; printf '%s\n' "$NEW" | sed 's/^/  /'
+      echo "ROW 84/134 (failure delta): FAIL"
+      exit 1
+    fi
+    echo "ROW 84/134 (failure delta): PASS -- no suite that passed at the baseline fails now"
+    ;;
   lint)
     cd "$REPO_ROOT"
     if [ ! -x ./scripts/lint-pbxproj-test-wiring.sh ]; then
