@@ -65,7 +65,15 @@ case "${1:?usage: lint|parse|assert}" in
       echo "ROW 134 (wiring lint): FAIL"
       exit 1
     fi
-    echo "ROW 134 (wiring lint): PASS -- no new unwired test file"
+    # The repo lint matches the four wiring patterns as STRINGS, so a PBXBuildFile
+    # whose fileRef is the literal `None` satisfies all four and it reports ok. The
+    # file is then compiled by nothing and the suite runs without it -- the same
+    # "Executed 0 tests" shape, one level deeper. Resolution is checked separately.
+    if ! /usr/bin/python3 "$REPO_ROOT/scripts/carousel-gates/pbxproj-ref-integrity.py"; then
+      echo "ROW 134 (wiring lint): FAIL -- a build-file reference does not resolve"
+      exit 1
+    fi
+    echo "ROW 134 (wiring lint): PASS -- no new unwired test file, every reference resolves"
     ;;
   parse) parse_count "${2:?log}" ;;
   assert)
