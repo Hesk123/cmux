@@ -2,7 +2,11 @@
 import Foundation
 import Testing
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT rows 76 and 120 — the parser against the payload that actually
 /// arrives, not only against the fixtures the contract describes.

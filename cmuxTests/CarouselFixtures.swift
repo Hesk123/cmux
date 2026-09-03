@@ -1,7 +1,11 @@
 // Modified 2026-09-03 for the cmux carousel build (carousel unit work).
 import Foundation
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// Fixtures for the U5 rows. These live in the test target and never ship
 /// (CONTRACT harness H3).
@@ -148,6 +152,7 @@ enum CarouselFixtures {
 @MainActor
 final class FakeCarouselSessionRouting: CarouselSessionRouting {
     var centredSession: CarouselSession?
+    var sessions: [CarouselSession] = []
     var onCentredSessionChanged: ((CarouselSession?) -> Void)?
 
     init(centredSession: CarouselSession?) {
@@ -157,6 +162,10 @@ final class FakeCarouselSessionRouting: CarouselSessionRouting {
     func centre(on session: CarouselSession?) {
         centredSession = session
         onCentredSessionChanged?(session)
+    }
+
+    func navigate(_ direction: CarouselNavigationDirection) {
+        // The fake binds the bar to a fixed card; nothing under test navigates.
     }
 }
 

@@ -40,8 +40,13 @@ final class CarouselSubAgentsUITests: XCTestCase {
         let chip = app.descendants(matching: .any)["carousel.subAgents.chip"]
         chip.click()
 
-        let popover = app.descendants(matching: .any)["carousel.subAgents.popover"]
-        XCTAssertTrue(popover.waitForExistence(timeout: 5))
+        // The open-popover signal is the header's running-count id. The panel
+        // container itself carries no identifier on purpose: a container id
+        // swallows its whole subtree's ids (outermost wins), which would make
+        // every row below unresolvable. The header renders in every popover
+        // state and has no identifier-bearing ancestors, so it resolves.
+        let popoverCount = app.descendants(matching: .any)["carousel.subAgents.popover.runningCount"]
+        XCTAssertTrue(popoverCount.waitForExistence(timeout: 5))
 
         for index in 0..<3 {
             let row = app.descendants(matching: .any)["carousel.subAgents.row.acanary\(index)"]
@@ -49,9 +54,12 @@ final class CarouselSubAgentsUITests: XCTestCase {
         }
 
         // The nested agent is indented, so its row's minX sits right of its
-        // parent's.
-        let parent = app.descendants(matching: .any)["carousel.subAgents.row.acanary0"]
-        let child = app.descendants(matching: .any)["carousel.subAgents.row.anested"]
+        // parent's. firstMatch: a row's texts surface as separate fragments
+        // sharing the row's id (outermost wins), so a bare subscript is
+        // ambiguous; every fragment shares the row's indentation padding, so
+        // first-match frames compare the rows correctly.
+        let parent = app.descendants(matching: .any)["carousel.subAgents.row.acanary0"].firstMatch
+        let child = app.descendants(matching: .any)["carousel.subAgents.row.anested"].firstMatch
         XCTAssertTrue(child.exists)
         XCTAssertGreaterThan(child.frame.minX, parent.frame.minX)
     }
@@ -90,6 +98,10 @@ final class CarouselSubAgentsUITests: XCTestCase {
         app.launchEnvironment["CMUX_UI_TEST_CAROUSEL_SESSION_SLUG"] = projectSlug
         app.launchEnvironment["CMUX_UI_TEST_CAROUSEL_SESSION_ID"] = sessionID
         app.launchEnvironment["CMUX_UI_TEST_CAROUSEL_UNMOUNTED_WORKSPACES"] = String(unmountedWorkspaces)
+        // Enter carousel mode at launch: the app auto-activates the mode when
+        // this debug toggle is set, so these tests assert on live carousel
+        // chrome instead of synthesising the ⌃⌘K chord.
+        app.launchEnvironment["CMUX_CAROUSEL_DEBUG_TOGGLE"] = "1"
         app.launch()
 
         // Guard on the chip itself rather than on a container identifier.

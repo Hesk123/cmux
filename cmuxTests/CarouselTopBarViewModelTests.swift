@@ -2,13 +2,18 @@
 import Foundation
 import Testing
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT rows 12, 13, 15, 76, 117, 120, 125, 126, 127.
 @MainActor
 struct CarouselTopBarViewModelTests {
     // MARK: - Harness
 
+    @MainActor
     private struct Harness {
         let directory: TemporaryDirectory
         let root: CarouselDataRoot

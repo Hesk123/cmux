@@ -40,8 +40,13 @@ struct SubAgentRowView: View {
         // Indentation is the nesting. Clamped so a deep chain cannot push a
         // row's text off the panel.
         .padding(.leading, presentation.rowIndent * CGFloat(min(row.depth, 3)))
+        // NOTE: no `.accessibilityElement(children: .combine)` here. Combined
+        // with an explicit identifier the row vanishes from accessibility
+        // entirely in this toolchain; without it each text fragment reports
+        // the row's id (outermost wins) and the row-11 UI contract resolves.
+        // The indentation the UI test asserts is the row's own padding, which
+        // every fragment shares, so first-match frames compare correctly.
         .accessibilityIdentifier("carousel.subAgents.row.\(record.id)")
-        .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
     }
 

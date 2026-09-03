@@ -400,7 +400,7 @@ final class CarouselToastMotionTests: XCTestCase {
         presenter.present(CarouselToast(title: "hive", body: "done", status: .stopped, slot: 0))
         _ = await spinUntil({ settled }, timeout: 4.0)
         let view = try XCTUnwrap(presenter.presentedView)
-        XCTAssertTrue(view.accessibilityLabel().contains("Status: stopped"))
+        XCTAssertTrue(view.accessibilityLabel()?.contains("Status: stopped") == true)
         presenter.dismiss()
         _ = await spinUntil({ !self.presenter.isPresenting }, timeout: 4.0)
     }

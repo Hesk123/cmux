@@ -157,31 +157,33 @@ struct CarouselSessionMatchingTests {
 
     @Test("Row 118: the environment override wins over the settings key")
     func environmentOverrideWins() {
-        let defaults = UserDefaults(suiteName: "carousel.tests.\(UUID().uuidString)")!
-        defaults.set("/from/settings", forKey: CarouselDataRoot.settingsKey)
-        let root = CarouselDataRoot(
-            environment: [CarouselDataRoot.environmentKey: "/from/env"],
-            defaults: defaults
+        let root = CarouselDataRoot.resolve(
+            environment: ["CMUX_CAROUSEL_DATA_ROOT": "/from/env"],
+            settingPath: "/from/settings"
         )
         #expect(root.url.path(percentEncoded: false).hasPrefix("/from/env"))
+        #expect(root.source == .environmentOverride)
     }
 
     @Test("Row 118: the settings key wins over the mirror default")
     func settingsKeyWins() {
-        let defaults = UserDefaults(suiteName: "carousel.tests.\(UUID().uuidString)")!
-        defaults.set("/from/settings", forKey: CarouselDataRoot.settingsKey)
-        let root = CarouselDataRoot(environment: [:], defaults: defaults)
+        let root = CarouselDataRoot.resolve(environment: [:], settingPath: "/from/settings")
         #expect(root.url.path(percentEncoded: false).hasPrefix("/from/settings"))
+        #expect(root.source == .setting)
     }
 
     @Test("Row 118: an empty override is ignored rather than resolving to /")
     func emptyOverrideIsIgnored() {
-        let defaults = UserDefaults(suiteName: "carousel.tests.\(UUID().uuidString)")!
-        let root = CarouselDataRoot(
-            environment: [CarouselDataRoot.environmentKey: "   "],
-            defaults: defaults
+        let root = CarouselDataRoot.resolve(
+            environment: ["CMUX_CAROUSEL_DATA_ROOT": "   "],
+            settingPath: nil,
+            fileManager: FileManager.default
         )
-        #expect(root.url == CarouselDataRoot.defaultMirrorURL)
+        // A whitespace-only override is no override: resolution falls through
+        // to the mirror (or the local fallback where the mirror never ran),
+        // never to a blank path.
+        #expect(root.source == .mirror || root.source == .localFallback)
+        #expect(!root.url.path(percentEncoded: false).hasPrefix("   "))
     }
 
     @Test("Row 118 positive control: the reader sees the injected root's own session")

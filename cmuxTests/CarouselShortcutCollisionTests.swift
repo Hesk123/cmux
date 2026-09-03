@@ -7,8 +7,12 @@ import Testing
 
 #if canImport(cmux_DEV)
 @testable import cmux_DEV
+// CmuxSettings (imported above) declares its own StoredShortcut; pin the app
+// type, the same disambiguation BrowserConfigTests uses.
+private typealias StoredShortcut = cmux_DEV.StoredShortcut
 #elseif canImport(cmux)
 @testable import cmux
+private typealias StoredShortcut = cmux.StoredShortcut
 #endif
 
 /// CONTRACT row 114: "A test asserts the build registers no chord already bound
@@ -138,10 +142,10 @@ struct CarouselShortcutCollisionTests {
                 continue
             }
             #expect(
-                a.key.lowercased() == d.key.lowercased()
-                    && a.command == d.command && a.shift == d.shift
-                    && a.option == d.option && a.control == d.control,
-                "\(settings) default \(d.key) does not match the app table")
+                a.key.lowercased() == d.first.key.lowercased()
+                    && a.command == d.first.command && a.shift == d.first.shift
+                    && a.option == d.first.option && a.control == d.first.control,
+                "\(settings) default \(d.first.key) does not match the app table")
         }
     }
 
@@ -167,9 +171,9 @@ struct CarouselShortcutCollisionTests {
             for other in ShortcutAction.allCases {
                 guard let d = other.defaultShortcut else { continue }
                 #expect(
-                    !(stroke.key.lowercased() == d.key.lowercased()
-                        && stroke.command == d.command && stroke.shift == d.shift
-                        && stroke.option == d.option && stroke.control == d.control),
+                    !(stroke.key.lowercased() == d.first.key.lowercased()
+                        && stroke.command == d.first.command && stroke.shift == d.first.shift
+                        && stroke.option == d.first.option && stroke.control == d.first.control),
                     "fallback chord \(stroke.key) collides with Settings \(other)")
             }
         }

@@ -48,25 +48,19 @@ struct SubAgentsChipView: View {
             Text(chipText)
                 .font(.system(size: presentation.chipLabelSize, weight: .medium))
                 .accessibilityIdentifier("carousel.subAgents.chip.label")
-            if store.excludedWorkspaceCount > 0 {
-                excludedBadge
-            }
+            // NOTE: the row-132 excluded-workspace badge is NOT rendered here.
+            // An explicit accessibilityIdentifier swallows the identifiers of
+            // its entire subtree in this toolchain (outermost wins), so a
+            // badge nested in this button can never resolve its own id while
+            // the button carries the chip's. The rail renders the badge as the
+            // chip's sibling (see CarouselTopBarView); the popover footnote
+            // below still states the count in words.
         }
         .foregroundStyle(isDegraded ? .secondary : .primary)
         .padding(.horizontal, presentation.chipHorizontalPadding)
         .padding(.vertical, presentation.chipVerticalPadding)
         .background(presentation.chipFill.opacity(0.9), in: .capsule)
         .background(.ultraThinMaterial, in: .capsule)
-    }
-
-    /// CONTRACT row 132: workspaces excluded from the card list because they
-    /// are not mounted are counted here, so nothing disappears silently.
-    private var excludedBadge: some View {
-        Text(verbatim: "+\(store.excludedWorkspaceCount)")
-            .font(.system(size: presentation.chipLabelSize, weight: .semibold))
-            .foregroundStyle(.secondary)
-            .accessibilityIdentifier("carousel.subAgents.excludedBadge")
-            .accessibilityLabel(SubAgentsStrings.excludedWorkspaces(store.excludedWorkspaceCount))
     }
 
     @ViewBuilder

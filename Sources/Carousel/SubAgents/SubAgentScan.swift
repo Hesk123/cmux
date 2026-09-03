@@ -42,6 +42,18 @@ struct SubAgentScan: Sendable, Equatable {
         records.count(where: { $0.activity == .running })
     }
 
+    /// Same reading, ignoring `scannedAt`: the watcher polls every second and
+    /// every scan carries a fresh timestamp, so plain equality never holds and
+    /// applying unconditionally re-renders the chip every second forever — the
+    /// app never idles and the accessibility tree churns under every snapshot.
+    /// The store drops readings that are the same by this measure; a real
+    /// change still propagates within one poll.
+    func isSameReading(as other: SubAgentScan) -> Bool {
+        availability == other.availability
+            && records == other.records
+            && freshness == other.freshness
+    }
+
     static func empty(
         availability: Availability,
         scannedAt: Date,

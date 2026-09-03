@@ -24,7 +24,7 @@ struct CarouselModeStateTests {
         let wasColor = window.backgroundColor
         CarouselModeState.applyTranslucency(true, to: window)
         #expect(window.isOpaque == false)
-        #expect(window.backgroundColor?.isEqual(.clear) == true)
+        #expect(window.backgroundColor?.isEqual(NSColor.clear) == true)
         CarouselModeState.applyTranslucency(false, to: window)
         #expect(window.isOpaque == wasOpaque)
         #expect(window.backgroundColor?.isEqual(wasColor) == true)

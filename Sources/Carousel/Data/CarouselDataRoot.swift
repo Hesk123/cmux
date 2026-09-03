@@ -94,7 +94,12 @@ struct CarouselDataRoot: Sendable, Equatable {
                         settingPath: String? = nil,
                         fileManager: FileManager = .default,
                         now: Date = .now) -> CarouselDataRoot {
-        if let raw = environment["CMUX_CAROUSEL_DATA_ROOT"], !raw.isEmpty {
+        // A whitespace-only override is no override: it can never be a valid
+        // path, and resolving it would point the carousel at a directory that
+        // cannot exist rather than falling through to the setting below.
+        let override = environment["CMUX_CAROUSEL_DATA_ROOT"]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if let raw = override, !raw.isEmpty {
             let url = URL(fileURLWithPath: raw, isDirectory: true)
             return CarouselDataRoot(url: url, source: .environmentOverride,
                                     freshness: .unknown)

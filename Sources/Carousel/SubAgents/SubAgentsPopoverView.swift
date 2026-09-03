@@ -34,7 +34,12 @@ struct SubAgentsPopoverView: View {
         .background(presentation.popoverFill.opacity(0.86), in: panelShape)
         .background(.ultraThinMaterial, in: panelShape)
         .overlay(panelShape.strokeBorder(.white.opacity(0.08), lineWidth: 1))
-        .accessibilityIdentifier("carousel.subAgents.popover")
+        // NOTE: no .accessibilityIdentifier(popover) on this container. An
+        // explicit identifier swallows its whole subtree's identifiers
+        // (outermost wins), which would make every row id unresolvable. The
+        // open-popover signal is the header's runningCount id below, which has
+        // no identifier-bearing ancestors and resolves; `.contain` still
+        // exposes each row as its own element.
         .accessibilityElement(children: .contain)
     }
 
@@ -75,8 +80,14 @@ struct SubAgentsPopoverView: View {
     }
 
     private var list: some View {
+        // Eager VStack, not LazyVStack: in an overlay the scroll proposes an
+        // unbounded axis, against which a lazy stack measures ~zero and the
+        // panel collapses to its header (rows present in data, absent on
+        // screen and in accessibility). The popover caps height at
+        // popoverMaxHeight and scrolls past it; materialising at most a few
+        // hundred small rows eagerly is what makes the content exist to scroll.
         ScrollView(.vertical) {
-            LazyVStack(alignment: .leading, spacing: presentation.rowSpacing) {
+            VStack(alignment: .leading, spacing: presentation.rowSpacing) {
                 ForEach(rows) { row in
                     SubAgentRowView(row: row, presentation: presentation)
                 }

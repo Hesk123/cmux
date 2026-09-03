@@ -83,6 +83,7 @@ final class SubAgentsStore {
     }
 
     private func apply(_ scan: SubAgentScan) {
+        guard !scan.isSameReading(as: self.scan) else { return }
         self.scan = scan
         rows = SubAgentOutline.rows(for: scan.records)
     }

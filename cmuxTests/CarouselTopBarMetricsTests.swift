@@ -2,7 +2,11 @@
 import Foundation
 import Testing
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT rows 73, 74, 75, 123 — asserted as ratios of window width, at three
 /// window sizes, because the contract's normalization rule makes the ratio the

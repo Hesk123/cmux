@@ -2,7 +2,11 @@
 import Foundation
 import Testing
 
+#if canImport(cmux_DEV)
+@testable import cmux_DEV
+#elseif canImport(cmux)
 @testable import cmux
+#endif
 
 /// CONTRACT row 118's controls, asserted against **U7's** provider rather than a
 /// second one. U5 deleted its own `CarouselDataRoot` when it rebased onto

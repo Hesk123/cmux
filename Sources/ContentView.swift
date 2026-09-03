@@ -1878,10 +1878,26 @@ struct ContentView: View {
             // and the menu bar all sit outside this region and do not move, which is
             // what rows 17 and 73 need.
             if carouselModeActive {
-                CarouselHostView(
-                    tabManager: tabManager,
-                    mountedWorkspaceIds: mountedWorkspaceIds
-                )
+                GeometryReader { geometry in
+                    ZStack(alignment: .top) {
+                        CarouselHostView(
+                            tabManager: tabManager,
+                            mountedWorkspaceIds: mountedWorkspaceIds
+                        )
+                        // U5 top rail with the U4 sub-agents chip at its trailing
+                        // end (Twin Rails pick). Default state renders the meters
+                        // as unavailable; binding the rail to the centred card
+                        // (row 125, CarouselTopBarViewModel.bind) is the follow-up
+                        // that makes the numbers live. The chip carries its own
+                        // fixture-driven store and works unbound.
+                        CarouselTopBarView(
+                            state: CarouselTopBarViewState(),
+                            metrics: CarouselTopBarMetrics(
+                                windowWidth: Double(geometry.size.width)
+                            )
+                        )
+                    }
+                }
             } else {
             ZStack {
                 ForEach(mountedWorkspaces) { tab in
@@ -1931,6 +1947,14 @@ struct ContentView: View {
             // registration lives in KeyboardShortcutSettings, which U3 owns; this
             // exists only so carousel mode is enterable before those branches meet.
             CarouselDebugEntryPoint.installIfEnabled()
+            // UI-test path: launching with CMUX_CAROUSEL_DEBUG_TOGGLE=1 enters
+            // carousel mode immediately, so CarouselSubAgentsUITests can assert
+            // on carousel chrome without synthesising the ⌃⌘K chord. Absent
+            // the flag this is a no-op and launch behaviour is unchanged.
+            if CarouselDebugEntryPoint.shouldAutoEnterCarousel(), !carouselModeActive {
+                carouselModeActive = true
+                CarouselModeState.applyTranslucency(true, to: observedWindow)
+            }
             // H2 capture, inert unless CMUX_CAROUSEL_RECORD is set. Empty
             // titleMatch records the largest on-screen window of this process.
             if #available(macOS 14.4, *), carouselRecorder == nil,
@@ -3477,6 +3501,14 @@ struct ContentView: View {
             DispatchQueue.main.async {
                 observedWindowReference = WeakWindowReference(window)
                 isFullScreen = window.styleMask.contains(.fullScreen)
+                // Auto-entered carousel mode (see the .task in terminalContent)
+                // may have activated before the window was known, in which case
+                // the translucency half of the toggle was a no-op on nil. Re-assert
+                // it now that the window exists. No-op unless the mode is active;
+                // capture-once in applyTranslucency makes repeats harmless.
+                if carouselModeActive {
+                    CarouselModeState.applyTranslucency(true, to: window)
+                }
                 let availableWidth = window.contentView?.bounds.width ?? window.contentLayoutRect.width
                 clampSidebarWidthIfNeeded(availableWidth: availableWidth)
                 clampRightSidebarWidthIfNeeded(availableWidth: availableWidth)

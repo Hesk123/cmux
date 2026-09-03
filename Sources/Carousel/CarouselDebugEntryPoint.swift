@@ -29,6 +29,15 @@ enum CarouselDebugEntryPoint {
         environment[environmentKey] == "1"
     }
 
+    /// True when the app should launch straight into carousel mode, with no
+    /// keystroke. Same flag as `isEnabled`: the toggle already means "carousel
+    /// is enterable on this build for debug/test", and the UI tests need the
+    /// mode active before they can assert on carousel chrome. A normal launch
+    /// never sets the flag, so default behaviour is untouched.
+    static func shouldAutoEnterCarousel(environment: [String: String] = ProcessInfo.processInfo.environment) -> Bool {
+        isEnabled(environment: environment)
+    }
+
     /// Idempotent: installing twice leaves one monitor, so a repeated `task` on a
     /// re-created view cannot stack handlers and toggle the mode twice per press.
     static func installIfEnabled(environment: [String: String] = ProcessInfo.processInfo.environment) {

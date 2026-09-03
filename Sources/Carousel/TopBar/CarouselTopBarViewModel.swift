@@ -129,7 +129,7 @@ final class CarouselTopBarViewModel {
     // MARK: - Field mapping
 
     /// Row 12.
-    static func modelState(_ snapshot: StatuslineSnapshot) -> CarouselTopBarViewState.ModelState {
+    nonisolated static func modelState(_ snapshot: StatuslineSnapshot) -> CarouselTopBarViewState.ModelState {
         guard let name = snapshot.model?.displayName?.trimmingCharacters(in: .whitespacesAndNewlines),
               !name.isEmpty
         else { return .unavailable }
@@ -139,7 +139,7 @@ final class CarouselTopBarViewModel {
     /// Row 13. `current_usage == nil` is the post-`/compact` state and renders
     /// the defined empty state — never a zero fill — even when a stale
     /// `used_percentage` is still present alongside it.
-    static func compactionState(_ snapshot: StatuslineSnapshot) -> CarouselTopBarViewState.CompactionState {
+    nonisolated static func compactionState(_ snapshot: StatuslineSnapshot) -> CarouselTopBarViewState.CompactionState {
         guard let window = snapshot.contextWindow else { return .unavailable }
         guard window.currentUsage != nil else { return .awaitingFirstResponse }
         guard let percentage = window.usedPercentage else { return .unavailable }
@@ -153,13 +153,13 @@ final class CarouselTopBarViewModel {
 
     /// Rows 15 and 120. Absent `rate_limits` renders the unavailable state; there
     /// is no path that invents a percentage.
-    static func usageState(_ window: StatuslineSnapshot.Window?) -> CarouselTopBarViewState.UsageState {
+    nonisolated static func usageState(_ window: StatuslineSnapshot.Window?) -> CarouselTopBarViewState.UsageState {
         guard let window, let percent = window.usedPercentage else { return .unavailable }
         return .measured(percent: min(max(percent, 0), 100), resetsAt: window.resetDate)
     }
 
     /// Row 127.
-    static func agentActivity(
+    nonisolated static func agentActivity(
         presence: CarouselSessionPresence,
         record: StatuslineSnapshotRecord?,
         fileManager: FileManager = .default,
