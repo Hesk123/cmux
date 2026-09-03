@@ -7,9 +7,9 @@ source "$SCRIPT_DIR/lib/mobile-attach.sh"
 # shellcheck source=scripts/lib/dev-secrets.sh
 source "$SCRIPT_DIR/lib/dev-secrets.sh"
 
-APP_NAME="cmux DEV"
+APP_NAME="Genesis DEV"
 BUNDLE_ID="com.cmuxterm.app.debug"
-BASE_APP_NAME="cmux DEV"
+BASE_APP_NAME="Genesis DEV"
 DERIVED_DATA=""
 NAME_SET=0
 BUNDLE_SET=0
@@ -352,7 +352,7 @@ reload_cleanup_tag_state_with_lock() {
       close($fh);
       exit 1;
     }
-    my $cli_suffix = "/cmux DEV ${slug}.app/Contents/Resources/bin/cmux";
+    my $cli_suffix = "/Genesis DEV ${slug}.app/Contents/Resources/bin/cmux";
     my $pointer_ok = length($publish_cli_path)
       ? write_discovery_file($pointer_path, $publish_cli_path)
       : clear_matching_discovery_file($pointer_path, $cli_suffix, 1);
@@ -493,8 +493,8 @@ cleanup_stale_cli_pointer_target() {
   esac
   local app_name="${bundle_path##*/}"
   app_name="${app_name%.app}"
-  [[ "$app_name" == "cmux DEV "* ]] || return 0
-  local slug="${app_name#cmux DEV }"
+  [[ "$app_name" == "Genesis DEV "* ]] || return 0
+  local slug="${app_name#Genesis DEV }"
   [[ "$slug" =~ ^[A-Za-z0-9_-]+$ ]] || return 0
   local socket_path=""
   if [[ -x /usr/libexec/PlistBuddy && -f "$bundle_path/Contents/Info.plist" ]]; then
@@ -613,8 +613,8 @@ bundle_socket_path() {
 
   local app_name="\${bundle_path##*/}"
   app_name="\${app_name%.app}"
-  if [[ "\$app_name" == "cmux DEV "* ]]; then
-    local tag="\${app_name#cmux DEV }"
+  if [[ "\$app_name" == "Genesis DEV "* ]]; then
+    local tag="\${app_name#Genesis DEV }"
     [[ "\$tag" =~ ^[A-Za-z0-9_-]+\$ ]] || return 1
     printf '/tmp/cmux-debug-%s.sock\\n' "\$tag"
     return 0
@@ -642,7 +642,7 @@ if [[ -n "\$SOCKET_ARG" ]]; then
     TAG="\${SOCKET_NAME#cmux-debug-}"
     TAG="\${TAG%.sock}"
     if [[ "\$TAG" =~ ^[A-Za-z0-9_-]+$ ]]; then
-      TAG_CLI="\$HOME/Library/Developer/Xcode/DerivedData/cmux-\$TAG/Build/Products/Debug/cmux DEV \$TAG.app/Contents/Resources/bin/cmux"
+      TAG_CLI="\$HOME/Library/Developer/Xcode/DerivedData/cmux-\$TAG/Build/Products/Debug/Genesis DEV \$TAG.app/Contents/Resources/bin/cmux"
       if live_cli_bundle "\$TAG_CLI" >/dev/null; then
         if [[ "\$HAS_EXPLICIT_SOCKET" == "0" ]] || socket_is_live "\$SOCKET_ARG"; then
           exec "\$TAG_CLI" "\$@"
@@ -1076,14 +1076,14 @@ print_tag_cleanup_reminder() {
     done
     echo "Cleanup stale tags only:"
     for tag in "${stale_tags[@]}"; do
-      echo "  pkill -f \"cmux DEV ${tag}.app/Contents/MacOS/cmux DEV\""
+      echo "  pkill -f \"Genesis DEV ${tag}.app/Contents/MacOS/Genesis DEV\""
       echo "  rm -rf \"$(tagged_derived_data_path "$tag")\" \"/tmp/cmux-${tag}\" \"/tmp/cmux-debug-${tag}.sock\""
       echo "  rm -f \"/tmp/cmux-debug-${tag}.log\""
       echo "  rm -f \"$HOME/Library/Application Support/cmux/cmuxd-dev-${tag}.sock\""
     done
   fi
   echo "After you verify current tag, cleanup command:"
-  echo "  pkill -f \"cmux DEV ${current_slug}.app/Contents/MacOS/cmux DEV\""
+  echo "  pkill -f \"Genesis DEV ${current_slug}.app/Contents/MacOS/Genesis DEV\""
   echo "  rm -rf \"$(tagged_derived_data_path "$current_slug")\" \"/tmp/cmux-${current_slug}\" \"/tmp/cmux-debug-${current_slug}.sock\""
   echo "  rm -f \"/tmp/cmux-debug-${current_slug}.log\""
   echo "  rm -f \"$HOME/Library/Application Support/cmux/cmuxd-dev-${current_slug}.sock\""
@@ -1211,7 +1211,7 @@ if [[ -n "$TAG" ]]; then
   TAG_ID="$(sanitize_bundle "$TAG")"
   TAG_SLUG="$(sanitize_path "$TAG")"
   if [[ "$NAME_SET" -eq 0 ]]; then
-    APP_NAME="cmux DEV ${TAG_SLUG}"
+    APP_NAME="${BASE_APP_NAME} ${TAG_SLUG}"
   fi
   if [[ "$BUNDLE_SET" -eq 0 ]]; then
     BUNDLE_ID="com.cmuxterm.app.debug.${TAG_ID}"
