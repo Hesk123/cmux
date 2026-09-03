@@ -61,10 +61,7 @@ final class CarouselWorkingIndicator {
         // dots hold at their lit value instead of pulsing, so "an agent is
         // working" is still readable with no motion at all.
         guard !reduceMotion.isEnabled else {
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            dots.forEach { $0.opacity = 1 }
-            CATransaction.commit()
+            carouselCommit { self.dots.forEach { $0.opacity = 1 } }
             return
         }
 
@@ -86,16 +83,13 @@ final class CarouselWorkingIndicator {
             pulse.repeatCount = .greatestFiniteMagnitude
             pulse.beginTime = now + CarouselMotion.workingDotPhase * CFTimeInterval(index)
             pulse.fillMode = .backwards
-            dot.add(pulse, forKey: Self.pulseKey)
+            carouselCommit { dot.add(pulse, forKey: Self.pulseKey) }
         }
     }
 
     private func stop() {
         removeAnimations()
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        dots.forEach { $0.opacity = 0 }
-        CATransaction.commit()
+        carouselCommit { self.dots.forEach { $0.opacity = 0 } }
     }
 
     private func removeAnimations() {

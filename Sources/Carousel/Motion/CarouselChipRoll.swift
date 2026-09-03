@@ -159,16 +159,16 @@ final class CarouselChipRoll {
         // The label must not flash at its resting value during the delay before
         // the roll starts, so the from-value is held backwards from beginTime.
         step.fillMode = .backwards
-        layer.add(step, forKey: keyPath)
 
         // The model has to end up at the target for EVERY key path, not just
-        // opacity. Core Animation removes a finished animation and then renders
+        // opacity: Core Animation removes a finished animation and then renders
         // the model value, so a label whose model y is still its entry offset
-        // snaps back up the instant the roll completes.
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        layer.setValue(to, forKeyPath: keyPath)
-        CATransaction.commit()
+        // snaps back up the instant the roll completes. Both go in one
+        // transaction so the model-only state is never committed alone.
+        carouselCommit {
+            layer.add(step, forKey: keyPath)
+            layer.setValue(to, forKeyPath: keyPath)
+        }
     }
 
     private func presentation(_ layer: CALayer, keyPath: String) -> CGFloat? {

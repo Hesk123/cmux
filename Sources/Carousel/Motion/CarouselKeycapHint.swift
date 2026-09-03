@@ -101,8 +101,14 @@ final class CarouselKeycapHint {
         fade.toValue = 0
         fade.duration = CarouselMotion.keycapFadeOut
         fade.timingFunction = CarouselMotion.switchCurve
-        container.add(fade, forKey: "opacity")
-        container.opacity = 0
+        // Setting `opacity` outside a disabled transaction triggers Core
+        // Animation's default action, which attaches its own 0.25 s animation
+        // under the same "opacity" key and replaces this one. The probe
+        // measured the fade at 233 ms against row 63's 83 +/- 25 before this.
+        carouselCommit {
+            container.add(fade, forKey: "opacity")
+            container.opacity = 0
+        }
     }
 
     func hideImmediately() {

@@ -348,7 +348,7 @@ final class CarouselMotionProbe: NSObject {
 
     /// Which card ramps is a function of where the centre is, so the probe
     /// tracks it the way U1's document view will.
-    private var centreIndex = Self.cardCount / 2
+    private var centreIndex = CarouselMotionProbe.cardCount / 2
 
     private func performSwitch(slots: Int, label: String) {
         note("switch.\(label).slots=\(slots)")

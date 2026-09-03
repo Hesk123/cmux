@@ -246,7 +246,6 @@ final class CarouselTrackAnimator {
     private func applyRecoil() {
         let current = presentationValue(forKeyPath: "transform.scale", on: layers.recoil)
             ?? CarouselMotion.centreScale
-        layers.recoil.removeAnimation(forKey: Self.recoilKey)
 
         let dip = CAKeyframeAnimation(keyPath: "transform.scale")
         // Explicit NSNumbers: `values` is `[Any]?`, and a CGFloat that only
@@ -272,7 +271,10 @@ final class CarouselTrackAnimator {
             CarouselMotion.linearCurve,
         ]
         dip.duration = CarouselMotion.switchDuration
-        layers.recoil.add(dip, forKey: Self.recoilKey)
+        carouselCommit {
+            layers.recoil.removeAnimation(forKey: Self.recoilKey)
+            layers.recoil.add(dip, forKey: Self.recoilKey)
+        }
     }
 
     // MARK: - Row 55, the per-card ramp
@@ -293,24 +295,26 @@ final class CarouselTrackAnimator {
         from oldTarget: CGFloat,
         to newTarget: CGFloat
     ) {
-        setModel(newTarget, forKeyPath: keyPath, on: layer)
-
         let move = CABasicAnimation(keyPath: keyPath)
         move.isAdditive = true
         move.fromValue = oldTarget - newTarget
         move.toValue = 0
         move.duration = CarouselMotion.switchDuration
         move.timingFunction = CarouselMotion.switchCurve
-        // A nil key accumulates. Naming it would replace the in-flight
-        // animation, which is the very thing additivity exists to avoid.
-        layer.add(move, forKey: nil)
+
+        // One transaction: the model write and the animation must reach the
+        // render server together, or the model-only state is committed on its
+        // own and the track snaps a full pitch for a frame. A nil key
+        // accumulates; naming it would replace the in-flight animation, which
+        // is the very thing additivity exists to avoid.
+        carouselCommit {
+            layer.setValue(newTarget, forKeyPath: keyPath)
+            layer.add(move, forKey: nil)
+        }
     }
 
     private func setModel(_ value: CGFloat, forKeyPath keyPath: String, on layer: CALayer) {
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        layer.setValue(value, forKeyPath: keyPath)
-        CATransaction.commit()
+        carouselCommit { layer.setValue(value, forKeyPath: keyPath) }
     }
 
     private func presentationValue(forKeyPath keyPath: String, on layer: CALayer) -> CGFloat? {

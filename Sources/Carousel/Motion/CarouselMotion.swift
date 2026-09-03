@@ -163,3 +163,26 @@ struct CarouselReduceMotion {
 
     var isEnabled: Bool { read() }
 }
+
+/// Applies model changes and their animations in ONE Core Animation
+/// transaction, with implicit actions off.
+///
+/// Splitting the two is a real defect, not a style point. A separate
+/// `CATransaction` around the model write commits model-only state to the
+/// render server before the animation is attached, and the probe reads exactly
+/// that: on the frame of a re-target the track's presentation translation jumps
+/// the full pitch and comes back on the next frame. The two commits normally
+/// coalesce inside one run-loop turn, so it is a hazard rather than a
+/// guaranteed visible snap — but it is free to remove and it makes every
+/// presentation-value measurement honest.
+///
+/// Disabling actions also stops Core Animation's default action from attaching
+/// its own 0.25 s animation to a property being set on a standalone layer, which
+/// silently replaced the keycap's 83 ms fade with a 250 ms one.
+@MainActor
+func carouselCommit(_ body: () -> Void) {
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    body()
+    CATransaction.commit()
+}

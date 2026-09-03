@@ -98,7 +98,7 @@ final class CarouselSendFeedback {
         let group = CAAnimationGroup()
         group.animations = [down, up]
         group.duration = CarouselMotion.sendPressIn + CarouselMotion.sendPressOut
-        pressTarget.add(group, forKey: "press")
+        carouselCommit { pressTarget.add(group, forKey: "press") }
     }
 
     /// Row 65's U2 half: the chips dim, and the input clears one frame later.
@@ -130,11 +130,10 @@ final class CarouselSendFeedback {
         step.toValue = target
         step.duration = duration
         step.timingFunction = CarouselMotion.switchCurve
-        layer.add(step, forKey: "opacity")
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        layer.opacity = target
-        CATransaction.commit()
+        carouselCommit {
+            layer.add(step, forKey: "opacity")
+            layer.opacity = target
+        }
     }
 
     private func presentationScale() -> CGFloat? {
