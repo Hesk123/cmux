@@ -1,3 +1,7 @@
+// GPL-3.0-or-later modified-file notice (CONTRACT row 129):
+// Modified 2026-09-02 for the cmux carousel UI (unit U1): added the window-scoped
+// carousel mode branch to the window content region.
+
 import AppKit
 import CmuxAppKitSupportUI
 import CmuxCommandPalette
@@ -915,6 +919,14 @@ struct ContentView: View {
     // Non-observed: flush pacing must not invalidate the view.
     @State private var selectedTabIds: Set<UUID> = []
     @State private var mountedWorkspaceIds: [UUID] = []
+    /// Carousel mode (CONTRACT rows 3, 17, 105 and Dawid's answer to Q3: a toggled
+    /// mode beside the existing sidebar and tab chrome, not a replacement).
+    ///
+    /// Window-scoped, not workspace-scoped. `WorkspaceLayoutMode` is published per
+    /// workspace and the canvas is scoped to one workspace's panels, but the
+    /// carousel's cards come from agent surfaces across every mounted workspace in
+    /// this window, so a workspace-scoped flag would make row 105 unsatisfiable.
+    @State private var carouselModeActive = false
     @State private var lastReconciledPortalRenderingStatesByWorkspaceId: [UUID: Bool] = [:]
     @State private var lastSidebarSelectionIndex: Int? = nil
     @State private var titlebarText: String = ""
@@ -1854,6 +1866,17 @@ struct ContentView: View {
         let retiringWorkspaceId = self.retiringWorkspaceId
 
         return ZStack {
+            // A mode swap, so this is a branch rather than a toggled modifier: the
+            // two arms are different view types and `_ConditionalContent`'s identity
+            // change is exactly what is wanted here. Window chrome, the toast slot
+            // and the menu bar all sit outside this region and do not move, which is
+            // what rows 17 and 73 need.
+            if carouselModeActive {
+                CarouselHostView(
+                    tabManager: tabManager,
+                    mountedWorkspaceIds: mountedWorkspaceIds
+                )
+            } else {
             ZStack {
                 ForEach(mountedWorkspaces) { tab in
                     let isSelectedWorkspace = selectedWorkspaceId == tab.id
@@ -1895,6 +1918,14 @@ struct ContentView: View {
             .opacity(sidebarSelectionState.selection == .tabs ? 1 : 0)
             .allowsHitTesting(sidebarSelectionState.selection == .tabs)
             .accessibilityHidden(sidebarSelectionState.selection != .tabs)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: CarouselModeState.toggleNotification)) { notification in
+            guard CarouselModeState.toggleApplies(notification, to: observedWindow) else { return }
+            carouselModeActive.toggle()
+            // Row 28: the card's `.behindWindow` material only reaches the desktop
+            // through a non-opaque window. Scoped to the mode and reversed on exit.
+            CarouselModeState.applyTranslucency(carouselModeActive, to: observedWindow)
         }
         .modifier(WorkspacePresentationModeContentTopPaddingModifier(
             isFullScreen: isFullScreen,
