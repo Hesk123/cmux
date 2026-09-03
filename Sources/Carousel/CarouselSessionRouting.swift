@@ -11,6 +11,11 @@ import Foundation
 /// The value every unit shares to describe one carousel card.
 struct CarouselSession: Equatable, Identifiable, Sendable {
     let panelId: UUID
+    /// The workspace the panel belongs to (row 132). Optional: construction
+    /// sites that genuinely do not know it (fixtures, compat shapes) pass
+    /// nil rather than a fabricated UUID, which would break panel lookup and
+    /// value semantics. Owned by U1; this copy deletes at integration.
+    let workspaceId: UUID?
     /// `SurfaceResourceID.description`
     let resourceId: String
     /// `nil` when the surface is not a Claude Code session.
@@ -23,6 +28,7 @@ struct CarouselSession: Equatable, Identifiable, Sendable {
 
     init(
         panelId: UUID,
+        workspaceId: UUID? = nil,
         resourceId: String,
         claudeSessionId: String?,
         projectSlug: String?,
@@ -30,6 +36,7 @@ struct CarouselSession: Equatable, Identifiable, Sendable {
         subtitle: String
     ) {
         self.panelId = panelId
+        self.workspaceId = workspaceId
         self.resourceId = resourceId
         self.claudeSessionId = claudeSessionId
         self.projectSlug = projectSlug

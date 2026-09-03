@@ -57,7 +57,9 @@ struct CarouselTopBarView: View {
         }
         .padding(.horizontal, metrics.horizontalInset)
         .frame(width: metrics.pillWidth, height: metrics.pillHeight)
-        .background(CarouselTopBarPalette.surface, in: .rect(cornerRadius: metrics.cornerRadius, style: .continuous))
+        // Circular, matching the prompt bar: Twin Rails frames the deck with
+        // two identical rails, and row 32's radius band was fitted circularly.
+        .background(CarouselTopBarPalette.surface, in: .rect(cornerRadius: metrics.cornerRadius, style: .circular))
         .accessibilityIdentifier(CarouselTopBarAccessibility.pill)
     }
 }
