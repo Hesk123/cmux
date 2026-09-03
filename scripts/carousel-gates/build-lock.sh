@@ -369,6 +369,21 @@ case "${1:-status}" in
       esac
     done
 
+    # Cheap, non-blocking submodule warning. A symlinked ghostty makes every git command
+    # in that worktree fail, so a build there produces commits nobody can inspect. Warn
+    # rather than refuse: the build itself still works, and blocking would strand a unit
+    # mid-run over something it can fix in two commands.
+    for sp in ghostty vendor/bonsplit; do
+      if [ -L "$sp" ]; then
+        echo "WARNING: $sp is a SYMLINK in this worktree." >&2
+        echo "  Every git command here fails with \"expected submodule path '$sp' not to be" >&2
+        echo "  a symbolic link\", so status, diff and commit are all broken. Fix with:" >&2
+        echo "    rm -rf ghostty && mkdir ghostty" >&2
+        echo "    cp -R $HOME/code/cmux/vendor/bonsplit/ vendor/bonsplit/ && rm -rf vendor/bonsplit/.git" >&2
+        log "WARN-SUBMODULE-SYMLINK unit=$unit path=$sp cwd=$PWD"
+      fi
+    done
+
     SHIM=$(mktemp -d)
     cat > "$SHIM/xcodebuild" <<'SHIMEOF'
 #!/bin/bash
