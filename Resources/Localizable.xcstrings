@@ -1,6 +1,132 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "carousel.subAgents.chip.countOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "1 agent" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "エージェント 1 件" } }
+      }
+    },
+    "carousel.subAgents.chip.countOther": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%lld agents" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "エージェント %lld 件" } }
+      }
+    },
+    "carousel.subAgents.chip.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sub-agents" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "サブエージェント" } }
+      }
+    },
+    "carousel.subAgents.popover.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sub-agents" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "サブエージェント" } }
+      }
+    },
+    "carousel.subAgents.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No sub-agents yet" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "サブエージェントはまだありません" } }
+      }
+    },
+    "carousel.subAgents.outOfScope": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Claude Code sessions only" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "Claude Code セッションのみ対応" } }
+      }
+    },
+    "carousel.subAgents.mirrorMissing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mirror not found" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ミラーが見つかりません" } }
+      }
+    },
+    "carousel.subAgents.mirrorMissingAt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No data root at %@" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%@ にデータルートがありません" } }
+      }
+    },
+    "carousel.subAgents.mirrorStale": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Data from %@ is stale" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%@ のデータが古くなっています" } }
+      }
+    },
+    "carousel.subAgents.mirrorStaleUnknownHost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mirrored data is stale" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ミラーのデータが古くなっています" } }
+      }
+    },
+    "carousel.subAgents.excludedOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "1 workspace not mounted" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "マウントされていないワークスペース 1 件" } }
+      }
+    },
+    "carousel.subAgents.excludedOther": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%lld workspaces not mounted" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "マウントされていないワークスペース %lld 件" } }
+      }
+    },
+    "carousel.subAgents.unnamedAgent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Agent %@" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "エージェント %@" } }
+      }
+    },
+    "carousel.subAgents.noDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No description" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "説明なし" } }
+      }
+    },
+    "carousel.subAgents.noMetadata": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Metadata not written yet" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メタデータは未書き込みです" } }
+      }
+    },
+    "carousel.subAgents.activity.running": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Running" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "実行中" } }
+      }
+    },
+    "carousel.subAgents.activity.finished": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Finished" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "完了" } }
+      }
+    },
+    "carousel.subAgents.activity.unknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Unknown" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "不明" } }
+      }
+    },
     "cli.help.readScreen": {
       "extractionState": "manual",
       "localizations": {

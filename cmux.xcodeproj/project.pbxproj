@@ -601,6 +601,8 @@
 		CAE10000000000000000000031 /* CarouselShortcutBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000032 /* CarouselShortcutBindings.swift */; };
 		CAE20000000000000000000007 /* CarouselShortcutCollisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000008 /* CarouselShortcutCollisionTests.swift */; };
 		CB10000000000000000000011 /* CarouselSnapshotCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000011 /* CarouselSnapshotCache.swift */; };
+		CE000000000000000000CE7024 /* CarouselSubAgentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7023 /* CarouselSubAgentsTests.swift */; };
+		CE000000000000000000CE7026 /* CarouselSubAgentsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7025 /* CarouselSubAgentsUITests.swift */; };
 		CAE10000000000000000000033 /* CarouselSubmitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000034 /* CarouselSubmitController.swift */; };
 		CAE20000000000000000000009 /* CarouselSubmitRoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000010 /* CarouselSubmitRoutingTests.swift */; };
 		CAE10000000000000000000035 /* CarouselSwipeNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000036 /* CarouselSwipeNavigator.swift */; };
@@ -2482,6 +2484,23 @@
 		F20F85FC5900550685FA33AD /* StackAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A8BD195031FC4B82B4354297 /* StackAuth */; };
 		C0DE70500000000000000002 /* start-cmux-profiling in Copy CLI */ = {isa = PBXBuildFile; fileRef = C0DE70500000000000000001 /* start-cmux-profiling */; };
 		D35B71010000000000000001 /* StartupBreadcrumbLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35B71010000000000000002 /* StartupBreadcrumbLog.swift */; };
+		CE000000000000000000CE7002 /* SubAgentDirectoryScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7001 /* SubAgentDirectoryScanner.swift */; };
+		CE000000000000000000CE7004 /* SubAgentDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7003 /* SubAgentDirectoryWatcher.swift */; };
+		CE000000000000000000CE7006 /* SubAgentLivenessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7005 /* SubAgentLivenessPolicy.swift */; };
+		CE000000000000000000CE7008 /* SubAgentMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7007 /* SubAgentMetadata.swift */; };
+		CE000000000000000000CE700A /* SubAgentOutline.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7009 /* SubAgentOutline.swift */; };
+		CE000000000000000000CE700C /* SubAgentRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE700B /* SubAgentRecord.swift */; };
+		CE000000000000000000CE700E /* SubAgentRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE700D /* SubAgentRowView.swift */; };
+		CE000000000000000000CE7010 /* SubAgentScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE700F /* SubAgentScan.swift */; };
+		CE000000000000000000CE7016 /* SubAgentsChipButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7015 /* SubAgentsChipButtonStyle.swift */; };
+		CE000000000000000000CE7018 /* SubAgentsChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7017 /* SubAgentsChipView.swift */; };
+		CE000000000000000000CE701A /* SubAgentsPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7019 /* SubAgentsPopoverView.swift */; };
+		CE000000000000000000CE701C /* SubAgentsPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE701B /* SubAgentsPresentation.swift */; };
+		CE000000000000000000CE701E /* SubAgentsSessionKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE701D /* SubAgentsSessionKey.swift */; };
+		CE000000000000000000CE7020 /* SubAgentsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE701F /* SubAgentsStore.swift */; };
+		CE000000000000000000CE7022 /* SubAgentsStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7021 /* SubAgentsStrings.swift */; };
+		CE000000000000000000CE7012 /* SubAgentTranscriptProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7011 /* SubAgentTranscriptProbe.swift */; };
+		CE000000000000000000CE7014 /* SubAgentWatchToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE000000000000000000CE7013 /* SubAgentWatchToken.swift */; };
 		C0DE70530000000000000002 /* submit-cmux-profile in Copy CLI */ = {isa = PBXBuildFile; fileRef = C0DE70530000000000000001 /* submit-cmux-profile */; };
 		D7AB00000000000000B041 /* SupersededPhoneDismissBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AB00000000000000B040 /* SupersededPhoneDismissBuffer.swift */; };
 		DD3A13AD76F5196C5FC8C52A /* SurfaceCatalog+Groups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660286CE22B478E887361407 /* SurfaceCatalog+Groups.swift */; };
@@ -3805,6 +3824,8 @@
 		CAE10000000000000000000032 /* CarouselShortcutBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselShortcutBindings.swift; sourceTree = "<group>"; };
 		CAE20000000000000000000008 /* CarouselShortcutCollisionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselShortcutCollisionTests.swift; sourceTree = "<group>"; };
 		CB20000000000000000000011 /* CarouselSnapshotCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselSnapshotCache.swift"; sourceTree = "<group>"; };
+		CE000000000000000000CE7023 /* CarouselSubAgentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSubAgentsTests.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7025 /* CarouselSubAgentsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSubAgentsUITests.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000034 /* CarouselSubmitController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSubmitController.swift; sourceTree = "<group>"; };
 		CAE20000000000000000000010 /* CarouselSubmitRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSubmitRoutingTests.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000036 /* CarouselSwipeNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSwipeNavigator.swift; sourceTree = "<group>"; };
@@ -5588,6 +5609,23 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 		A5C017000000000000000006 /* StackAccountAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackAccountAvatarView.swift; sourceTree = "<group>"; };
 		C0DE70500000000000000001 /* start-cmux-profiling */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "Resources/bin/start-cmux-profiling"; sourceTree = SOURCE_ROOT; };
 		D35B71010000000000000002 /* StartupBreadcrumbLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/StartupBreadcrumbLog.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7001 /* SubAgentDirectoryScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentDirectoryScanner.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7003 /* SubAgentDirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentDirectoryWatcher.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7005 /* SubAgentLivenessPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentLivenessPolicy.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7007 /* SubAgentMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentMetadata.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7009 /* SubAgentOutline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentOutline.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE700B /* SubAgentRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentRecord.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE700D /* SubAgentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentRowView.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE700F /* SubAgentScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentScan.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7015 /* SubAgentsChipButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsChipButtonStyle.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7017 /* SubAgentsChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsChipView.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7019 /* SubAgentsPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsPopoverView.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE701B /* SubAgentsPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsPresentation.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE701D /* SubAgentsSessionKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsSessionKey.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE701F /* SubAgentsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsStore.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7021 /* SubAgentsStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentsStrings.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7011 /* SubAgentTranscriptProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentTranscriptProbe.swift; sourceTree = "<group>"; };
+		CE000000000000000000CE7013 /* SubAgentWatchToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubAgentWatchToken.swift; sourceTree = "<group>"; };
 		C0DE70530000000000000001 /* submit-cmux-profile */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "Resources/bin/submit-cmux-profile"; sourceTree = SOURCE_ROOT; };
 		D7AB00000000000000B040 /* SupersededPhoneDismissBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupersededPhoneDismissBuffer.swift; sourceTree = "<group>"; };
 		660286CE22B478E887361407 /* SurfaceCatalog+Groups.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "SurfaceCatalog+Groups.swift"; sourceTree = "<group>"; };
@@ -6388,6 +6426,23 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CB20000000000000000000006 /* CarouselSessionModel.swift */,
 				CB20000000000000000000007 /* CarouselCardChromeView.swift */,
 				CB20000000000000000000008 /* CarouselCardView.swift */,
+				CE000000000000000000CE7021 /* SubAgentsStrings.swift */,
+				CE000000000000000000CE701F /* SubAgentsStore.swift */,
+				CE000000000000000000CE701D /* SubAgentsSessionKey.swift */,
+				CE000000000000000000CE701B /* SubAgentsPresentation.swift */,
+				CE000000000000000000CE7019 /* SubAgentsPopoverView.swift */,
+				CE000000000000000000CE7017 /* SubAgentsChipView.swift */,
+				CE000000000000000000CE7015 /* SubAgentsChipButtonStyle.swift */,
+				CE000000000000000000CE7013 /* SubAgentWatchToken.swift */,
+				CE000000000000000000CE7011 /* SubAgentTranscriptProbe.swift */,
+				CE000000000000000000CE700F /* SubAgentScan.swift */,
+				CE000000000000000000CE700D /* SubAgentRowView.swift */,
+				CE000000000000000000CE700B /* SubAgentRecord.swift */,
+				CE000000000000000000CE7009 /* SubAgentOutline.swift */,
+				CE000000000000000000CE7007 /* SubAgentMetadata.swift */,
+				CE000000000000000000CE7005 /* SubAgentLivenessPolicy.swift */,
+				CE000000000000000000CE7003 /* SubAgentDirectoryWatcher.swift */,
+				CE000000000000000000CE7001 /* SubAgentDirectoryScanner.swift */,
 				CE000000000000000000CE6011 /* CarouselToastView.swift */,
 				CE000000000000000000CE600F /* CarouselToastPresenter.swift */,
 				CE000000000000000000CE600D /* CarouselToast.swift */,
@@ -6493,6 +6548,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 			isa = PBXGroup;
 			children = (
 				B9000011A1B2C3D4E5F60719 /* AutomationSocketUITests.swift */,
+				CE000000000000000000CE7025 /* CarouselSubAgentsUITests.swift */,
 				FEED0000000000000000F008 /* FeedSidebarUITests.swift */,
 				B9000013A1B2C3D4E5F60719 /* JumpToUnreadUITests.swift */,
 				B9000022A1B2C3D4E5F60719 /* CloseWorkspaceCmdDUITests.swift */,
@@ -8766,6 +8822,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 			children = (
 				CB40000000000000000000001 /* CarouselMetricsTests.swift */,
 				CB40000000000000000000002 /* CarouselSessionMatchingTests.swift */,
+				CE000000000000000000CE7023 /* CarouselSubAgentsTests.swift */,
 				CE000000000000000000CE6019 /* CarouselToastMotionTests.swift */,
 				CE000000000000000000CE6017 /* CarouselOverlayFrameRecorder.swift */,
 				CE000000000000000000CE6015 /* CarouselGridTransitionTests.swift */,
@@ -11579,6 +11636,23 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 					E30780000000000000000012 /* SSHPTYAttachStartupCommandBuilder.swift in Sources */,
 				A5C017000000000000000005 /* StackAccountAvatarView.swift in Sources */,
 				D35B71010000000000000001 /* StartupBreadcrumbLog.swift in Sources */,
+				CE000000000000000000CE7002 /* SubAgentDirectoryScanner.swift in Sources */,
+				CE000000000000000000CE7004 /* SubAgentDirectoryWatcher.swift in Sources */,
+				CE000000000000000000CE7006 /* SubAgentLivenessPolicy.swift in Sources */,
+				CE000000000000000000CE7008 /* SubAgentMetadata.swift in Sources */,
+				CE000000000000000000CE700A /* SubAgentOutline.swift in Sources */,
+				CE000000000000000000CE700C /* SubAgentRecord.swift in Sources */,
+				CE000000000000000000CE700E /* SubAgentRowView.swift in Sources */,
+				CE000000000000000000CE7010 /* SubAgentScan.swift in Sources */,
+				CE000000000000000000CE7016 /* SubAgentsChipButtonStyle.swift in Sources */,
+				CE000000000000000000CE7018 /* SubAgentsChipView.swift in Sources */,
+				CE000000000000000000CE701A /* SubAgentsPopoverView.swift in Sources */,
+				CE000000000000000000CE701C /* SubAgentsPresentation.swift in Sources */,
+				CE000000000000000000CE701E /* SubAgentsSessionKey.swift in Sources */,
+				CE000000000000000000CE7020 /* SubAgentsStore.swift in Sources */,
+				CE000000000000000000CE7022 /* SubAgentsStrings.swift in Sources */,
+				CE000000000000000000CE7012 /* SubAgentTranscriptProbe.swift in Sources */,
+				CE000000000000000000CE7014 /* SubAgentWatchToken.swift in Sources */,
 				D7AB00000000000000B041 /* SupersededPhoneDismissBuffer.swift in Sources */,
 				DD3A13AD76F5196C5FC8C52A /* SurfaceCatalog+Groups.swift in Sources */,
 				F7F3BED81BD5FE96D52055C0 /* SurfaceCatalog.swift in Sources */,
@@ -12268,6 +12342,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				D0E0F0B0A1B2C3D4E5F60718 /* BrowserPaneNavigationKeybindUITests.swift in Sources */,
 				8478A0000000000000000002 /* BrowserRecoveryHTTPServer.swift in Sources */,
 				7B5F1A2E9C0D4B6A8E217304 /* BrowserReliabilityRegressionUITests.swift in Sources */,
+				CE000000000000000000CE7026 /* CarouselSubAgentsUITests.swift in Sources */,
 				B9000025A1B2C3D4E5F60719 /* CloseWindowConfirmDialogUITests.swift in Sources */,
 				B9000023A1B2C3D4E5F60719 /* CloseWorkspaceCmdDUITests.swift in Sources */,
 				B900001AA1B2C3D4E5F60719 /* CloseWorkspaceConfirmDialogUITests.swift in Sources */,
@@ -12458,6 +12533,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CAE20000000000000000000005 /* CarouselSendSequenceTests.swift in Sources */,
 				CB30000000000000000000002 /* CarouselSessionMatchingTests.swift in Sources */,
 				CAE20000000000000000000007 /* CarouselShortcutCollisionTests.swift in Sources */,
+				CE000000000000000000CE7024 /* CarouselSubAgentsTests.swift in Sources */,
 				CAE20000000000000000000009 /* CarouselSubmitRoutingTests.swift in Sources */,
 				CAE20000000000000000000011 /* CarouselSwipeNavigatorTests.swift in Sources */,
 				CE000000000000000000CE601A /* CarouselToastMotionTests.swift in Sources */,
