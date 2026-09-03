@@ -1,0 +1,10 @@
+# Build order, team-lead ruling 2026-09-03. One unit per line.
+# A listed unit sorts ahead of every unlisted one; unlisted units keep arrival order.
+u1
+u2
+u6
+u3
+u4
+u5
+provision
+u7

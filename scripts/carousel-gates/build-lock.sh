@@ -9,6 +9,7 @@
 #   cmux-build-lock.sh release <unit>                 give it back
 #   cmux-build-lock.sh run <unit> -- <command...>     acquire, run, ALWAYS release
 #   cmux-build-lock.sh status                         who holds it, and is it real
+#   cmux-build-lock.sh queue                          the waiting order, front first
 #   cmux-build-lock.sh reap                           remove a provably stranded lock
 #
 # `run` is the one to use. It releases on every exit path including a signal, which is
@@ -48,6 +49,124 @@ file_mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null || ech
 # artifact cache, and the next agent inherits the wreckage. Refusing the slot is the
 # cheaper failure.
 MIN_FREE_GIB=${CMUX_MIN_FREE_GIB:-15}
+
+# --- FIFO ticket queue ------------------------------------------------------------
+# Without this, every waiter polls the same mkdir and whoever happens to win the race
+# builds. With eight jobs waiting that is not a queue, it is a lottery: U1, first in the
+# ruled order, waited 33 minutes while later arrivals went ahead of it.
+#
+# A waiter now takes a numbered ticket and only ATTEMPTS the mkdir when its ticket is
+# the lowest live one. The mkdir stays as the actual mutex -- the queue decides whose
+# turn it is, the mkdir still guarantees only one winner if two agree they are next.
+#
+# Ordering is (priority, sequence). Priority comes from an optional order file, one unit
+# per line; a listed unit sorts ahead of every unlisted one, and unlisted units keep
+# plain arrival order among themselves.
+QUEUE=/tmp/cmux-build-queue.d
+SEQ_MUTEX=/tmp/cmux-build-seq.mutex.d
+SEQ_FILE=/tmp/cmux-build-queue.d/.seq
+ORDER_FILE=${CMUX_BUILD_ORDER_FILE:-/tmp/cmux-build-order}
+TICKET=""
+
+# The counter is incremented under its OWN mkdir mutex, separate from the build slot.
+# Read-modify-write on a shared file is not atomic, and two agents taking a ticket in
+# the same instant would otherwise get the same number and both believe they are next.
+next_seq() {
+  local n=0 waited=0
+  mkdir -p "$QUEUE" 2>/dev/null
+  while ! mkdir "$SEQ_MUTEX" 2>/dev/null; do
+    sleep 0.2
+    waited=$((waited + 1))
+    # The counter mutex is held for microseconds. Seconds of contention means a crashed
+    # holder, not a busy one, so break the deadlock rather than wait out the build.
+    if [ "$waited" -gt 50 ]; then
+      log "SEQ-MUTEX-BREAK held over 10s, assuming a crashed holder"
+      rm -rf "$SEQ_MUTEX"
+    fi
+  done
+  n=$(cat "$SEQ_FILE" 2>/dev/null || echo 0)
+  case "$n" in ''|*[!0-9]*) n=0 ;; esac
+  n=$((n + 1))
+  printf '%s\n' "$n" > "$SEQ_FILE"
+  rmdir "$SEQ_MUTEX" 2>/dev/null
+  printf '%s\n' "$n"
+}
+
+take_ticket() {
+  local unit=$1 n
+  n=$(next_seq)
+  TICKET="$QUEUE/$(printf '%06d' "$n")-$unit"
+  printf '%s\n' "$$" > "$TICKET"
+  log "TICKET unit=$unit seq=$n pid=$$"
+  echo "queued as ticket $(basename "$TICKET")" >&2
+}
+
+drop_ticket() {
+  [ -n "$TICKET" ] && rm -f "$TICKET" 2>/dev/null
+  TICKET=""
+}
+
+# A ticket whose holder is gone would block the whole queue forever, so liveness is
+# checked by kill -0 on the pid inside, the same test the lock itself uses.
+reap_dead_tickets() {
+  local t p
+  for t in "$QUEUE"/*; do
+    [ -f "$t" ] || continue
+    case "$(basename "$t")" in .seq) continue ;; esac
+    p=$(cat "$t" 2>/dev/null || echo "")
+    if [ -z "$p" ] || ! kill -0 "$p" 2>/dev/null; then
+      log "TICKET-REAP $(basename "$t") pid=${p:-none} reason=holder-dead"
+      rm -f "$t" 2>/dev/null
+    fi
+  done
+}
+
+# Position in the order file, or a large number when unlisted.
+priority_of() {
+  local unit=$1 i=1 line
+  [ -f "$ORDER_FILE" ] || { echo 9999; return; }
+  while IFS= read -r line; do
+    line=$(printf '%s' "$line" | tr -d '[:space:]')
+    [ -z "$line" ] && continue
+    case "$line" in \#*) continue ;; esac
+    if [ "$line" = "$unit" ]; then echo "$i"; return; fi
+    i=$((i + 1))
+  done < "$ORDER_FILE"
+  echo 9999
+}
+
+# The sort key for a ticket file: priority first, arrival second.
+ticket_key() {
+  local base=$1 seq unit
+  seq=${base%%-*}
+  unit=${base#*-}
+  printf '%04d:%s' "$(priority_of "$unit")" "$seq"
+}
+
+my_turn() {
+  [ -n "$TICKET" ] || return 0
+  reap_dead_tickets
+  local best="" t k mine
+  mine=$(ticket_key "$(basename "$TICKET")")
+  for t in "$QUEUE"/*; do
+    [ -f "$t" ] || continue
+    case "$(basename "$t")" in .seq) continue ;; esac
+    k=$(ticket_key "$(basename "$t")")
+    if [ -z "$best" ] || [ "$k" \< "$best" ]; then best=$k; fi
+  done
+  [ "$mine" = "$best" ]
+}
+
+queue_report() {
+  local t
+  [ -d "$QUEUE" ] || return 0
+  echo "  queue, in service order:" >&2
+  for t in "$QUEUE"/*; do
+    [ -f "$t" ] || continue
+    case "$(basename "$t")" in .seq) continue ;; esac
+    printf '%s\t%s\tpid %s\n' "$(ticket_key "$(basename "$t")")" "$(basename "$t")" "$(cat "$t" 2>/dev/null)"
+  done | sort | awk '{ printf "    %s  (pid %s)\n", $2, $4 }' >&2
+}
 
 free_gib() { df -Pk / | awk 'NR==2 {printf "%d", $4/1048576}'; }
 
@@ -144,9 +263,16 @@ acquire() {
   local deadline=$(( $(now) + timeout ))
   local warned=0
   disk_ok || return 4
+  take_ticket "$unit"
+  # The ticket is dropped on every exit path, or a crashed waiter blocks the queue
+  # until its ticket is reaped.
+  trap 'drop_ticket' EXIT INT TERM HUP
   while true; do
     reap >/dev/null
-    if ! builds_running && ! legacy_present && mkdir "$LOCK" 2>/dev/null; then
+    # Only the front of the queue even attempts the mutex. The mkdir still decides,
+    # so a disagreement about whose turn it is cannot produce two builders.
+    if my_turn && ! builds_running && ! legacy_present && mkdir "$LOCK" 2>/dev/null; then
+      drop_ticket
       printf '%s\n' "$$"      > "$LOCK/pid"
       printf '%s\n' "$unit"   > "$LOCK/unit"
       now                     > "$LOCK/started_epoch"
@@ -166,6 +292,8 @@ acquire() {
     if [ "$(now)" -ge "$deadline" ]; then
       echo "timed out after ${timeout}s waiting for the build slot." >&2
       status >&2
+      queue_report
+      drop_ticket
       return 2
     fi
     sleep 10
@@ -206,7 +334,8 @@ status() {
 case "${1:-status}" in
   acquire) shift; acquire "$@" ;;
   release) shift; release "${1:-}" ;;
-  status)  status ;;
+  status)  status; queue_report ;;
+  queue)   reap_dead_tickets; queue_report ;;
   reap)    reap; status ;;
   run)
     shift
