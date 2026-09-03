@@ -541,6 +541,19 @@
 		CA52B0070000000000000000 /* CanvasPaneContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA52C0070000000000000000 /* CanvasPaneContent.swift */; };
 		852600010000000000000002 /* CanvasPaneContentMountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852600010000000000000001 /* CanvasPaneContentMountTests.swift */; };
 		C4A570030000000000000001 /* CanvasShortcutContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A570030000000000000002 /* CanvasShortcutContextTests.swift */; };
+		391930C1B60CB1702D5E76BE /* CarouselGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4167E5AEAE531D6C5E8898 /* CarouselGridLayout.swift */; };
+		19E730C606DD81B939CF5B9E /* CarouselGridLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9896A9FC66570FE117F046 /* CarouselGridLayoutTests.swift */; };
+		2B755BCC387A81834D2C953B /* CarouselGridPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAB2C982A8579E676E6B669 /* CarouselGridPresenter.swift */; };
+		C5C6FA27B39604B3F535413B /* CarouselGridSelectionIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B02AE5C02213795100E8F09 /* CarouselGridSelectionIndicator.swift */; };
+		2EBB72AE7A51C82B350240AD /* CarouselGridTransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805F5B0BBFA3BA0E1D24DD64 /* CarouselGridTransitionTests.swift */; };
+		168BF9DB5D160C3058B71CFC /* CarouselOverlayFrameRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410308BDECCB278E5C7BFDB5 /* CarouselOverlayFrameRecorder.swift */; };
+		CF28CB48DD09260C7734E8C4 /* CarouselOverlayGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFDFD74640181BE2EEEC91F /* CarouselOverlayGeometry.swift */; };
+		66E5DF58EF09B119E69E3612 /* CarouselOverlayHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808047B31D0DC12A58FCCD72 /* CarouselOverlayHostView.swift */; };
+		3E77497AE911E4EAD74FF9DB /* CarouselOverlayMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7153DC208DB79E7FB1E29F0A /* CarouselOverlayMotion.swift */; };
+		CEA7F6B86DDF61F18D9198DA /* CarouselToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B256EFFEF31E951D105DBD /* CarouselToast.swift */; };
+		C73942A509E5B8AC4D31214C /* CarouselToastMotionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBFA76380B4874C01FFDC03 /* CarouselToastMotionTests.swift */; };
+		77480089A8D7CD3AFA4A9F30 /* CarouselToastPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B995E8C8253AC8ECF9EAA2 /* CarouselToastPresenter.swift */; };
+		8F4A457C1612CC1D5E66E72C /* CarouselToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9184B9362757F0B6F9FC2D03 /* CarouselToastView.swift */; };
 		081696D3A66545C50AD0598E /* ChecklistInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E449BD36EA0670CC7D75C /* ChecklistInputField.swift */; };
 		D78129DCAE6C4D919AE20FF9 /* ChecklistPopoverPointerTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9890AFCF5E5F4F3DA9F00CCC /* ChecklistPopoverPointerTracking.swift */; };
 		ED226C59A21547BB962DB2A5 /* ChecklistSummaryPopoverModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319C469164C74F2F8E41D2C3 /* ChecklistSummaryPopoverModifier.swift */; };
@@ -3672,6 +3685,19 @@
 		CA52C0070000000000000000 /* CanvasPaneContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CanvasPaneContent.swift"; sourceTree = "<group>"; };
 		852600010000000000000001 /* CanvasPaneContentMountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasPaneContentMountTests.swift; sourceTree = "<group>"; };
 		C4A570030000000000000002 /* CanvasShortcutContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasShortcutContextTests.swift; sourceTree = "<group>"; };
+		8F4167E5AEAE531D6C5E8898 /* CarouselGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselGridLayout.swift"; sourceTree = "<group>"; };
+		6B9896A9FC66570FE117F046 /* CarouselGridLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselGridLayoutTests.swift"; sourceTree = "<group>"; };
+		AAAB2C982A8579E676E6B669 /* CarouselGridPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselGridPresenter.swift"; sourceTree = "<group>"; };
+		9B02AE5C02213795100E8F09 /* CarouselGridSelectionIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselGridSelectionIndicator.swift"; sourceTree = "<group>"; };
+		805F5B0BBFA3BA0E1D24DD64 /* CarouselGridTransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselGridTransitionTests.swift"; sourceTree = "<group>"; };
+		410308BDECCB278E5C7BFDB5 /* CarouselOverlayFrameRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselOverlayFrameRecorder.swift"; sourceTree = "<group>"; };
+		FAFDFD74640181BE2EEEC91F /* CarouselOverlayGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselOverlayGeometry.swift"; sourceTree = "<group>"; };
+		808047B31D0DC12A58FCCD72 /* CarouselOverlayHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselOverlayHostView.swift"; sourceTree = "<group>"; };
+		7153DC208DB79E7FB1E29F0A /* CarouselOverlayMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselOverlayMotion.swift"; sourceTree = "<group>"; };
+		91B256EFFEF31E951D105DBD /* CarouselToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselToast.swift"; sourceTree = "<group>"; };
+		FFBFA76380B4874C01FFDC03 /* CarouselToastMotionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselToastMotionTests.swift"; sourceTree = "<group>"; };
+		26B995E8C8253AC8ECF9EAA2 /* CarouselToastPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselToastPresenter.swift"; sourceTree = "<group>"; };
+		9184B9362757F0B6F9FC2D03 /* CarouselToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselToastView.swift"; sourceTree = "<group>"; };
 		3E3E449BD36EA0670CC7D75C /* ChecklistInputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistInputField.swift; sourceTree = "<group>"; };
 		9890AFCF5E5F4F3DA9F00CCC /* ChecklistPopoverPointerTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistPopoverPointerTracking.swift"; sourceTree = "<group>"; };
 		319C469164C74F2F8E41D2C3 /* ChecklistSummaryPopoverModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistSummaryPopoverModifier.swift"; sourceTree = "<group>"; };
@@ -6228,6 +6254,46 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F5FECA5566CD4AC484D1CC66 /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				FAFDFD74640181BE2EEEC91F /* CarouselOverlayGeometry.swift */,
+				7153DC208DB79E7FB1E29F0A /* CarouselOverlayMotion.swift */,
+				808047B31D0DC12A58FCCD72 /* CarouselOverlayHostView.swift */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
+		AF1A5ED62FCD0DFA17640F43 /* Grid */ = {
+			isa = PBXGroup;
+			children = (
+				8F4167E5AEAE531D6C5E8898 /* CarouselGridLayout.swift */,
+				AAAB2C982A8579E676E6B669 /* CarouselGridPresenter.swift */,
+				9B02AE5C02213795100E8F09 /* CarouselGridSelectionIndicator.swift */,
+			);
+			path = Grid;
+			sourceTree = "<group>";
+		};
+		AEF297E91C8E3763909EC924 /* Toast */ = {
+			isa = PBXGroup;
+			children = (
+				91B256EFFEF31E951D105DBD /* CarouselToast.swift */,
+				9184B9362757F0B6F9FC2D03 /* CarouselToastView.swift */,
+				26B995E8C8253AC8ECF9EAA2 /* CarouselToastPresenter.swift */,
+			);
+			path = Toast;
+			sourceTree = "<group>";
+		};
+		148465D96544681EDBEC6255 /* Carousel */ = {
+			isa = PBXGroup;
+			children = (
+				F5FECA5566CD4AC484D1CC66 /* Overlay */,
+				AF1A5ED62FCD0DFA17640F43 /* Grid */,
+				AEF297E91C8E3763909EC924 /* Toast */,
+			);
+			path = Carousel;
+			sourceTree = "<group>";
+		};
 		087C454FFF74443AB06942C3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -8328,6 +8394,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				8777A0028777A0028777A002 /* AppDelegate+DockAttentionRouting.swift */,
 				DCDC3000000000000000E002 /* AppDelegate+DockShortcutRouting.swift */,
 				CA52D0010000000000000000 /* Canvas */,
+				148465D96544681EDBEC6255 /* Carousel */,
 				CA52F0020000000000000000 /* TerminalController+ControlCanvasContext.swift */,
 				C51A73000000000000000004 /* TerminalController+ControlSimulatorContext.swift */,
 				C51A73B30000000000000001 /* ControlSimulatorPendingTextInput.swift */,
@@ -8530,6 +8597,10 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 		F1000003A1B2C3D4E5F60718 /* cmuxTests */ = {
 			isa = PBXGroup;
 			children = (
+				410308BDECCB278E5C7BFDB5 /* CarouselOverlayFrameRecorder.swift */,
+				6B9896A9FC66570FE117F046 /* CarouselGridLayoutTests.swift */,
+				805F5B0BBFA3BA0E1D24DD64 /* CarouselGridTransitionTests.swift */,
+				FFBFA76380B4874C01FFDC03 /* CarouselToastMotionTests.swift */,
 				C11322A20000000000000001 /* CloudManualMirrorTransportTests.swift */,
 				9520B0019520B0019520B001 /* HermesFirstClassSupportTests.swift */,
 				A11CE0020000000000000001 /* AboutLicensesResourceTests.swift */,
@@ -10176,6 +10247,15 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CA52E0030000000000000000 /* CanvasInlineBrowserHostingEnvironment.swift in Sources */,
 				CA52B0060000000000000000 /* CanvasLayoutSettings.swift in Sources */,
 				CA52B0070000000000000000 /* CanvasPaneContent.swift in Sources */,
+				391930C1B60CB1702D5E76BE /* CarouselGridLayout.swift in Sources */,
+				2B755BCC387A81834D2C953B /* CarouselGridPresenter.swift in Sources */,
+				C5C6FA27B39604B3F535413B /* CarouselGridSelectionIndicator.swift in Sources */,
+				CF28CB48DD09260C7734E8C4 /* CarouselOverlayGeometry.swift in Sources */,
+				66E5DF58EF09B119E69E3612 /* CarouselOverlayHostView.swift in Sources */,
+				3E77497AE911E4EAD74FF9DB /* CarouselOverlayMotion.swift in Sources */,
+				CEA7F6B86DDF61F18D9198DA /* CarouselToast.swift in Sources */,
+				77480089A8D7CD3AFA4A9F30 /* CarouselToastPresenter.swift in Sources */,
+				8F4A457C1612CC1D5E66E72C /* CarouselToastView.swift in Sources */,
 				081696D3A66545C50AD0598E /* ChecklistInputField.swift in Sources */,
 				D78129DCAE6C4D919AE20FF9 /* ChecklistPopoverPointerTracking.swift in Sources */,
 				ED226C59A21547BB962DB2A5 /* ChecklistSummaryPopoverModifier.swift in Sources */,
@@ -12139,6 +12219,10 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				0A0F00580000000000000003 /* CampfireSupportTestSupport.swift in Sources */,
 				852600010000000000000002 /* CanvasPaneContentMountTests.swift in Sources */,
 				C4A570030000000000000001 /* CanvasShortcutContextTests.swift in Sources */,
+				19E730C606DD81B939CF5B9E /* CarouselGridLayoutTests.swift in Sources */,
+				2EBB72AE7A51C82B350240AD /* CarouselGridTransitionTests.swift in Sources */,
+				168BF9DB5D160C3058B71CFC /* CarouselOverlayFrameRecorder.swift in Sources */,
+				C73942A509E5B8AC4D31214C /* CarouselToastMotionTests.swift in Sources */,
 				F3000000A1B2C3D4E5F60718 /* CJKIMEInputTests.swift in Sources */,
 				D3571002A1B2C3D4E5F60718 /* CJKIMEMarkedSelectionTests.swift in Sources */,
 				A5D41232A1B2C3D4E5F60718 /* ClaudeBackgroundWorkNotifyTests.swift in Sources */,
