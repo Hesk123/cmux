@@ -1,3 +1,4 @@
+// Modified 2026-09-03 for the cmux carousel build (Xcode 26.4 / Swift 6.3 test compile fix).
 import CMUXMobileCore
 import Foundation
 import Testing
@@ -128,6 +129,9 @@ import Testing
         )
         #expect(JSONSerialization.isValidJSONObject(body))
     }
+    // PresenceHeartbeatClient is @MainActor, so resolvedServiceURL is too. Swift 6.3
+    // checks that isolation inside a macro expansion, which earlier compilers did not.
+    @MainActor
     @Test func productionPresenceIgnoresStagingEnvironment() {
         let defaults = UserDefaults(suiteName: "presence-prod-origin-\(UUID().uuidString)")!
         #expect(PresenceHeartbeatClient.resolvedServiceURL(
