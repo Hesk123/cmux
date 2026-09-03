@@ -120,7 +120,7 @@ final class CarouselSessionModel {
         if !isClaude {
             status = .outOfScope
         } else if !isMirrorFresh {
-            status = .stale(age: mirrorAge ?? CarouselDataRoot.stalenessBound)
+            status = .stale(age: mirrorAge ?? CarouselDataRoot.mirrorMaxAge)
         } else if let record {
             status = record.carouselStatus
         } else {

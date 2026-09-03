@@ -200,7 +200,7 @@ struct CarouselSessionMatchingTests {
         """
         try Data(json.utf8).write(to: sessions.appending(path: "1.json", directoryHint: .notDirectory))
 
-        let liveness = CarouselSessionLiveness(root: CarouselDataRoot(url: directory))
+        let liveness = CarouselSessionLiveness(root: CarouselDataRoot(url: directory, source: .environmentOverride, freshness: .unknown))
         let records = liveness.records()
         #expect(records.count == 1)
         #expect(records.first?.name == canary)
@@ -218,7 +218,7 @@ struct CarouselSessionMatchingTests {
         )
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        let liveness = CarouselSessionLiveness(root: CarouselDataRoot(url: directory))
+        let liveness = CarouselSessionLiveness(root: CarouselDataRoot(url: directory, source: .environmentOverride, freshness: .unknown))
         #expect(liveness.records().isEmpty)
     }
 
@@ -232,7 +232,7 @@ struct CarouselSessionMatchingTests {
         try FileManager.default.createDirectory(at: sessions, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        let liveness = CarouselSessionLiveness(root: CarouselDataRoot(url: directory))
+        let liveness = CarouselSessionLiveness(root: CarouselDataRoot(url: directory, source: .environmentOverride, freshness: .unknown))
         let start = Date(timeIntervalSince1970: 1_000_000)
         #expect(liveness.records(now: start).isEmpty)
 
@@ -252,19 +252,28 @@ struct CarouselSessionMatchingTests {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        let root = CarouselDataRoot(url: directory)
-        #expect(root.isFresh())
+        let root = CarouselDataRoot(url: directory, source: .environmentOverride, freshness: .unknown)
+        // The stamp is the freshness clock: the mirror writes it last, after the
+        // data lands, so its epoch is what the bound is measured against.
+        let now = Date()
+        try Data(
+            "completed_epoch=\(now.timeIntervalSince1970)\nhost=hive\n".utf8
+        ).write(to: directory.appending(path: ".mirror-stamp", directoryHint: .notDirectory))
+        #expect(CarouselDataRoot.mirrorFreshness(at: root.url, now: now) == .fresh(age: 0))
         // A downed ssh bridge must read as stale rather than as an idle machine.
-        let later = Date().addingTimeInterval(CarouselDataRoot.stalenessBound + 5)
-        #expect(!root.isFresh(now: later))
-        #expect((root.age(now: later) ?? 0) > CarouselDataRoot.stalenessBound)
+        let later = now.addingTimeInterval(CarouselDataRoot.mirrorMaxAge + 5)
+        #expect(
+            CarouselDataRoot.mirrorFreshness(at: root.url, now: later)
+                == .stale(age: CarouselDataRoot.mirrorMaxAge + 5, host: "hive")
+        )
+        #expect((CarouselDataRoot.mirrorAge(at: root.url, now: later) ?? 0) > CarouselDataRoot.mirrorMaxAge)
     }
 
     @Test("A missing root has no age and is never fresh")
     func missingRoot() {
-        let root = CarouselDataRoot(url: URL(filePath: "/nonexistent/carousel/root"))
-        #expect(root.age() == nil)
-        #expect(!root.isFresh())
+        let missing = URL(filePath: "/nonexistent/carousel/root")
+        #expect(CarouselDataRoot.mirrorAge(at: missing) == nil)
+        #expect(CarouselDataRoot.mirrorFreshness(at: missing) == .unknown)
     }
 
     // MARK: - Row 10: the never-captured flank renders the placeholder

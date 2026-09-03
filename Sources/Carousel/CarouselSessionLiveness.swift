@@ -100,11 +100,14 @@ final class CarouselSessionLiveness {
     /// whether any session file parsed. Row 117: bridge down, Hive asleep and a
     /// half-finished copy all leave a root that reads fine and lies.
     func isMirrorFresh(now: Date = .now) -> Bool {
-        root.isFresh(now: now, fileManager: fileManager)
+        if case .fresh = CarouselDataRoot.mirrorFreshness(at: root.url, now: now) {
+            return true
+        }
+        return false
     }
 
     func mirrorAge(now: Date = .now) -> TimeInterval? {
-        root.age(now: now, fileManager: fileManager)
+        CarouselDataRoot.mirrorAge(at: root.url, now: now)
     }
 
     private static func readRecords(
@@ -112,7 +115,7 @@ final class CarouselSessionLiveness {
         fileManager: FileManager
     ) -> [CarouselClaudeSessionRecord] {
         guard let names = try? fileManager.contentsOfDirectory(
-            atPath: root.sessionsURL.path(percentEncoded: false)
+            atPath: root.sessionsDirectory.path(percentEncoded: false)
         ) else {
             return []
         }
@@ -121,7 +124,7 @@ final class CarouselSessionLiveness {
             .filter { $0.hasSuffix(".json") }
             .sorted()
             .compactMap { name in
-                let url = root.sessionsURL.appending(path: name, directoryHint: .notDirectory)
+                let url = root.sessionsDirectory.appending(path: name, directoryHint: .notDirectory)
                 guard let data = try? Data(contentsOf: url) else { return nil }
                 return try? decoder.decode(CarouselClaudeSessionRecord.self, from: data)
             }

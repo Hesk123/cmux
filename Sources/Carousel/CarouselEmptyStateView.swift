@@ -16,7 +16,7 @@ struct CarouselEmptyStateView: View {
     enum Reason: Equatable {
         /// Every workspace was searched and no surface is running an agent.
         case noAgentSurfaces
-        /// The mirror is older than `CarouselDataRoot.stalenessBound`.
+        /// The mirror is older than `CarouselDataRoot.mirrorMaxAge`.
         case mirrorStale(age: TimeInterval)
         /// Row 132: agent surfaces exist but their workspaces are not mounted.
         case allSurfacesUnmounted(count: Int)

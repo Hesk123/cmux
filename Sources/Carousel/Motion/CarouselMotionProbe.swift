@@ -116,14 +116,14 @@ final class CarouselMotionProbe: NSObject {
         viewport = CGRect(origin: .zero, size: size)
 
         let scale = NSScreen.main?.backingScaleFactor ?? 0
-        let visible = NSScreen.main?.visibleFrame.size ?? .zero
+        let screenSize = NSScreen.main?.visibleFrame.size ?? .zero
         let scaleOK = scale == 2.0
-        let visibleOK = visible.width >= 1344 && visible.height >= 1080
+        let visibleOK = screenSize.width >= 1344 && screenSize.height >= 1080
         let windowOK = size.width == 1344 && size.height == 1080
         precondition = Precondition(
             lines: [
                 "backingScaleFactor=\(scale) required=2.0 \(scaleOK ? "OK" : "FAIL")",
-                "visibleFrame=\(Int(visible.width))x\(Int(visible.height)) required>=1344x1080 \(visibleOK ? "OK" : "FAIL")",
+                "visibleFrame=\(Int(screenSize.width))x\(Int(screenSize.height)) required>=1344x1080 \(visibleOK ? "OK" : "FAIL")",
                 "window=\(Int(size.width))x\(Int(size.height)) required=1344x1080 \(windowOK ? "OK" : "FAIL")",
                 "backingStore=\(Int(size.width * scale))x\(Int(size.height * scale)) expected=2688x2160",
             ],

@@ -48,7 +48,7 @@ final class CarouselRootView: NSView, CarouselSessionRouting {
         coordinator = CarouselLiveSwapCoordinator(mount: mount, cache: cache)
         track = CarouselTrackView(metrics: metrics)
         sessionModel = CarouselSessionModel(
-            liveness: CarouselSessionLiveness(root: CarouselDataRoot())
+            liveness: CarouselSessionLiveness(root: CarouselDataRoot.resolve())
         )
         super.init(frame: .zero)
         wantsLayer = true
@@ -134,7 +134,7 @@ final class CarouselRootView: NSView, CarouselSessionRouting {
     /// into one rendering.
     static func emptyReason(for snapshot: CarouselSessionSnapshot) -> CarouselEmptyStateView.Reason {
         if !snapshot.isMirrorFresh {
-            return .mirrorStale(age: snapshot.mirrorAge ?? CarouselDataRoot.stalenessBound)
+            return .mirrorStale(age: snapshot.mirrorAge ?? CarouselDataRoot.mirrorMaxAge)
         }
         if snapshot.unmountedAgentSurfaceCount > 0 {
             return .allSurfacesUnmounted(count: snapshot.unmountedAgentSurfaceCount)

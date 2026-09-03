@@ -136,10 +136,27 @@ struct CarouselDataRoot: Sendable, Equatable {
     /// than the data it vouches for. A half-finished pull leaves the previous stamp,
     /// which reads as stale rather than as fresh-but-truncated.
     static func mirrorFreshness(at url: URL, now: Date = .now) -> Freshness {
+        guard let (epoch, host) = stampClock(at: url) else { return .unknown }
+        let age = now.timeIntervalSince1970 - epoch
+        return age <= mirrorMaxAge ? .fresh(age: age) : .stale(age: age, host: host)
+    }
+
+    /// Age of the mirror stamp, or nil when there is no stamp (the mirror has never
+    /// run, or this is a local/fixture root). Single code path with mirrorFreshness
+    /// so the two can never disagree about what the stamp says.
+    static func mirrorAge(at url: URL, now: Date = .now) -> TimeInterval? {
+        guard let (epoch, _) = stampClock(at: url) else { return nil }
+        return now.timeIntervalSince1970 - epoch
+    }
+
+    /// Parses `.mirror-stamp` into its completion epoch and host, or nil when the
+    /// stamp is missing or unparsable. The ONLY stamp reader; every freshness
+    /// question goes through here so no call site builds the stamp path itself.
+    private static func stampClock(at url: URL) -> (epoch: TimeInterval, host: String?)? {
         let stampURL = url.appending(path: ".mirror-stamp")
         guard let data = try? Data(contentsOf: stampURL),
               let text = String(data: data, encoding: .utf8) else {
-            return .unknown
+            return nil
         }
         var epoch: TimeInterval?
         var host: String?
@@ -152,8 +169,7 @@ struct CarouselDataRoot: Sendable, Equatable {
             default: break
             }
         }
-        guard let epoch else { return .unknown }
-        let age = now.timeIntervalSince1970 - epoch
-        return age <= mirrorMaxAge ? .fresh(age: age) : .stale(age: age, host: host)
+        guard let epoch else { return nil }
+        return (epoch, host)
     }
 }

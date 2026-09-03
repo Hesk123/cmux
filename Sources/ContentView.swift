@@ -930,7 +930,9 @@ struct ContentView: View {
     /// H2's in-process recorder, held for the window's life while recording.
     /// Created only when CMUX_CAROUSEL_RECORD names an output path; a normal
     /// launch never constructs a stream (row 122: no Screen Recording grant).
-    @State private var carouselRecorder: CarouselFrameRecorder?
+    /// Type-erased: CarouselFrameRecorder is macOS 14.4+ while the deployment
+    /// target is 14.0, so the property cannot name the type.
+    @State private var carouselRecorder: Any?
     @State private var lastReconciledPortalRenderingStatesByWorkspaceId: [UUID: Bool] = [:]
     @State private var lastSidebarSelectionIndex: Int? = nil
     @State private var titlebarText: String = ""
@@ -1931,7 +1933,8 @@ struct ContentView: View {
             CarouselDebugEntryPoint.installIfEnabled()
             // H2 capture, inert unless CMUX_CAROUSEL_RECORD is set. Empty
             // titleMatch records the largest on-screen window of this process.
-            if carouselRecorder == nil, let url = CarouselFrameRecorder.requestedOutputURL() {
+            if #available(macOS 14.4, *), carouselRecorder == nil,
+               let url = CarouselFrameRecorder.requestedOutputURL() {
                 let recorder = CarouselFrameRecorder()
                 carouselRecorder = recorder
                 Task { try? await recorder.start(outputURL: url, titleMatch: "") }
