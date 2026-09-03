@@ -89,6 +89,38 @@ final class CarouselGridSelectionIndicator {
         let fromPosition = presentation?.position ?? layer.position
         let fromBounds = presentation?.bounds ?? layer.bounds
 
+        if CarouselOverlayMotion.reduceMotion, animated {
+            // Geometry changes only while the ring is invisible: fade out,
+            // snap, fade back in. The previous shape committed the geometry
+            // at full opacity first and only then blinked — a teleport with
+            // a blink on top, which row 113's letter cannot see but a viewer
+            // can (row 80/113, ruling (d) A1).
+            let half = CarouselOverlayMotion.reducedCrossFade / 2
+            let out = CABasicAnimation(keyPath: "opacity")
+            out.fromValue = presentation?.opacity ?? layer.opacity
+            out.toValue = 0
+            out.duration = half
+            out.timingFunction = CarouselOverlayMotion.easeOut
+            CATransaction.begin()
+            CATransaction.setCompletionBlock { [weak self] in
+                guard let self else { return }
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
+                self.layer.bounds = CGRect(origin: .zero, size: targetFrame.size)
+                self.layer.position = CGPoint(x: targetFrame.midX, y: targetFrame.midY)
+                CATransaction.commit()
+                let inn = CABasicAnimation(keyPath: "opacity")
+                inn.fromValue = 0
+                inn.toValue = 1
+                inn.duration = half
+                inn.timingFunction = CarouselOverlayMotion.easeOut
+                self.layer.add(inn, forKey: "carousel.grid.selection.opacity")
+            }
+            layer.add(out, forKey: "carousel.grid.selection.opacity")
+            CATransaction.commit()
+            return
+        }
+
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         layer.bounds = CGRect(origin: .zero, size: targetFrame.size)
@@ -98,15 +130,6 @@ final class CarouselGridSelectionIndicator {
         guard animated else {
             layer.removeAnimation(forKey: "carousel.grid.selection.position")
             layer.removeAnimation(forKey: "carousel.grid.selection.bounds")
-            return
-        }
-
-        if CarouselOverlayMotion.reduceMotion {
-            let fade = CAKeyframeAnimation(keyPath: "opacity")
-            fade.values = [layer.opacity, 0, 0, layer.opacity]
-            fade.keyTimes = [0, 0.45, 0.55, 1]
-            fade.duration = CarouselOverlayMotion.reducedCrossFade
-            layer.add(fade, forKey: "carousel.grid.selection.opacity")
             return
         }
 

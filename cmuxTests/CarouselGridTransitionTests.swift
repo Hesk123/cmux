@@ -356,6 +356,26 @@ final class CarouselGridTransitionTests: XCTestCase {
         XCTAssertEqual(presenter.mode, .grid)
     }
 
+    // MARK: - Row 80/113 (S6b), ring under reduced motion
+
+    func testReducedMotionRingMovesOnlyWhileInvisible() async throws {
+        // Ruling (d) A1: the previous shape committed geometry at full
+        // opacity first and only then blinked — a teleport the row-113 letter
+        // cannot see. Geometry must still be at A immediately after the move
+        // and reach B only after the fade completes.
+        CarouselOverlayMotion.reduceMotionProvider = { true }
+        let indicator = presenter.selectionIndicator
+        let frameA = CGRect(x: 100, y: 100, width: 200, height: 150)
+        let frameB = CGRect(x: 400, y: 300, width: 200, height: 150)
+        indicator.move(to: frameA, animated: false)
+        indicator.move(to: frameB, animated: true)
+        XCTAssertEqual(indicator.layer.position.x, frameA.midX, accuracy: 0.5)
+        XCTAssertEqual(indicator.layer.position.y, frameA.midY, accuracy: 0.5)
+        await spin(CarouselOverlayMotion.reducedCrossFade + 0.3)
+        XCTAssertEqual(indicator.layer.position.x, frameB.midX, accuracy: 0.5)
+        XCTAssertEqual(indicator.layer.position.y, frameB.midY, accuracy: 0.5)
+    }
+
     // MARK: - Pixel helpers
 
     /// Renders the host's layer tree into a bitmap.

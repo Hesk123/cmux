@@ -373,4 +373,58 @@ final class CarouselToastMotionTests: XCTestCase {
                        "nor does the height")
         XCTAssertLessThanOrEqual(widths[1], geometry.toastMaxWidth + 0.5, "still capped")
     }
+
+    // MARK: - Row 37 corrected, mid-band + ruling (d)
+
+    func testToastWidthTracksContentInsideTheClamps() async throws {
+        // "ok" saturates the floor and the 6x line the ceiling, so a
+        // constant-width build passes both. This body lands mid-band
+        // (measured ~252 CSS on the reference panel): it fails on a constant
+        // and on either clamp.
+        var settled = false
+        presenter.onSettled = { _ in settled = true }
+        presenter.present(CarouselToast(title: "hive", body: "compiling target cmux xcodebuild", status: .running, slot: 0))
+        _ = await spinUntil({ settled }, timeout: 4.0)
+        let view = try XCTUnwrap(presenter.presentedView)
+        XCTAssertGreaterThan(view.frame.width, geometry.toastMinWidth + 1)
+        XCTAssertLessThan(view.frame.width, geometry.toastMaxWidth - 1)
+        presenter.dismiss()
+        _ = await spinUntil({ !self.presenter.isPresenting }, timeout: 4.0)
+    }
+
+    func testToastAccessibilityLabelNamesTheStatus() async throws {
+        // Ruling (d) A3: VoiceOver must say whether the session is running,
+        // not just read the title and body the dot's colour already codes.
+        var settled = false
+        presenter.onSettled = { _ in settled = true }
+        presenter.present(CarouselToast(title: "hive", body: "done", status: .stopped, slot: 0))
+        _ = await spinUntil({ settled }, timeout: 4.0)
+        let view = try XCTUnwrap(presenter.presentedView)
+        XCTAssertTrue(view.accessibilityLabel().contains("Status: stopped"))
+        presenter.dismiss()
+        _ = await spinUntil({ !self.presenter.isPresenting }, timeout: 4.0)
+    }
+
+    func testStatusShapeVariesWithoutColour() async throws {
+        // Ruling (d) A2: with differentiate-without-colour on, idle renders
+        // as a ring rather than a filled dot; with it off, today's pixels.
+        CarouselOverlayMotion.differentiateWithoutColorProvider = { true }
+        var settled = false
+        presenter.onSettled = { _ in settled = true }
+        presenter.present(CarouselToast(title: "hive", body: "waiting", status: .idle, slot: 0))
+        _ = await spinUntil({ settled }, timeout: 4.0)
+        let shaped = try XCTUnwrap(presenter.presentedView)
+        XCTAssertGreaterThan(shaped.statusDot.borderWidth, 0, "idle renders as a ring, not a filled dot")
+        presenter.dismiss()
+        _ = await spinUntil({ !self.presenter.isPresenting }, timeout: 4.0)
+
+        CarouselOverlayMotion.differentiateWithoutColorProvider = { false }
+        settled = false
+        presenter.present(CarouselToast(title: "hive", body: "waiting", status: .idle, slot: 0))
+        _ = await spinUntil({ settled }, timeout: 4.0)
+        let plain = try XCTUnwrap(presenter.presentedView)
+        XCTAssertEqual(plain.statusDot.borderWidth, 0, "default pixels keep today's plain dot")
+        presenter.dismiss()
+        _ = await spinUntil({ !self.presenter.isPresenting }, timeout: 4.0)
+    }
 }

@@ -31,7 +31,9 @@ final class CarouselToastView: NSView {
     private let material = NSVisualEffectView()
     private let tint = NSView()
     private let tile = NSView()
-    private let statusDot = CALayer()
+    // Internal (not private) so the ruling-(d) shape test can read it;
+    // nothing outside tests and apply() touches it.
+    let statusDot = CALayer()
     private let titleLabel = NSTextField(labelWithString: "")
     private let bodyLabel = NSTextField(labelWithString: "")
 
@@ -86,7 +88,31 @@ final class CarouselToastView: NSView {
         titleLabel.stringValue = toast.title
         bodyLabel.stringValue = toast.body
         statusDot.backgroundColor = Self.dotColor(for: toast.status).cgColor
-        setAccessibilityLabel("\(toast.title). \(toast.body)")
+        applyDotShape(statusDot, for: toast.status)
+        setAccessibilityLabel("\(toast.title). \(toast.body). Status: \(toast.status.accessibilityText)")
+    }
+
+    /// Ruling (d) A2: when differentiate-without-colour is on, status is
+    /// carried by shape as well as colour — ring for idle, square for
+    /// stopped, diamond for unknown, filled circle for running. Default
+    /// pixels (setting off) are exactly today's dot, so H1 is unaffected.
+    private func applyDotShape(_ dot: CALayer, for status: CarouselToast.Status) {
+        dot.transform = CATransform3DIdentity
+        dot.borderWidth = 0
+        dot.cornerRadius = geometry.scaled(4)
+        guard CarouselOverlayMotion.differentiateWithoutColor else { return }
+        switch status {
+        case .running:
+            break
+        case .idle:
+            dot.backgroundColor = NSColor.clear.cgColor
+            dot.borderWidth = 1.5
+            dot.borderColor = Self.dotColor(for: status).cgColor
+        case .stopped:
+            dot.cornerRadius = geometry.scaled(1.5)
+        case .unknown:
+            dot.transform = CATransform3DMakeRotation(.pi / 4, 0, 0, 1)
+        }
     }
 
     private static func dotColor(for status: CarouselToast.Status) -> NSColor {

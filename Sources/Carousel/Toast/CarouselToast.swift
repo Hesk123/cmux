@@ -32,6 +32,18 @@ struct CarouselToast: Equatable, Identifiable {
         /// CONTRACT row 127: a signal past its max age renders as unknown
         /// rather than as idle.
         case unknown
+
+        /// Spoken form for the toast's accessibility label (ruling (d) A3):
+        /// VoiceOver must say whether the session is running, not just read
+        /// the title and body the dot's colour already codes.
+        var accessibilityText: String {
+            switch self {
+            case .running: return "running"
+            case .idle: return "idle"
+            case .stopped: return "stopped"
+            case .unknown: return "unknown"
+            }
+        }
     }
 
     let id: UUID

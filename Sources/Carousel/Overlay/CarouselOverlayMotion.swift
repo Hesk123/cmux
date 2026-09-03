@@ -80,10 +80,19 @@ enum CarouselOverlayMotion {
 
     static var reduceTransparency: Bool { reduceTransparencyProvider() }
 
+    /// Injectable colour-differentiation signal (ruling (d)): when on, status
+    /// is carried by shape as well as colour. Injectable for the same reason.
+    static var differentiateWithoutColorProvider: @MainActor () -> Bool = {
+        NSWorkspace.shared.accessibilityDisplayShouldDifferentiateWithoutColor
+    }
+
+    static var differentiateWithoutColor: Bool { differentiateWithoutColorProvider() }
+
     /// Restores both providers to the machine's real settings. Tests call this
     /// in teardown so one test cannot leak a forced value into the next.
     static func resetAccessibilityProviders() {
         reduceMotionProvider = { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
         reduceTransparencyProvider = { NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency }
+        differentiateWithoutColorProvider = { NSWorkspace.shared.accessibilityDisplayShouldDifferentiateWithoutColor }
     }
 }
