@@ -1,0 +1,40 @@
+# Modified 2026-09-03 for the cmux carousel build (cmux-carousel-ui CONTRACT rows 84, 130, 134).
+#
+# Suites that ALREADY FAIL on the fork's main with U3's Xcode 26.4 compile fix applied and
+# NO unit's feature work present. Measured by U3 under the canonical build lock:
+# `xcodebuild build-for-testing` exit 0, then 2081 tests executed across 173 suites,
+# 151 suites passed and these 22 failed.
+#
+# Why this file exists. Row 84 says no test that passed at the pinned sha may fail after,
+# and row 130 sets the flake policy. Neither is answerable without knowing what was
+# already red: a unit reading "22 suites failed" has no way to tell a regression it caused
+# from noise the fork already had, and the honest options without a baseline are to block
+# on all 22 or to wave all 22 through. A UNIT OWNS ONLY ITS DELTA.
+#
+# These are TEST failures, not compile errors -- the target builds. Causes were not
+# investigated and are not this build's to fix.
+#
+# Regenerate on the fork's main, never on a feature branch:
+#   scripts/carousel-gates/executed-test-count.sh failures <test.log> > this-file
+AppDelegateIssue2907RoutingTests
+AppDelegateShortcutRoutingTests
+BrowserDeveloperToolsConfigurationTests
+BrowserDeveloperToolsVisibilityPersistenceTests
+BrowserInsecureHTTPAlertPresentationTests
+BrowserPaneDropRoutingTests
+BrowserPanelRemoteStoreTests
+BrowserPanelWebViewLifecycleTests
+BrowserWindowPortalLifecycleTests
+CLINotifyProcessIntegrationRegressionTests
+CLINotifyProcessIntegrationTests
+CloudTreeScopeAndSignatureTests
+CMUXOpenCommandTests
+CmuxWebViewKeyEquivalentTests
+CommandPaletteFocusStealerClassificationTests
+CommandPaletteShortcutCustomizationTests
+FilePreviewDragPasteboardWriterTests
+FinderFileDropRegressionTests
+GhosttyKeyEquivalentRegressionTests
+GhosttyResponderResolutionTests
+GhosttySurfaceOverlayTests
+LocalSurfaceProviderTests

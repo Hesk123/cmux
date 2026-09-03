@@ -1,0 +1,33 @@
+# Modified 2026-09-02 for the cmux carousel build (cmux-carousel-ui CONTRACT row 131).
+#
+# THE PINNED BASELINE. Rows 84 (test baseline) and 110 (strict-concurrency baseline)
+# both take their before-set from this exact tree, and nothing re-baselines mid-build.
+#
+# Row 131 exists because the previous pin had already drifted: the clone's HEAD was one
+# commit past it and upstream moved again within the hour. This file is the pin of
+# record; a number quoted from anywhere else is stale by construction.
+
+BASELINE_SHA=57460cc83fced2b1c473eb48ae0d2990441ba7e3
+BASELINE_CUT_AT=2026-09-02T23:36Z
+UPSTREAM_SHA=86cb5ceaae76e6e84a8bc6c769dba50b2eed2b5d
+BRANCH=carousel/u7
+
+# Why the pin is NOT the bare upstream sha. 86cb5ceaae does not compile at all: the
+# cmux-cli target fails with "argument 'hookEventName' must precede argument
+# 'runtimeStatus'" at CLI/cmux.swift:35218. Confirmed still broken on the true upstream
+# main tip. 57460cc83f is that sha plus a one-line, zero-semantic parameter reorder, and
+# is the closest BUILDABLE equivalent. A baseline taken at a tree that cannot build is
+# not a baseline, it is an empty file that every later comparison would pass against.
+#
+# Known-red at this pin, recorded so neither becomes a mystery later:
+#   - ./scripts/lint-pbxproj-test-wiring.sh flags ClaudeHookSessionStorePersistenceTests.swift
+#     (see pbxproj-wiring-baseline.txt)
+#   - SWIFT_STRICT_CONCURRENCY=complete fails to build outright on
+#     Sources/Panels/BrowserWebAuthnSupport.swift, so the warning baseline is PARTIAL
+#     (see PROVISION-baseline-warnings.txt and strict-concurrency-gate.sh's header)
+
+# Row 97 rollback, rehearsed rather than trusted:
+#   git -C ~/code/cmux-u7 checkout 57460cc83fced2b1c473eb48ae0d2990441ba7e3
+#   bash ~/code/cmux-u7/scripts/reload-carousel.sh
+# Zero-risk fallback, which touches nothing this build owns:
+#   open /Applications/cmux.app
