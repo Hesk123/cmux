@@ -39,6 +39,37 @@ STALE_SECONDS=${CMUX_LOCK_STALE_SECONDS:-1800}   # 30 minutes, the team norm
 
 now() { date +%s; }
 
+# mtime in epoch seconds; BSD stat on macOS, GNU stat elsewhere.
+file_mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null || echo 0; }
+
+# --- disk floor -------------------------------------------------------------------
+# The data volume hit 99 % with a dozen cmux-* DerivedData trees. A build that starts
+# with no room does not fail cleanly: it half-writes DerivedData, corrupts the SwiftPM
+# artifact cache, and the next agent inherits the wreckage. Refusing the slot is the
+# cheaper failure.
+MIN_FREE_GIB=${CMUX_MIN_FREE_GIB:-15}
+
+free_gib() { df -Pk / | awk 'NR==2 {printf "%d", $4/1048576}'; }
+
+derived_data_report() {
+  local dd="$HOME/Library/Developer/Xcode/DerivedData"
+  [ -d "$dd" ] || return 0
+  echo "  DerivedData trees, largest first:" >&2
+  du -sk "$dd"/* 2>/dev/null | sort -rn | head -12 \
+    | awk '{ printf "    %6.1f GiB  %s\n", $1/1048576, $2 }' >&2
+}
+
+disk_ok() {
+  local free; free=$(free_gib)
+  [ -n "$free" ] || return 0            # cannot measure: do not block on a broken df
+  [ "$free" -ge "$MIN_FREE_GIB" ] && return 0
+  echo "DISK FLOOR: ${free} GiB free on the data volume, ${MIN_FREE_GIB} GiB required." >&2
+  echo "  Waiting will NOT help -- nothing here frees disk. Someone has to delete a tree." >&2
+  derived_data_report
+  log "REFUSE-DISK free=${free}GiB min=${MIN_FREE_GIB}GiB"
+  return 1
+}
+
 log() {
   printf '%s\t%s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >> "$LOG" 2>/dev/null || true
 }
@@ -50,9 +81,16 @@ build_pids()     { pgrep -x xcodebuild 2>/dev/null | tr '\n' ' '; }
 
 holder_pid()  { cat "$LOCK/pid"  2>/dev/null; }
 holder_unit() { cat "$LOCK/unit" 2>/dev/null; }
+# A MISSING started_epoch is UNKNOWN age, never zero. Defaulting it to 0 would make
+# every lock written by another helper -- which records only a pid -- compute as
+# epoch-old, and any age-based branch would then fire on a perfectly live holder.
+# -1 means unknown and no comparison against the staleness norm can be true for it.
 holder_age()  {
-  local s; s=$(cat "$LOCK/started_epoch" 2>/dev/null || echo 0)
-  [ "$s" -gt 0 ] 2>/dev/null && echo $(( $(now) - s )) || echo -1
+  local s; s=$(cat "$LOCK/started_epoch" 2>/dev/null || echo "")
+  case "$s" in
+    ''|*[!0-9]*) echo -1 ;;
+    *) [ "$s" -gt 0 ] && echo $(( $(now) - s )) || echo -1 ;;
+  esac
 }
 
 # Alive means the recorded pid answers kill -0. A lock with no pid file records no
@@ -77,11 +115,25 @@ reap() {
     log "REAP $LOCK holder_pid=$(holder_pid) unit=$(holder_unit) age=$(holder_age)s reason=holder-dead-and-no-xcodebuild"
     rm -rf "$LOCK"; reaped=1
   fi
+  # A legacy path can itself be somebody's live lock, so "no build is running" is not
+  # enough to delete it: an agent that has just acquired and not yet spawned xcodebuild
+  # looks identical to an abandoned file. Require a recorded holder that is DEAD, or no
+  # recorded holder at all AND an age past the staleness norm. Never age alone, and
+  # never liveness alone.
   for p in "${LEGACY_PATHS[@]}"; do
-    if [ -e "$p" ] && ! builds_running; then
-      log "REAP $p (deprecated path) reason=legacy-shape-and-no-xcodebuild"
-      rm -rf "$p"; reaped=1
+    [ -e "$p" ] || continue
+    builds_running && continue
+    local lpid lage
+    lpid=$( { [ -d "$p" ] && cat "$p/pid"; } 2>/dev/null || true)
+    if [ -n "$lpid" ] && kill -0 "$lpid" 2>/dev/null; then
+      continue   # a live holder recorded in a deprecated path is still a live holder
     fi
+    lage=$(( $(now) - $(file_mtime "$p") ))
+    if [ -z "$lpid" ] && [ "$lage" -lt "$STALE_SECONDS" ]; then
+      continue   # no holder recorded and recently touched: assume somebody just took it
+    fi
+    log "REAP $p (deprecated path) holder_pid=${lpid:-none} age=${lage}s reason=no-live-holder-and-no-xcodebuild"
+    rm -rf "$p"; reaped=1
   done
   [ "$reaped" -eq 1 ] && echo "reaped a stranded lock; see $LOG"
   return 0
@@ -91,6 +143,7 @@ acquire() {
   local unit=${1:?usage: acquire <unit> [timeout_s]} timeout=${2:-7200}
   local deadline=$(( $(now) + timeout ))
   local warned=0
+  disk_ok || return 4
   while true; do
     reap >/dev/null
     if ! builds_running && ! legacy_present && mkdir "$LOCK" 2>/dev/null; then
@@ -165,5 +218,17 @@ case "${1:-status}" in
     "$@"
     exit $?
     ;;
-  *) sed -n '2,30p' "$0"; exit 2 ;;
+  ""|-h|--help) sed -n '2,30p' "$0"; exit 2 ;;
+  *)
+    # /tmp/cmux-build-lock.sh was a separate 13-line mutex taking a BARE command
+    # (`cmux-build-lock.sh xcodebuild ...`). That path is now a symlink here, so its
+    # callers would otherwise land in the usage branch and never build. Anything that
+    # is not a known action is treated as a bare command under an inferred unit name,
+    # which keeps every existing call site working while it converges on `run`.
+    echo "note: bare-command form; treating as: run ${CMUX_UNIT:-legacy-caller} -- $*" >&2
+    acquire "${CMUX_UNIT:-legacy-caller}" "${CMUX_LOCK_TIMEOUT:-7200}" || exit $?
+    trap 'release "${CMUX_UNIT:-legacy-caller}" >/dev/null 2>&1' EXIT INT TERM HUP
+    "$@"
+    exit $?
+    ;;
 esac
