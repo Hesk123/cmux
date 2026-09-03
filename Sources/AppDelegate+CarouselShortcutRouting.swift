@@ -15,8 +15,8 @@ import AppKit
 /// shortcut is settable in Settings and in `~/.config/cmux/cmux.json`. D-15 checked
 /// them against the whole default table and against macOS system bindings: ⌃⌘G is
 /// taken at `KeyboardShortcutSettings.swift` by `.newWorkspaceGroup`, which is why
-/// grid is ⌃⌘M and not the reference video's ⌘G, and no `StoredShortcut` binds any
-/// arrow key at all, which is what makes ⌃⌘←/→ free. ⌘⇧←/→ were rejected: AppKit
+/// grid is ⌃⌘M and not the reference video's ⌘G, and the ⌥⌘ arrow bindings (`.focusLeft/Right/Up/Down`) do not collide
+/// with ⌃⌘←/→, which is what keeps those chords free. ⌘⇧←/→ were rejected: AppKit
 /// binds them to select-to-beginning/end-of-line in a text field, and D-1 puts focus
 /// in exactly that field by default.
 @MainActor

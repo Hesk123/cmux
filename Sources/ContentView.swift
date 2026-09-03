@@ -1920,6 +1920,12 @@ struct ContentView: View {
             .accessibilityHidden(sidebarSelectionState.selection != .tabs)
             }
         }
+        .task {
+            // Debug-only, opt-in via CMUX_CAROUSEL_DEBUG_TOGGLE. The real ⌃⌘K
+            // registration lives in KeyboardShortcutSettings, which U3 owns; this
+            // exists only so carousel mode is enterable before those branches meet.
+            CarouselDebugEntryPoint.installIfEnabled()
+        }
         .onReceive(NotificationCenter.default.publisher(for: CarouselModeState.toggleNotification)) { notification in
             guard CarouselModeState.toggleApplies(notification, to: observedWindow) else { return }
             carouselModeActive.toggle()

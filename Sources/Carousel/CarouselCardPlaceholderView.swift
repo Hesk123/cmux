@@ -40,11 +40,19 @@ struct CarouselCardPlaceholderView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
+        .accessibilityElement(children: .combine)
         .accessibilityIdentifier(CarouselAccessibility.cardPlaceholder)
         .accessibilityLabel(session.displayName)
+        // The floor again: without this the placeholder is indistinguishable from a
+        // rendered terminal to anyone not looking at it.
+        .accessibilityValue(Text(lastActivityText))
+        .accessibilityHint(Text(String(
+            localized: "carousel.placeholder.hint",
+            defaultValue: "Not yet rendered. Centre this card to load it."
+        )))
     }
 
-    private var lastActivityText: String {
+    var lastActivityText: String {
         guard let lastActivity = session.lastActivity else {
             // "Unknown" and "a long time ago" are different facts and are rendered
             // as different strings. A live Hive session was observed with an

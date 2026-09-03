@@ -13,7 +13,13 @@ struct CarouselSession: Identifiable, Hashable, Sendable {
     let panelId: UUID
     /// The workspace the panel belongs to. Row 132: only mounted workspaces
     /// contribute, and this is what that filter is applied against.
-    let workspaceId: UUID
+    ///
+    /// Optional, because the compatibility initialiser below genuinely does not
+    /// know it. Filling it with a fresh `UUID()` would have been worse than
+    /// admitting the gap: `panelForSession` looks the panel up *by* this id and
+    /// would find nothing, and two otherwise-identical sessions would compare
+    /// unequal and hash differently.
+    let workspaceId: UUID?
     /// `SurfaceResourceID.description`, i.e. `machine/kind/key`. Row 51 wants a
     /// stable order across relaunch; ordering by this makes stability a property of
     /// the identity rather than of a saved array that can drift.
@@ -43,8 +49,9 @@ struct CarouselSession: Identifiable, Hashable, Sendable {
 
     /// Compatibility shape for U5's transcription of the frozen block, so their
     /// construction sites compile against the canonical type without an edit.
-    /// The three fields U5's version lacks take their honest unknown values:
-    /// no workspace, no session state, and not known to be Claude Code.
+    /// The four fields U5's version lacks take their honest unknown values:
+    /// no workspace, no session state, no last activity, and not known to be
+    /// Claude Code. None of them is guessed into something that reads as a claim.
     init(
         panelId: UUID,
         resourceId: String,
@@ -55,7 +62,7 @@ struct CarouselSession: Identifiable, Hashable, Sendable {
     ) {
         self.init(
             panelId: panelId,
-            workspaceId: UUID(),
+            workspaceId: nil,
             resourceId: resourceId,
             claudeSessionId: claudeSessionId,
             projectSlug: projectSlug,
@@ -69,7 +76,7 @@ struct CarouselSession: Identifiable, Hashable, Sendable {
 
     init(
         panelId: UUID,
-        workspaceId: UUID,
+        workspaceId: UUID?,
         resourceId: String,
         claudeSessionId: String?,
         projectSlug: String?,

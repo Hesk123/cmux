@@ -26,6 +26,41 @@ protocol CarouselGeometryProviding: AnyObject {
     /// Which session is centred, as an index into the session list. Rows 51 and 57:
     /// this wraps, so it is always in `0..<sessionCount` and never saturates.
     var centredSlotIndex: Int { get }
+
+    /// Recentres on `card` and returns the resulting rects, **without animating**.
+    ///
+    /// U6's grid exit is two-stage: it computes each card's exit target before the
+    /// track has recentred on whatever the user picked in the grid, so a target
+    /// computed against the old centre lands every card one pitch out. This is
+    /// synchronous and returns the post-recentre geometry precisely so U6 can ask
+    /// "where will these be?" and animate to that answer in one stage.
+    ///
+    /// Returns nil when `card` is not in the current session list.
+    @discardableResult
+    func recentre(to card: CarouselCardID) -> [CarouselCardID: CGRect]?
+
+    /// Runs `body` with the track's own position writes suppressed.
+    ///
+    /// While U6 animates a grid exit it owns the same layers the track lays out, and
+    /// a reseat landing mid-flight would snap every card back to its rest rect. Scoped
+    /// rather than a flag so it cannot be left on: the track resumes when `body`
+    /// returns, including on a thrown error.
+    func withTrackAnimationSuppressed<T>(_ body: () throws -> T) rethrows -> T
+}
+
+/// A card's identity across the geometry and motion interfaces. The session's
+/// `resourceId`, which rows 51 and 105 already make the stable identity, rather
+/// than a slot index - a slot is a position and changes on every navigation.
+struct CarouselCardID: Hashable, Sendable {
+    let resourceId: String
+
+    init(resourceId: String) {
+        self.resourceId = resourceId
+    }
+
+    init(_ session: CarouselSession) {
+        self.init(resourceId: session.resourceId)
+    }
 }
 
 /// The animatable surface U2 drives. U1 ships the static geometry plus a linear

@@ -29,8 +29,11 @@ struct CarouselHostView: View {
     }
 
     private func panelForSession(_ session: CarouselSession) -> TerminalPanel? {
-        tabManager.tabs
-            .first { $0.id == session.workspaceId }?
+        // A session with no workspace resolves to no panel rather than to the first
+        // workspace, which is what a `nil == nil` match would have given.
+        guard let workspaceId = session.workspaceId else { return nil }
+        return tabManager.tabs
+            .first { $0.id == workspaceId }?
             .panels[session.panelId] as? TerminalPanel
     }
 }

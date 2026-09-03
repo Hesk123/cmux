@@ -29,6 +29,18 @@ final class CarouselCardView: NSView {
     private(set) var session: CarouselSession?
     private var metrics: CarouselMetrics
 
+    /// Whether this card's body is a static image rather than a live terminal.
+    ///
+    /// Row 115 says exactly one live view exists at rest and none during a switch,
+    /// and row 77's grid transition animates card layers directly. U6 asserts on
+    /// this that it is only ever moving snapshots, which is the property that makes
+    /// a layer transform safe here at all - the section 2.1 portal frame-sync tear
+    /// is designed out only while nothing live is on the moving track.
+    var isSnapshotLayer: Bool { !terminalBody.hostsLiveTerminal }
+
+    /// This card's identity for the geometry and motion interfaces.
+    var cardID: CarouselCardID? { session.map(CarouselCardID.init) }
+
     override var isFlipped: Bool { true }
 
     init(metrics: CarouselMetrics) {
@@ -77,6 +89,10 @@ final class CarouselCardView: NSView {
 
         setAccessibilityElement(true)
         setAccessibilityRole(.group)
+        setAccessibilityRoleDescription(String(
+            localized: "carousel.card.roleDescription",
+            defaultValue: "agent session card"
+        ))
     }
 
     @available(*, unavailable)
@@ -102,6 +118,10 @@ final class CarouselCardView: NSView {
         )
         setAccessibilityValue(session.resourceId)
         setAccessibilityLabel(session.displayName)
+        // Rule 37's accessibility floor: the card's state has to be readable, not
+        // only its identity. Centred-ness and the status pill are both purely
+        // visual otherwise.
+        setAccessibilityHelp(Self.accessibilityHelp(for: session, isCentre: isCentre))
         chromeHost.rootView = CarouselCardChromeView(model: CarouselCardChromeModel(
             name: session.displayName,
             subtitle: session.subtitle,
@@ -116,6 +136,25 @@ final class CarouselCardView: NSView {
             chipFontSize: metrics.footerChipFontSize
         ))
         needsLayout = true
+    }
+
+    /// The card's state in words: whether it is the centred, interactive card, and
+    /// what its status pill says.
+    static func accessibilityHelp(for session: CarouselSession, isCentre: Bool) -> String {
+        let position = isCentre
+            ? String(localized: "carousel.card.centred", defaultValue: "Centred")
+            : String(localized: "carousel.card.offCentre", defaultValue: "Off centre")
+        return "\(position). \(Self.statusDescription(session.status))"
+    }
+
+    static func statusDescription(_ status: CarouselSessionStatus) -> String {
+        switch status {
+        case .busy: String(localized: "carousel.status.busy", defaultValue: "Working")
+        case .idle: String(localized: "carousel.status.idle", defaultValue: "Waiting")
+        case .stopped: String(localized: "carousel.status.stopped", defaultValue: "Agent stopped")
+        case .stale: String(localized: "carousel.status.stale", defaultValue: "Session data stale")
+        case .outOfScope: String(localized: "carousel.status.outOfScope", defaultValue: "Not Claude Code")
+        }
     }
 
     /// Row 47's three chips. U1 ships the box and the empty state; the branch,
@@ -170,6 +209,13 @@ final class CarouselCardBodyView: NSView {
     /// supersampled rather than blurred, which is what makes row 30's "no
     /// additional blur, no opacity change" true by construction.
     private let snapshotLayer = CALayer()
+
+    /// True while `CarouselPaneMount` has a live `GhosttySurfaceScrollView` parented
+    /// here. Derived from the view tree rather than from a flag the mount sets, so it
+    /// cannot drift out of step with what is actually on screen.
+    var hostsLiveTerminal: Bool {
+        subviews.contains { $0 is GhosttySurfaceScrollView }
+    }
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)

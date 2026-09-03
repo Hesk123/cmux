@@ -50,6 +50,12 @@ final class CarouselTrackView: NSView, CarouselGeometryProviding, CarouselTrackA
         trackContainer.layer?.isGeometryFlipped = true
         addSubview(trackContainer)
         setAccessibilityIdentifier(CarouselAccessibility.track)
+        setAccessibilityElement(true)
+        setAccessibilityRole(.list)
+        setAccessibilityLabel(String(
+            localized: "carousel.track.accessibilityLabel",
+            defaultValue: "Agent sessions"
+        ))
     }
 
     @available(*, unavailable)
@@ -117,6 +123,41 @@ final class CarouselTrackView: NSView, CarouselGeometryProviding, CarouselTrackA
         metrics.gridRect(forSlot: index)
     }
 
+    /// Synchronous recentre for U6's grid exit. Moves the model, re-seats every card
+    /// at its rest rect, and hands back where they landed - no animation, so U6 can
+    /// animate from the grid straight to these rects in one stage instead of racing
+    /// a recentre it cannot see.
+    @discardableResult
+    func recentre(to card: CarouselCardID) -> [CarouselCardID: CGRect]? {
+        guard let index = sessions.firstIndex(where: { $0.resourceId == card.resourceId }) else {
+            return nil
+        }
+        centredSlotIndex = index
+        trackOffset = 0
+        trackScale = 1
+        reseat()
+        onCentredSessionChanged?(centredSession)
+
+        var rects: [CarouselCardID: CGRect] = [:]
+        for (slot, cardView) in cardsBySlot {
+            guard let session = cardView.session else { continue }
+            rects[CarouselCardID(session)] = metrics.rect(forSlot: slot)
+        }
+        return rects
+    }
+
+    /// Suppresses the track's own position writes for the duration of `body`.
+    /// `defer` rather than a trailing reset, so a throwing body cannot leave the
+    /// track permanently unable to lay itself out.
+    func withTrackAnimationSuppressed<T>(_ body: () throws -> T) rethrows -> T {
+        isLayoutSuppressed = true
+        defer { isLayoutSuppressed = false }
+        return try body()
+    }
+
+    /// While true, `reseat()` is a no-op: U6 owns these layers.
+    private var isLayoutSuppressed = false
+
     // MARK: - Content
 
     func update(sessions: [CarouselSession], metrics: CarouselMetrics) {
@@ -182,6 +223,13 @@ final class CarouselTrackView: NSView, CarouselGeometryProviding, CarouselTrackA
         onCentredSessionChanged?(centredSession)
     }
 
+    /// The accessibility floor for the track: which session is centred, exposed as a
+    /// value a VoiceOver user and an `AXUIElement` read both resolve. Without it the
+    /// only cue to the current session is visual position.
+    private func updateAccessibilityValue() {
+        setAccessibilityValue(centredSession?.displayName ?? "")
+    }
+
     // MARK: - Layout
 
     override func layout() {
@@ -195,6 +243,7 @@ final class CarouselTrackView: NSView, CarouselGeometryProviding, CarouselTrackA
     /// rather than recreated, so a switch never allocates an `NSHostingView` on the
     /// keypress frame.
     private func reseat() {
+        guard !isLayoutSuppressed else { return }
         let slots = CarouselMetrics.visibleSlots(forSessionCount: sessions.count)
         let wanted = Set(slots)
 
@@ -206,6 +255,7 @@ final class CarouselTrackView: NSView, CarouselGeometryProviding, CarouselTrackA
         for slot in slots {
             ensureCard(atSlot: slot)
         }
+        updateAccessibilityValue()
         onCardsChanged?()
     }
 

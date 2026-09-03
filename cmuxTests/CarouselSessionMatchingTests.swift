@@ -320,10 +320,25 @@ struct CarouselSessionMatchingTests {
         // "Unknown" and "a long time ago" are different facts. A live Hive session
         // was observed with an `updatedAt` 6.7 days old and a running pid, so an age
         // is never evidence of death and must not be rendered as though it were.
-        let unknown = makeSession(lastActivity: nil)
-        let known = makeSession(lastActivity: Date(timeIntervalSince1970: 1_788_000_000))
-        #expect(unknown.lastActivity == nil)
-        #expect(known.lastActivity != nil)
+        let unknown = CarouselCardPlaceholderView(session: makeSession(lastActivity: nil))
+        let known = CarouselCardPlaceholderView(session: makeSession(lastActivity: Date(timeIntervalSince1970: 1_788_000_000)))
+        #expect(unknown.lastActivityText != known.lastActivityText)
+        #expect(unknown.lastActivityText.contains("Not opened"))
+        #expect(known.lastActivityText.contains("Last activity"))
+    }
+
+    @Test("Row 115: a fresh mount has no live view attached")
+    func freshMountHasNoLiveView() {
+        // The zero state of row 115's seam. The one-state needs a live
+        // libghostty panel and is proven on the running app, not here.
+        #expect(CarouselPaneMount().attachedLiveViewCount == 0)
+    }
+
+    @Test("Row 27: the card corner is circular, not the squircle default")
+    func cardCornerIsCircular() {
+        let card = CarouselCardView(metrics: CarouselMetrics(viewport: CGSize(width: 1344, height: 1080)))
+        card.layout()
+        #expect(card.layer?.cornerCurve == .circular)
     }
 
     // MARK: - The U5 compatibility init
@@ -338,8 +353,11 @@ struct CarouselSessionMatchingTests {
             displayName: "n",
             subtitle: "s"
         )
-        // The three fields U5's transcription lacks must not be guessed into
-        // something that reads as a claim: no session state, and not Claude Code.
+        // The four fields U5's transcription lacks must not be guessed into
+        // something that reads as a claim: no workspace, no session state,
+        // and not Claude Code. A fabricated `workspaceId` breaks panel lookup
+        // and value semantics, so nil is asserted, not just the honest three.
+        #expect(session.workspaceId == nil)
         #expect(session.status == .outOfScope)
         #expect(!session.isClaudeCodeSurface)
         #expect(session.lastActivity == nil)
