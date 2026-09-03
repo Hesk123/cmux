@@ -1,3 +1,5 @@
+// Modified 2026-09-02 for the cmux carousel build: corrected the upsert() keyword-argument
+// order in one store.upsert(...) call so the cmux-cli target compiles. GPL-3 section 5(a).
 import Foundation
 import CMUXAgentLaunch
 import CmuxAgentJournal
