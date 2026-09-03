@@ -547,6 +547,7 @@
 		CB10000000000000000000010 /* CarouselCardSnapshotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000010 /* CarouselCardSnapshotter.swift */; };
 		CB10000000000000000000008 /* CarouselCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000008 /* CarouselCardView.swift */; };
 		CAE10000000000000000000001 /* CarouselCentreProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000002 /* CarouselCentreProviding.swift */; };
+		CA2002000000000000000001 /* CarouselChipRoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2002000000000000000002 /* CarouselChipRoll.swift */; };
 		CAE10000000000000000000003 /* CarouselComposeActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000004 /* CarouselComposeActionButton.swift */; };
 		CAE10000000000000000000005 /* CarouselComposeButtonMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000006 /* CarouselComposeButtonMode.swift */; };
 		9065CA010000000000000001 /* CarouselDataRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9065CA010000000000000002 /* CarouselDataRoot.swift */; };
@@ -559,6 +560,7 @@
 		9065CA010000000000000003 /* CarouselFrameRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9065CA010000000000000004 /* CarouselFrameRecorder.swift */; };
 		CB10000000000000000000003 /* CarouselGeometryProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000003 /* CarouselGeometryProviding.swift */; };
 		CB1000000000000000000000D /* CarouselHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2000000000000000000000D /* CarouselHostView.swift */; };
+		CA2003000000000000000001 /* CarouselKeycapHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2003000000000000000002 /* CarouselKeycapHint.swift */; };
 		CAE10000000000000000000011 /* CarouselKeyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000012 /* CarouselKeyRouter.swift */; };
 		CAE10000000000000000000013 /* CarouselKeyRouting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000014 /* CarouselKeyRouting.swift */; };
 		CB10000000000000000000012 /* CarouselLiveSwapCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000012 /* CarouselLiveSwapCoordinator.swift */; };
@@ -566,6 +568,10 @@
 		CB30000000000000000000001 /* CarouselMetricsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB40000000000000000000001 /* CarouselMetricsTests.swift */; };
 		CB1000000000000000000000E /* CarouselModeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2000000000000000000000E /* CarouselModeState.swift */; };
 		CD60000000000000000000011 /* CarouselModeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD50000000000000000000011 /* CarouselModeStateTests.swift */; };
+		CA2000000000000000000001 /* CarouselMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2000000000000000000002 /* CarouselMotion.swift */; };
+		CA2009000000000000000001 /* CarouselMotionComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2009000000000000000002 /* CarouselMotionComponentTests.swift */; };
+		CA2007000000000000000001 /* CarouselMotionConstantsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2007000000000000000002 /* CarouselMotionConstantsTests.swift */; };
+		CA2006000000000000000001 /* CarouselMotionProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2006000000000000000002 /* CarouselMotionProbe.swift */; };
 		CAE5000000000000000000001 /* CarouselNavigationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE5000000000000000000002 /* CarouselNavigationDirection.swift */; };
 		CB1000000000000000000000A /* CarouselPaneMount.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2000000000000000000000A /* CarouselPaneMount.swift */; };
 		CAE10000000000000000000017 /* CarouselPromptBarAccessibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000018 /* CarouselPromptBarAccessibility.swift */; };
@@ -575,6 +581,7 @@
 		CAE10000000000000000000023 /* CarouselPromptBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000024 /* CarouselPromptBarView.swift */; };
 		CAE10000000000000000000025 /* CarouselPromptSessionChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000026 /* CarouselPromptSessionChipView.swift */; };
 		CB1000000000000000000000C /* CarouselRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2000000000000000000000C /* CarouselRootView.swift */; };
+		CA2004000000000000000001 /* CarouselSendFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2004000000000000000002 /* CarouselSendFeedback.swift */; };
 		CAE10000000000000000000027 /* CarouselSendSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000028 /* CarouselSendSequence.swift */; };
 		CAE20000000000000000000005 /* CarouselSendSequenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000006 /* CarouselSendSequenceTests.swift */; };
 		CB10000000000000000000002 /* CarouselSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000002 /* CarouselSession.swift */; };
@@ -590,7 +597,10 @@
 		CAE20000000000000000000009 /* CarouselSubmitRoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000010 /* CarouselSubmitRoutingTests.swift */; };
 		CAE10000000000000000000035 /* CarouselSwipeNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE10000000000000000000036 /* CarouselSwipeNavigator.swift */; };
 		CAE20000000000000000000011 /* CarouselSwipeNavigatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE20000000000000000000012 /* CarouselSwipeNavigatorTests.swift */; };
+		CA2001000000000000000001 /* CarouselTrackAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2001000000000000000002 /* CarouselTrackAnimator.swift */; };
+		CA2008000000000000000001 /* CarouselTrackAnimatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2008000000000000000002 /* CarouselTrackAnimatorTests.swift */; };
 		CB10000000000000000000009 /* CarouselTrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB20000000000000000000009 /* CarouselTrackView.swift */; };
+		CA2005000000000000000001 /* CarouselWorkingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2005000000000000000002 /* CarouselWorkingIndicator.swift */; };
 		081696D3A66545C50AD0598E /* ChecklistInputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E449BD36EA0670CC7D75C /* ChecklistInputField.swift */; };
 		D78129DCAE6C4D919AE20FF9 /* ChecklistPopoverPointerTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9890AFCF5E5F4F3DA9F00CCC /* ChecklistPopoverPointerTracking.swift */; };
 		ED226C59A21547BB962DB2A5 /* ChecklistSummaryPopoverModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319C469164C74F2F8E41D2C3 /* ChecklistSummaryPopoverModifier.swift */; };
@@ -605,6 +615,7 @@
 		79390011AA11BB22CC33DD11 /* ClaudeHookPIDAuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79390012AA11BB22CC33DD12 /* ClaudeHookPIDAuthenticationTests.swift */; };
 		89930005AABBCCDDEEFF0001 /* ClaudeHookSessionStore+SupersededCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89930005AABBCCDDEEFF0002 /* ClaudeHookSessionStore+SupersededCleanup.swift */; };
 		89930004AABBCCDDEEFF0001 /* ClaudeHookSessionStoreFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89930004AABBCCDDEEFF0002 /* ClaudeHookSessionStoreFile.swift */; };
+		CA20FF000000000000000001 /* ClaudeHookSessionStorePersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA20FF000000000000000002 /* ClaudeHookSessionStorePersistenceTests.swift */; };
 		A5D41220A1B2C3D4E5F60718 /* ClaudeHookSurfaceResolutionSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D41221A1B2C3D4E5F60718 /* ClaudeHookSurfaceResolutionSwiftTests.swift */; };
 		A5D41222A1B2C3D4E5F60718 /* ClaudeNotificationStatusLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D41223A1B2C3D4E5F60718 /* ClaudeNotificationStatusLifecycleTests.swift */; };
 		C7A533000000000000000002 /* ClaudeSessionCanonicalizationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A533000000000000000001 /* ClaudeSessionCanonicalizationContext.swift */; };
@@ -3728,6 +3739,7 @@
 		CB20000000000000000000010 /* CarouselCardSnapshotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselCardSnapshotter.swift"; sourceTree = "<group>"; };
 		CB20000000000000000000008 /* CarouselCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselCardView.swift"; sourceTree = "<group>"; };
 		CAE10000000000000000000002 /* CarouselCentreProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselCentreProviding.swift; sourceTree = "<group>"; };
+		CA2002000000000000000002 /* CarouselChipRoll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselChipRoll.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000004 /* CarouselComposeActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselComposeActionButton.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000006 /* CarouselComposeButtonMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselComposeButtonMode.swift; sourceTree = "<group>"; };
 		9065CA010000000000000002 /* CarouselDataRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Carousel/Data/CarouselDataRoot.swift"; sourceTree = "<group>"; };
@@ -3740,6 +3752,7 @@
 		9065CA010000000000000004 /* CarouselFrameRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Carousel/Fidelity/CarouselFrameRecorder.swift"; sourceTree = "<group>"; };
 		CB20000000000000000000003 /* CarouselGeometryProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselGeometryProviding.swift"; sourceTree = "<group>"; };
 		CB2000000000000000000000D /* CarouselHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselHostView.swift"; sourceTree = "<group>"; };
+		CA2003000000000000000002 /* CarouselKeycapHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselKeycapHint.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000012 /* CarouselKeyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselKeyRouter.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000014 /* CarouselKeyRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselKeyRouting.swift; sourceTree = "<group>"; };
 		CB20000000000000000000012 /* CarouselLiveSwapCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselLiveSwapCoordinator.swift"; sourceTree = "<group>"; };
@@ -3747,6 +3760,10 @@
 		CB40000000000000000000001 /* CarouselMetricsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselMetricsTests.swift; sourceTree = "<group>"; };
 		CB2000000000000000000000E /* CarouselModeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselModeState.swift"; sourceTree = "<group>"; };
 		CD50000000000000000000011 /* CarouselModeStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselModeStateTests.swift; sourceTree = "<group>"; };
+		CA2000000000000000000002 /* CarouselMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselMotion.swift; sourceTree = "<group>"; };
+		CA2009000000000000000002 /* CarouselMotionComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselMotionComponentTests.swift; sourceTree = "<group>"; };
+		CA2007000000000000000002 /* CarouselMotionConstantsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselMotionConstantsTests.swift; sourceTree = "<group>"; };
+		CA2006000000000000000002 /* CarouselMotionProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselMotionProbe.swift; sourceTree = "<group>"; };
 		CAE5000000000000000000002 /* CarouselNavigationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselNavigationDirection.swift; sourceTree = "<group>"; };
 		CB2000000000000000000000A /* CarouselPaneMount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselPaneMount.swift"; sourceTree = "<group>"; };
 		CAE10000000000000000000018 /* CarouselPromptBarAccessibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPromptBarAccessibility.swift; sourceTree = "<group>"; };
@@ -3756,6 +3773,7 @@
 		CAE10000000000000000000024 /* CarouselPromptBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPromptBarView.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000026 /* CarouselPromptSessionChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselPromptSessionChipView.swift; sourceTree = "<group>"; };
 		CB2000000000000000000000C /* CarouselRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselRootView.swift"; sourceTree = "<group>"; };
+		CA2004000000000000000002 /* CarouselSendFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselSendFeedback.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000028 /* CarouselSendSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSendSequence.swift; sourceTree = "<group>"; };
 		CAE20000000000000000000006 /* CarouselSendSequenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSendSequenceTests.swift; sourceTree = "<group>"; };
 		CB20000000000000000000002 /* CarouselSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselSession.swift"; sourceTree = "<group>"; };
@@ -3771,7 +3789,10 @@
 		CAE20000000000000000000010 /* CarouselSubmitRoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSubmitRoutingTests.swift; sourceTree = "<group>"; };
 		CAE10000000000000000000036 /* CarouselSwipeNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSwipeNavigator.swift; sourceTree = "<group>"; };
 		CAE20000000000000000000012 /* CarouselSwipeNavigatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselSwipeNavigatorTests.swift; sourceTree = "<group>"; };
+		CA2001000000000000000002 /* CarouselTrackAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselTrackAnimator.swift; sourceTree = "<group>"; };
+		CA2008000000000000000002 /* CarouselTrackAnimatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselTrackAnimatorTests.swift; sourceTree = "<group>"; };
 		CB20000000000000000000009 /* CarouselTrackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CarouselTrackView.swift"; sourceTree = "<group>"; };
+		CA2005000000000000000002 /* CarouselWorkingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel/Motion/CarouselWorkingIndicator.swift; sourceTree = "<group>"; };
 		3E3E449BD36EA0670CC7D75C /* ChecklistInputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistInputField.swift; sourceTree = "<group>"; };
 		9890AFCF5E5F4F3DA9F00CCC /* ChecklistPopoverPointerTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistPopoverPointerTracking.swift"; sourceTree = "<group>"; };
 		319C469164C74F2F8E41D2C3 /* ChecklistSummaryPopoverModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistSummaryPopoverModifier.swift"; sourceTree = "<group>"; };
@@ -3786,6 +3807,7 @@
 		79390012AA11BB22CC33DD12 /* ClaudeHookPIDAuthenticationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeHookPIDAuthenticationTests.swift; sourceTree = "<group>"; };
 		89930005AABBCCDDEEFF0002 /* ClaudeHookSessionStore+SupersededCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClaudeHookSessionStore+SupersededCleanup.swift"; sourceTree = "<group>"; };
 		89930004AABBCCDDEEFF0002 /* ClaudeHookSessionStoreFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeHookSessionStoreFile.swift; sourceTree = "<group>"; };
+		CA20FF000000000000000002 /* ClaudeHookSessionStorePersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeHookSessionStorePersistenceTests.swift; sourceTree = "<group>"; };
 		A5D41221A1B2C3D4E5F60718 /* ClaudeHookSurfaceResolutionSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeHookSurfaceResolutionSwiftTests.swift; sourceTree = "<group>"; };
 		A5D41223A1B2C3D4E5F60718 /* ClaudeNotificationStatusLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeNotificationStatusLifecycleTests.swift; sourceTree = "<group>"; };
 		C7A533000000000000000001 /* ClaudeSessionCanonicalizationContext.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "ClaudeSessionCanonicalizationContext.swift"; sourceTree = "<group>"; };
@@ -6743,6 +6765,13 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 			isa = PBXGroup;
 			children = (
 				CB20000000000000000000013 /* AppDelegate+CarouselShortcutRouting.swift */,
+				CA2006000000000000000002 /* CarouselMotionProbe.swift */,
+				CA2005000000000000000002 /* CarouselWorkingIndicator.swift */,
+				CA2004000000000000000002 /* CarouselSendFeedback.swift */,
+				CA2003000000000000000002 /* CarouselKeycapHint.swift */,
+				CA2002000000000000000002 /* CarouselChipRoll.swift */,
+				CA2001000000000000000002 /* CarouselTrackAnimator.swift */,
+				CA2000000000000000000002 /* CarouselMotion.swift */,
 				986900010000000000000002 /* AppDelegate+BrowserActionRouting.swift */,
 				986900080000000000000002 /* BrowserAction.swift */,
 				986900020000000000000002 /* BrowserActionDispatcher.swift */,
@@ -8706,6 +8735,10 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CB40000000000000000000001 /* CarouselMetricsTests.swift */,
 				CB40000000000000000000002 /* CarouselSessionMatchingTests.swift */,
 				CD50000000000000000000011 /* CarouselModeStateTests.swift */,
+				CA2009000000000000000002 /* CarouselMotionComponentTests.swift */,
+				CA2008000000000000000002 /* CarouselTrackAnimatorTests.swift */,
+				CA2007000000000000000002 /* CarouselMotionConstantsTests.swift */,
+				CA20FF000000000000000002 /* ClaudeHookSessionStorePersistenceTests.swift */,
 				C11322A20000000000000001 /* CloudManualMirrorTransportTests.swift */,
 				9520B0019520B0019520B001 /* HermesFirstClassSupportTests.swift */,
 				A11CE0020000000000000001 /* AboutLicensesResourceTests.swift */,
@@ -10364,6 +10397,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CB10000000000000000000010 /* CarouselCardSnapshotter.swift in Sources */,
 				CB10000000000000000000008 /* CarouselCardView.swift in Sources */,
 				CAE10000000000000000000001 /* CarouselCentreProviding.swift in Sources */,
+				CA2002000000000000000001 /* CarouselChipRoll.swift in Sources */,
 				CAE10000000000000000000003 /* CarouselComposeActionButton.swift in Sources */,
 				CAE10000000000000000000005 /* CarouselComposeButtonMode.swift in Sources */,
 				9065CA010000000000000001 /* CarouselDataRoot.swift in Sources */,
@@ -10375,11 +10409,14 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				9065CA010000000000000003 /* CarouselFrameRecorder.swift in Sources */,
 				CB10000000000000000000003 /* CarouselGeometryProviding.swift in Sources */,
 				CB1000000000000000000000D /* CarouselHostView.swift in Sources */,
+				CA2003000000000000000001 /* CarouselKeycapHint.swift in Sources */,
 				CAE10000000000000000000011 /* CarouselKeyRouter.swift in Sources */,
 				CAE10000000000000000000013 /* CarouselKeyRouting.swift in Sources */,
 				CB10000000000000000000012 /* CarouselLiveSwapCoordinator.swift in Sources */,
 				CB10000000000000000000001 /* CarouselMetrics.swift in Sources */,
 				CB1000000000000000000000E /* CarouselModeState.swift in Sources */,
+				CA2000000000000000000001 /* CarouselMotion.swift in Sources */,
+				CA2006000000000000000001 /* CarouselMotionProbe.swift in Sources */,
 				CAE5000000000000000000001 /* CarouselNavigationDirection.swift in Sources */,
 				CB1000000000000000000000A /* CarouselPaneMount.swift in Sources */,
 				CAE10000000000000000000017 /* CarouselPromptBarAccessibility.swift in Sources */,
@@ -10388,6 +10425,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CAE10000000000000000000023 /* CarouselPromptBarView.swift in Sources */,
 				CAE10000000000000000000025 /* CarouselPromptSessionChipView.swift in Sources */,
 				CB1000000000000000000000C /* CarouselRootView.swift in Sources */,
+				CA2004000000000000000001 /* CarouselSendFeedback.swift in Sources */,
 				CAE10000000000000000000027 /* CarouselSendSequence.swift in Sources */,
 				CB10000000000000000000002 /* CarouselSession.swift in Sources */,
 				CAE10000000000000000000029 /* CarouselSessionChipMetrics.swift in Sources */,
@@ -10398,7 +10436,9 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CB10000000000000000000011 /* CarouselSnapshotCache.swift in Sources */,
 				CAE10000000000000000000033 /* CarouselSubmitController.swift in Sources */,
 				CAE10000000000000000000035 /* CarouselSwipeNavigator.swift in Sources */,
+				CA2001000000000000000001 /* CarouselTrackAnimator.swift in Sources */,
 				CB10000000000000000000009 /* CarouselTrackView.swift in Sources */,
+				CA2005000000000000000001 /* CarouselWorkingIndicator.swift in Sources */,
 				081696D3A66545C50AD0598E /* ChecklistInputField.swift in Sources */,
 				D78129DCAE6C4D919AE20FF9 /* ChecklistPopoverPointerTracking.swift in Sources */,
 				ED226C59A21547BB962DB2A5 /* ChecklistSummaryPopoverModifier.swift in Sources */,
@@ -12365,12 +12405,15 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				CAE20000000000000000000001 /* CarouselFocusRoutingTests.swift in Sources */,
 				CB30000000000000000000001 /* CarouselMetricsTests.swift in Sources */,
 				CD60000000000000000000011 /* CarouselModeStateTests.swift in Sources */,
+				CA2009000000000000000001 /* CarouselMotionComponentTests.swift in Sources */,
+				CA2007000000000000000001 /* CarouselMotionConstantsTests.swift in Sources */,
 				CAE20000000000000000000003 /* CarouselPromptBarGeometryTests.swift in Sources */,
 				CAE20000000000000000000005 /* CarouselSendSequenceTests.swift in Sources */,
 				CB30000000000000000000002 /* CarouselSessionMatchingTests.swift in Sources */,
 				CAE20000000000000000000007 /* CarouselShortcutCollisionTests.swift in Sources */,
 				CAE20000000000000000000009 /* CarouselSubmitRoutingTests.swift in Sources */,
 				CAE20000000000000000000011 /* CarouselSwipeNavigatorTests.swift in Sources */,
+				CA2008000000000000000001 /* CarouselTrackAnimatorTests.swift in Sources */,
 				F3000000A1B2C3D4E5F60718 /* CJKIMEInputTests.swift in Sources */,
 				D3571002A1B2C3D4E5F60718 /* CJKIMEMarkedSelectionTests.swift in Sources */,
 				A5D41232A1B2C3D4E5F60718 /* ClaudeBackgroundWorkNotifyTests.swift in Sources */,
@@ -12380,6 +12423,7 @@ B8B056D80000000000000002 /* MobileHostIdentityTests.swift */ = {isa = PBXFileRef
 				79390001AA11BB22CC33DD01 /* ClaudeHookLiveDeliveryTargetTests.swift in Sources */,
 				79390009AA11BB22CC33DD09 /* ClaudeHookLiveDeliveryTargetTestSupport.swift in Sources */,
 				79390011AA11BB22CC33DD11 /* ClaudeHookPIDAuthenticationTests.swift in Sources */,
+				CA20FF000000000000000001 /* ClaudeHookSessionStorePersistenceTests.swift in Sources */,
 				A5D41220A1B2C3D4E5F60718 /* ClaudeHookSurfaceResolutionSwiftTests.swift in Sources */,
 				A5D41222A1B2C3D4E5F60718 /* ClaudeNotificationStatusLifecycleTests.swift in Sources */,
 				CE7000000000000000000001 /* ClaudeWrapperResumeEnvironmentTests.swift in Sources */,
