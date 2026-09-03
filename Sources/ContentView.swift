@@ -927,6 +927,10 @@ struct ContentView: View {
     /// carousel's cards come from agent surfaces across every mounted workspace in
     /// this window, so a workspace-scoped flag would make row 105 unsatisfiable.
     @State private var carouselModeActive = false
+    /// H2's in-process recorder, held for the window's life while recording.
+    /// Created only when CMUX_CAROUSEL_RECORD names an output path; a normal
+    /// launch never constructs a stream (row 122: no Screen Recording grant).
+    @State private var carouselRecorder: CarouselFrameRecorder?
     @State private var lastReconciledPortalRenderingStatesByWorkspaceId: [UUID: Bool] = [:]
     @State private var lastSidebarSelectionIndex: Int? = nil
     @State private var titlebarText: String = ""
@@ -1925,6 +1929,13 @@ struct ContentView: View {
             // registration lives in KeyboardShortcutSettings, which U3 owns; this
             // exists only so carousel mode is enterable before those branches meet.
             CarouselDebugEntryPoint.installIfEnabled()
+            // H2 capture, inert unless CMUX_CAROUSEL_RECORD is set. Empty
+            // titleMatch records the largest on-screen window of this process.
+            if carouselRecorder == nil, let url = CarouselFrameRecorder.requestedOutputURL() {
+                let recorder = CarouselFrameRecorder()
+                carouselRecorder = recorder
+                Task { try? await recorder.start(outputURL: url, titleMatch: "") }
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: CarouselModeState.toggleNotification)) { notification in
             guard CarouselModeState.toggleApplies(notification, to: observedWindow) else { return }
