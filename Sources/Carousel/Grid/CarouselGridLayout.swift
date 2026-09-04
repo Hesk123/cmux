@@ -65,9 +65,13 @@ struct CarouselGridLayout: Equatable {
         // than letting it grow under either.
         let band = geometry.overlaySafeBand
         let available = band.upperBound - band.lowerBound
-        let scale: CGFloat = (naturalBlockHeight > available && available > 0)
-            ? available / naturalBlockHeight
-            : 1
+        let centreForFit = geometry.centreCardRect.midY
+        let scale: CGFloat
+        if naturalBlockHeight > available && available > 0 {
+            scale = min(available, 2 * min(centreForFit - band.lowerBound, band.upperBound - centreForFit)) / naturalBlockHeight
+        } else {
+            scale = 1
+        }
         self.overflowScale = scale
 
         self.cardSize = CGSize(width: naturalCardWidth * scale, height: naturalCardHeight * scale)
