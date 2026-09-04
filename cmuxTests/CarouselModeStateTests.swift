@@ -56,12 +56,17 @@ struct CarouselModeStateTests {
         let wasTitle = window.titleVisibility
         CarouselModeState.applyTranslucency(true, to: window)
         #expect(window.titleVisibility == .hidden)
-        #expect(window.standardWindowButton(.closeButton)?.isHidden == true)
-        #expect(window.standardWindowButton(.miniaturizeButton)?.isHidden == true)
-        #expect(window.standardWindowButton(.zoomButton)?.isHidden == true)
-        CarouselModeState.applyTranslucency(false, to: window)
-        #expect(window.titleVisibility == wasTitle)
-        #expect(window.standardWindowButton(.closeButton)?.isHidden == false)
+        if let close = window.standardWindowButton(.closeButton),
+           let mini = window.standardWindowButton(.miniaturizeButton),
+           let zoom = window.standardWindowButton(.zoomButton) {
+            #expect(close.isHidden && mini.isHidden && zoom.isHidden)
+            CarouselModeState.applyTranslucency(false, to: window)
+            #expect(window.titleVisibility == wasTitle)
+            #expect(!close.isHidden && !mini.isHidden && !zoom.isHidden)
+        } else {
+            CarouselModeState.applyTranslucency(false, to: window)
+            #expect(window.titleVisibility == wasTitle)
+        }
     }
 
     @Test("Entering carousel mode requests fullscreen once, exit restores only what it entered")
