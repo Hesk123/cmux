@@ -1,3 +1,4 @@
+// Modified 2026-09-04 for the Genesis rename (row-129 follow-through: expectation wording).
 import XCTest
 import CmuxBrowser
 
