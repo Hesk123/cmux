@@ -69,7 +69,7 @@ struct CarouselModeStateTests {
         var calls = 0
         CarouselModeState.fullscreenToggle = { _ in calls += 1 }
         defer { CarouselModeState.fullscreenToggle = { win in win.toggleFullScreen(nil) } }
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturized, .resizable], backing: .buffered, defer: false)
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         CarouselModeState.applyTranslucency(true, to: window)
         #expect(calls == 1)
         CarouselModeState.applyTranslucency(true, to: window)
@@ -86,7 +86,7 @@ struct CarouselModeStateTests {
         var calls = 0
         CarouselModeState.fullscreenToggle = { _ in calls += 1 }
         defer { CarouselModeState.fullscreenToggle = { win in win.toggleFullScreen(nil) } }
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturized, .resizable], backing: .buffered, defer: false)
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         window.styleMask.insert(.fullScreen)
         CarouselModeState.applyTranslucency(true, to: window)
         CarouselModeState.applyTranslucency(false, to: window)
