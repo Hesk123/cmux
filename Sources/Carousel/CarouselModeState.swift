@@ -43,6 +43,7 @@ enum CarouselModeState {
         guard let window else { return }
         if active {
             if restoreStateByWindow[ObjectIdentifier(window)] == nil {
+                let wasFullScreen = window.styleMask.contains(.fullScreen)
                 restoreStateByWindow[ObjectIdentifier(window)] = RestoreState(
                     isOpaque: window.isOpaque,
                     backgroundColor: window.backgroundColor,
@@ -50,10 +51,9 @@ enum CarouselModeState {
                     closeHidden: window.standardWindowButton(.closeButton)?.isHidden ?? false,
                     miniaturizeHidden: window.standardWindowButton(.miniaturizeButton)?.isHidden ?? false,
                     zoomHidden: window.standardWindowButton(.zoomButton)?.isHidden ?? false,
-                    wasFullScreen: window.styleMask.contains(.fullScreen),
+                    wasFullScreen: wasFullScreen,
                     enteredFullscreen: false
                 )
-            }
             window.isOpaque = false
             window.backgroundColor = .clear
             // Row 17 chrome-less posture: the reference shows no title text
@@ -62,8 +62,11 @@ enum CarouselModeState {
             window.standardWindowButton(.closeButton)?.isHidden = true
             window.standardWindowButton(.miniaturizeButton)?.isHidden = true
             window.standardWindowButton(.zoomButton)?.isHidden = true
-            if let state = restoreStateByWindow[ObjectIdentifier(window)], !state.wasFullScreen {
-                restoreStateByWindow[ObjectIdentifier(window)]?.enteredFullscreen = true
+            if !wasFullScreen {
+                if var state = restoreStateByWindow[ObjectIdentifier(window)] {
+                    state.enteredFullscreen = true
+                    restoreStateByWindow[ObjectIdentifier(window)] = state
+                }
                 fullscreenToggle(window)
             }
             return
