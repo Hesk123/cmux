@@ -86,9 +86,29 @@ final class CarouselToastMotionTests: XCTestCase {
         return condition()
     }
 
+
+    private func requiresLivePresentation() throws {
+        let host = NSView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        host.wantsLayer = true
+        let sub = CALayer()
+        host.layer?.addSublayer(sub)
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        let m = CABasicAnimation(keyPath: "opacity")
+        m.fromValue = 0
+        m.toValue = 1
+        m.duration = 0.3
+        sub.add(m, forKey: "canary")
+        CATransaction.commit()
+        let a = sub.presentation()?.value(forKeyPath: "opacity") as? NSNumber
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
+        let b = sub.presentation()?.value(forKeyPath: "opacity") as? NSNumber
+        try XCTSkipUnless(a != b, "flight assertions need a ticking compositor; host presentation is frozen")
+    }
     // MARK: - Row 67 (M16)
 
     func testToastEntersBySlidingFromOffScreenRightWithNoOvershoot() async throws {
+        try requiresLivePresentation()
         var settledAt: CFTimeInterval?
         presenter.onSettled = { _ in settledAt = CACurrentMediaTime() }
 

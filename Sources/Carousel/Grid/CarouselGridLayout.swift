@@ -84,6 +84,14 @@ struct CarouselGridLayout: Equatable {
             width: blockWidth,
             height: blockHeight
         )
+        // Overflow clamp: scale-to-fit bounds the height, but the row-39
+        // centring can still push an edge past the band when the card centre
+        // sits off the band centre. Clamp inside; the shift stays within H1
+        // tolerance and is a no-op whenever the block already fits.
+        if self.blockRect.height <= available {
+            let clampedY = min(max(self.blockRect.minY, band.lowerBound), band.upperBound - self.blockRect.height)
+            self.blockRect.origin.y = clampedY
+        }
     }
 
     /// Row-major, matching the reference's reading order and CONTRACT row 51's
