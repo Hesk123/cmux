@@ -26,6 +26,8 @@ enum CarouselModeState {
     static func postToggle(window: NSWindow?) {
         NotificationCenter.default.post(name: toggleNotification, object: window)
     }
+    static var fullscreenToggle: (NSWindow) -> Void = { win in win.toggleFullScreen(nil) }
+
 
     /// Row 28. The card is an `NSVisualEffectView` with `.behindWindow` blending,
     /// which is the only material that samples the **desktop** rather than the app's
@@ -47,7 +49,9 @@ enum CarouselModeState {
                     titleVisibility: window.titleVisibility,
                     closeHidden: window.standardWindowButton(.closeButton)?.isHidden ?? false,
                     miniaturizeHidden: window.standardWindowButton(.miniaturizeButton)?.isHidden ?? false,
-                    zoomHidden: window.standardWindowButton(.zoomButton)?.isHidden ?? false
+                    zoomHidden: window.standardWindowButton(.zoomButton)?.isHidden ?? false,
+                    wasFullScreen: window.styleMask.contains(.fullScreen),
+                    enteredFullscreen: false
                 )
             }
             window.isOpaque = false
@@ -58,6 +62,10 @@ enum CarouselModeState {
             window.standardWindowButton(.closeButton)?.isHidden = true
             window.standardWindowButton(.miniaturizeButton)?.isHidden = true
             window.standardWindowButton(.zoomButton)?.isHidden = true
+            if let state = restoreStateByWindow[ObjectIdentifier(window)], !state.wasFullScreen {
+                restoreStateByWindow[ObjectIdentifier(window)]?.enteredFullscreen = true
+                fullscreenToggle(window)
+            }
             return
         }
         guard let restore = restoreStateByWindow.removeValue(forKey: ObjectIdentifier(window)) else {
@@ -69,6 +77,9 @@ enum CarouselModeState {
         window.standardWindowButton(.closeButton)?.isHidden = restore.closeHidden
         window.standardWindowButton(.miniaturizeButton)?.isHidden = restore.miniaturizeHidden
         window.standardWindowButton(.zoomButton)?.isHidden = restore.zoomHidden
+        if restore.enteredFullscreen {
+            fullscreenToggle(window)
+        }
     }
 
     private struct RestoreState {
@@ -78,6 +89,8 @@ enum CarouselModeState {
         let closeHidden: Bool
         let miniaturizeHidden: Bool
         let zoomHidden: Bool
+        let wasFullScreen: Bool
+        var enteredFullscreen: Bool
     }
 
     private static var restoreStateByWindow: [ObjectIdentifier: RestoreState] = [:]

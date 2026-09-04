@@ -64,6 +64,36 @@ struct CarouselModeStateTests {
         #expect(window.standardWindowButton(.closeButton)?.isHidden == false)
     }
 
+    @Test("Entering carousel mode requests fullscreen once, exit restores only what it entered")
+    func fullscreenEnterAndRestore() {
+        var calls = 0
+        CarouselModeState.fullscreenToggle = { _ in calls += 1 }
+        defer { CarouselModeState.fullscreenToggle = { win in win.toggleFullScreen(nil) } }
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturized, .resizable], backing: .buffered, defer: false)
+        CarouselModeState.applyTranslucency(true, to: window)
+        #expect(calls == 1)
+        CarouselModeState.applyTranslucency(true, to: window)
+        #expect(calls == 1)
+        CarouselModeState.applyTranslucency(false, to: window)
+        #expect(calls == 2)
+        CarouselModeState.applyTranslucency(false, to: window)
+        #expect(calls == 2)
+        window.close()
+    }
+
+    @Test("Already-fullscreen window is left alone")
+    func fullscreenAlreadyThere() {
+        var calls = 0
+        CarouselModeState.fullscreenToggle = { _ in calls += 1 }
+        defer { CarouselModeState.fullscreenToggle = { win in win.toggleFullScreen(nil) } }
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturized, .resizable], backing: .buffered, defer: false)
+        window.styleMask.insert(.fullScreen)
+        CarouselModeState.applyTranslucency(true, to: window)
+        CarouselModeState.applyTranslucency(false, to: window)
+        #expect(calls == 0)
+        window.close()
+    }
+
     @Test("Nil window is a no-op")
     func nilWindowIsNoop() {
         CarouselModeState.applyTranslucency(true, to: nil)
