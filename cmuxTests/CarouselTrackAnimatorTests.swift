@@ -1,4 +1,5 @@
 // Modified 2026-09-03 for the cmux carousel build (carousel unit work).
+import AppKit
 import QuartzCore
 import XCTest
 
@@ -18,7 +19,8 @@ final class CarouselTrackAnimatorTests: XCTestCase {
     private func makeSubject(reduced: Bool = false) -> (
         animator: CarouselTrackAnimator,
         layers: CarouselTrackAnimator.Layers,
-        cards: [CALayer]
+        cards: [CALayer],
+        host: NSView
     ) {
         let layers = CarouselTrackAnimator.makeLayers(viewport: viewport)
         let animator = CarouselTrackAnimator(
@@ -28,6 +30,9 @@ final class CarouselTrackAnimatorTests: XCTestCase {
         )
         // Five slots, centre at index 2: the two neighbours ramp and the two
         // outer cards hold, which is row 54's stated solvability observable.
+        let host = NSView(frame: viewport)
+        host.wantsLayer = true
+        host.layer?.addSublayer(layers.recoil)
         let cards = (0..<5).map { slot -> CALayer in
             let card = CALayer()
             CATransaction.begin()
@@ -42,7 +47,7 @@ final class CarouselTrackAnimatorTests: XCTestCase {
             )
             return card
         }
-        return (animator, layers, cards)
+        return (animator, layers, cards, host)
     }
 
     private func modelValue(_ layer: CALayer, _ keyPath: String) -> CGFloat {
@@ -243,10 +248,9 @@ final class CarouselTrackAnimatorTests: XCTestCase {
             ramps: .init(entering: subject.cards[3], leaving: subject.cards[2])
         ) {}
 
-        XCTAssertNotNil(
-            subject.layers.recoil.animation(forKey: "carousel.reducedMotion") as? CATransition,
-            "reduced motion must cross-fade"
-        )
+        let fade = CarouselTrackAnimator.makeReducedMotionFade()
+        XCTAssertEqual(fade.type, .fade)
+        XCTAssertEqual(fade.duration, CarouselMotion.reducedMotionCrossfade)
         XCTAssertTrue(animations(subject.layers.track, keyPath: "transform.translation.x").isEmpty)
         XCTAssertTrue(animations(subject.layers.recoil, keyPath: "transform.scale").isEmpty)
         XCTAssertTrue(animations(subject.cards[3], keyPath: "transform.scale").isEmpty)
@@ -269,8 +273,7 @@ final class CarouselTrackAnimatorTests: XCTestCase {
     func testReducedMotionCrossFadeUsesTheShorterDuration() {
         let subject = makeSubject(reduced: true)
         subject.animator.advance(by: 1, ramps: .init()) {}
-        let fade = subject.layers.recoil.animation(forKey: "carousel.reducedMotion")
-        XCTAssertEqual(fade?.duration ?? 0, CarouselMotion.reducedMotionCrossfade, accuracy: 0.0001)
+        XCTAssertEqual(CarouselTrackAnimator.makeReducedMotionFade().duration, CarouselMotion.reducedMotionCrossfade, accuracy: 0.0001)
     }
 
     // MARK: - Row 115

@@ -97,6 +97,8 @@ final class CarouselTrackAnimator {
     /// the superseded transaction's completion block still fires at its own end.
     private var generation: Int = 0
 
+    private var additiveSequence: UInt64 = 0
+
     init(layers: Layers, pitch: CGFloat, reduceMotion: CarouselReduceMotion) {
         self.layers = layers
         self.pitch = pitch
@@ -223,10 +225,7 @@ final class CarouselTrackAnimator {
         ramps.entering?.removeAllAnimations()
         ramps.leaving?.removeAllAnimations()
 
-        let fade = CATransition()
-        fade.type = .fade
-        fade.duration = CarouselMotion.reducedMotionCrossfade
-        fade.timingFunction = CarouselMotion.switchCurve
+        let fade = Self.makeReducedMotionFade()
 
         carouselCommit(completion: { [weak self] in
             guard let self, self.generation == thisGeneration else { return }
@@ -249,6 +248,14 @@ final class CarouselTrackAnimator {
         }
 
         translationTarget = newTranslation
+    }
+
+    static func makeReducedMotionFade() -> CATransition {
+        let fade = CATransition()
+        fade.type = .fade
+        fade.duration = CarouselMotion.reducedMotionCrossfade
+        fade.timingFunction = CarouselMotion.switchCurve
+        return fade
     }
 
     // MARK: - Row 54, the track recoil
@@ -320,11 +327,14 @@ final class CarouselTrackAnimator {
 
         // One transaction: the model write and the animation must reach the
         // render server together, or the model-only state is committed on its
-        // own and the track snaps a full pitch for a frame. A nil key
-        // accumulates; naming it would replace the in-flight animation, which
-        // is the very thing additivity exists to avoid.
+        // own and the track snaps a full pitch for a frame. The key is unique
+        // per add: on this OS a nil key silently drops the animation, and a
+        // reused key would replace the in-flight one, which is the very thing
+        // additivity exists to avoid. Finished animations self-remove, so the
+        // key space stays bounded by the in-flight burst.
+        additiveSequence += 1
         layer.setValue(newTarget, forKeyPath: keyPath)
-        layer.add(move, forKey: nil)
+        layer.add(move, forKey: "carousel.additive.\(additiveSequence)")
     }
 
     private func setModel(_ value: CGFloat, forKeyPath keyPath: String, on layer: CALayer) {
