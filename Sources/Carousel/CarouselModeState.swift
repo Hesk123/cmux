@@ -43,11 +43,21 @@ enum CarouselModeState {
             if restoreStateByWindow[ObjectIdentifier(window)] == nil {
                 restoreStateByWindow[ObjectIdentifier(window)] = RestoreState(
                     isOpaque: window.isOpaque,
-                    backgroundColor: window.backgroundColor
+                    backgroundColor: window.backgroundColor,
+                    titleVisibility: window.titleVisibility,
+                    closeHidden: window.standardWindowButton(.closeButton)?.isHidden ?? false,
+                    miniaturizeHidden: window.standardWindowButton(.miniaturizeButton)?.isHidden ?? false,
+                    zoomHidden: window.standardWindowButton(.zoomButton)?.isHidden ?? false
                 )
             }
             window.isOpaque = false
             window.backgroundColor = .clear
+            // Row 17 chrome-less posture: the reference shows no title text
+            // and no traffic lights; the deck owns the whole window.
+            window.titleVisibility = .hidden
+            window.standardWindowButton(.closeButton)?.isHidden = true
+            window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            window.standardWindowButton(.zoomButton)?.isHidden = true
             return
         }
         guard let restore = restoreStateByWindow.removeValue(forKey: ObjectIdentifier(window)) else {
@@ -55,11 +65,19 @@ enum CarouselModeState {
         }
         window.isOpaque = restore.isOpaque
         window.backgroundColor = restore.backgroundColor
+        window.titleVisibility = restore.titleVisibility
+        window.standardWindowButton(.closeButton)?.isHidden = restore.closeHidden
+        window.standardWindowButton(.miniaturizeButton)?.isHidden = restore.miniaturizeHidden
+        window.standardWindowButton(.zoomButton)?.isHidden = restore.zoomHidden
     }
 
     private struct RestoreState {
         let isOpaque: Bool
         let backgroundColor: NSColor?
+        let titleVisibility: NSWindow.TitleVisibility
+        let closeHidden: Bool
+        let miniaturizeHidden: Bool
+        let zoomHidden: Bool
     }
 
     private static var restoreStateByWindow: [ObjectIdentifier: RestoreState] = [:]

@@ -48,6 +48,20 @@ struct CarouselModeStateTests {
         #expect(window.isOpaque == wasOpaque)
     }
 
+    @Test("Entering carousel mode hides title and traffic lights, exit restores them")
+    func chromeHiddenAndRestored() {
+        let window = NSWindow()
+        let wasTitle = window.titleVisibility
+        CarouselModeState.applyTranslucency(true, to: window)
+        #expect(window.titleVisibility == .hidden)
+        #expect(window.standardWindowButton(.closeButton)?.isHidden == true)
+        #expect(window.standardWindowButton(.miniaturizeButton)?.isHidden == true)
+        #expect(window.standardWindowButton(.zoomButton)?.isHidden == true)
+        CarouselModeState.applyTranslucency(false, to: window)
+        #expect(window.titleVisibility == wasTitle)
+        #expect(window.standardWindowButton(.closeButton)?.isHidden == false)
+    }
+
     @Test("Nil window is a no-op")
     func nilWindowIsNoop() {
         CarouselModeState.applyTranslucency(true, to: nil)
