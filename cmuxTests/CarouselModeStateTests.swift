@@ -15,7 +15,7 @@ import Testing
 /// capture-and-restore behaviour, including the already-non-opaque case the
 /// ruling was written for, previously had no test at any level.
 @MainActor
-@Suite("Carousel mode translucency")
+@Suite("Carousel mode translucency", .serialized)
 struct CarouselModeStateTests {
     @Test("Entering carousel mode makes the window non-opaque and exit restores it")
     func entryAndExitRoundTrip() {
