@@ -42,8 +42,8 @@ enum CarouselModeState {
     static func applyTranslucency(_ active: Bool, to window: NSWindow?) {
         guard let window else { return }
         if active {
-            if restoreStateByWindow[ObjectIdentifier(window)] == nil {
-                let wasFullScreen = window.styleMask.contains(.fullScreen)
+            let firstEntry = restoreStateByWindow[ObjectIdentifier(window)] == nil
+            if firstEntry {
                 restoreStateByWindow[ObjectIdentifier(window)] = RestoreState(
                     isOpaque: window.isOpaque,
                     backgroundColor: window.backgroundColor,
@@ -51,18 +51,17 @@ enum CarouselModeState {
                     closeHidden: window.standardWindowButton(.closeButton)?.isHidden ?? false,
                     miniaturizeHidden: window.standardWindowButton(.miniaturizeButton)?.isHidden ?? false,
                     zoomHidden: window.standardWindowButton(.zoomButton)?.isHidden ?? false,
-                    wasFullScreen: wasFullScreen,
+                    wasFullScreen: window.styleMask.contains(.fullScreen),
                     enteredFullscreen: false
                 )
+            }
             window.isOpaque = false
             window.backgroundColor = .clear
-            // Row 17 chrome-less posture: the reference shows no title text
-            // and no traffic lights; the deck owns the whole window.
             window.titleVisibility = .hidden
             window.standardWindowButton(.closeButton)?.isHidden = true
             window.standardWindowButton(.miniaturizeButton)?.isHidden = true
             window.standardWindowButton(.zoomButton)?.isHidden = true
-            if !wasFullScreen {
+            if firstEntry, let was = restoreStateByWindow[ObjectIdentifier(window)]?.wasFullScreen, !was {
                 if var state = restoreStateByWindow[ObjectIdentifier(window)] {
                     state.enteredFullscreen = true
                     restoreStateByWindow[ObjectIdentifier(window)] = state
