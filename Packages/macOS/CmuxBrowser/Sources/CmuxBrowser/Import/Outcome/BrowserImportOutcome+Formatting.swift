@@ -1,3 +1,4 @@
+// Modified 2026-09-04 for the Genesis rename (row-129 follow-through: defaultValue wording).
 import Foundation
 
 extension BrowserImportOutcome {
@@ -114,7 +115,7 @@ extension BrowserImportOutcome {
                 String(
                     format: String(
                         localized: "browser.import.complete.createdProfiles",
-                        defaultValue: "Created cmux profiles: %@"
+                        defaultValue: "Created Genesis profiles: %@"
                     ),
                     createdDestinationProfileNames.joined(separator: ", ")
                 )
