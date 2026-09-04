@@ -10,6 +10,7 @@ import Testing
 
 /// CONTRACT rows 12, 13, 15, 76, 117, 120, 125, 126, 127.
 @MainActor
+@Suite("Carousel top bar view model")
 struct CarouselTopBarViewModelTests {
     // MARK: - Harness
 

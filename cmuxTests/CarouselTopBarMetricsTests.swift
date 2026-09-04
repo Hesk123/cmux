@@ -11,6 +11,7 @@ import Testing
 /// CONTRACT rows 73, 74, 75, 123 — asserted as ratios of window width, at three
 /// window sizes, because the contract's normalization rule makes the ratio the
 /// thing that is asserted and the absolute number only its value at W = 1344.
+@Suite("Carousel top bar metrics")
 struct CarouselTopBarMetricsTests {
     private let widths: [Double] = [1344, 1128, 1920]
 

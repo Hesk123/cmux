@@ -13,6 +13,7 @@ import Testing
 /// `carousel/u7`; U7 shipped the provider and the seam gate but no test target
 /// files, so these are the only executable controls the row has.
 @MainActor
+@Suite("Carousel statusline seam")
 struct CarouselStatuslineSeamTests {
     @Test("Row 118: CMUX_CAROUSEL_DATA_ROOT wins and NEVER falls back")
     func environmentOverrideWinsAndDoesNotFallBack() {
