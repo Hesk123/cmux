@@ -25,11 +25,14 @@ final class CarouselMotionComponentTests: XCTestCase {
 
     // MARK: - Chip roll, rows 58, 59, 60, 79
 
-    private func makeChip(reduced: Bool = false) -> (roll: CarouselChipRoll, pill: CALayer, labels: () -> [CALayer]) {
+    private func makeChip(reduced: Bool = false) -> (roll: CarouselChipRoll, pill: CALayer, labels: () -> [CALayer], host: NSView) {
+        let host = NSView(frame: CGRect(x: 0, y: 0, width: 400, height: 100))
+        host.wantsLayer = true
         let pill = CALayer()
         pill.bounds = CGRect(x: 0, y: 0, width: 120, height: 26)
         pill.anchorPoint = CGPoint(x: 0, y: 0.5)
         pill.masksToBounds = true
+        host.layer?.addSublayer(pill)
         var made: [CALayer] = []
         let roll = CarouselChipRoll(
             pill: pill,
@@ -41,7 +44,7 @@ final class CarouselMotionComponentTests: XCTestCase {
             },
             reduceMotion: .fixed(reduced)
         )
-        return (roll, pill, { made })
+        return (roll, pill, { made }, host)
     }
 
     func testForwardRollEntersFromTheTopAndBackwardFromTheBottom() {
@@ -216,12 +219,16 @@ final class CarouselMotionComponentTests: XCTestCase {
         press: CALayer,
         voice: CALayer,
         send: CALayer,
-        chips: [CALayer]
+        chips: [CALayer],
+        root: NSView
     ) {
+        let root = NSView(frame: CGRect(x: 0, y: 0, width: 400, height: 100))
+        root.wantsLayer = true
         let press = CALayer()
         let voice = CALayer()
         let sendIcon = CALayer()
         let chips = [CALayer(), CALayer(), CALayer()]
+        for layer in [press, voice, sendIcon] + chips { root.layer?.addSublayer(layer) }
         let feedback = CarouselSendFeedback(
             pressTarget: press,
             voiceIcon: voice,
@@ -229,7 +236,7 @@ final class CarouselMotionComponentTests: XCTestCase {
             suggestionChips: chips,
             reduceMotion: .fixed(reduced)
         )
-        return (feedback, press, voice, sendIcon, chips)
+        return (feedback, press, voice, sendIcon, chips, root)
     }
 
     func testVoiceToSendIsAnIconCrossFadeAtRow64sDuration() {
