@@ -26,9 +26,6 @@ struct SubAgentsChipView: View {
         }
         .buttonStyle(SubAgentsChipButtonStyle(reduceMotion: reduceMotion))
         .disabled(!store.isInteractive)
-        .accessibilityIdentifier("carousel.subAgents.chip")
-        .accessibilityLabel(SubAgentsStrings.chipAccessibilityLabel)
-        .accessibilityValue(chipText)
         .help(helpText)
         // The panel's top edge meets the chip's bottom edge: redefining the
         // overlay's `.bottom` guide as its own `.top` turns a bottom-aligned
@@ -47,7 +44,6 @@ struct SubAgentsChipView: View {
                 .font(.system(size: presentation.chipIconSize, weight: .medium))
             Text(chipText)
                 .font(.system(size: presentation.chipLabelSize, weight: .medium))
-                .accessibilityIdentifier("carousel.subAgents.chip.label")
             // NOTE: the row-132 excluded-workspace badge is NOT rendered here.
             // An explicit accessibilityIdentifier swallows the identifiers of
             // its entire subtree in this toolchain (outermost wins), so a
@@ -61,6 +57,9 @@ struct SubAgentsChipView: View {
         .padding(.vertical, presentation.chipVerticalPadding)
         .background(presentation.chipFill.opacity(0.9), in: .capsule)
         .background(.ultraThinMaterial, in: .capsule)
+        .accessibilityIdentifier("carousel.subAgents.chip")
+        .accessibilityLabel(SubAgentsStrings.chipAccessibilityLabel)
+        .accessibilityValue(chipText)
     }
 
     @ViewBuilder
