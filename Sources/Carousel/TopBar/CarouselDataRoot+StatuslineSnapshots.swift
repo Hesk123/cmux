@@ -33,7 +33,7 @@ extension CarouselDataRoot {
         case (.mirror, .stale(let age, let host)):
             "Mirror of \(host ?? "the Hive") is \(Int(age.rounded()))s stale at \(url.path)"
         case (.mirror, .unknown):
-            "Mirror has never completed a pull at \(url.path)"
+            "Mirror of the Hive has never completed a pull at \(url.path)"
         case (.mirror, .fresh):
             "Mirror is fresh but unreadable at \(url.path)"
         case (.environmentOverride, _):
