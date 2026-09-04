@@ -88,6 +88,113 @@ final class CarouselTrackView: NSView, CarouselGeometryProviding, CarouselTrackA
         trackOffset = live
     }
 
+    /// The default switch animation, filling ``CarouselRootView/trackAnimator``
+    /// until U2's additive engine lands and overwrites it. Same observable
+    /// contract, simpler machinery: a single keyframed transform sampled from
+    /// `CarouselMotion`'s own numbers (row 52's 300 ms ease-out translate, row
+    /// 54's hold/trough/return recoil envelope), so the harness measures the
+    /// specified curves whichever engine draws them.
+    ///
+    /// Interruption: presses mid-flight QUEUE behind the running one and play
+    /// in order, each settling before the next starts, so no flight ever
+    /// starts from a displaced transform and nothing jumps. True additive
+    /// re-targeting is U2's engine; this trades serialisation for zero jump
+    /// risk. Reduced motion skips straight to completion.
+    private var switchQueue: [(step: Int, completion: () -> Void)] = []
+    private var switchFlying = false
+
+    func runSwitchAnimation(step: Int, completion: @escaping () -> Void) {
+        switchQueue.append((step, completion))
+        drainSwitchQueue()
+    }
+
+    private func drainSwitchQueue() {
+        guard !switchFlying, let next = switchQueue.first else { return }
+        switchFlying = true
+        switchQueue.removeFirst()
+        guard let layer = trackContainer.layer else {
+            switchFlying = false
+            next.completion()
+            drainSwitchQueue()
+            return
+        }
+        if CarouselOverlayMotion.reduceMotion {
+            switchFlying = false
+            next.completion()
+            drainSwitchQueue()
+            return
+        }
+        layer.removeAllAnimations()
+        // Row 52/54/56: the flight starts at rest showing the OLD mapping and
+        // travels exactly one pitch to the new one; settle() then rebases the
+        // model (new centre, offset back to zero), which renders identically
+        // to the animation's end frame, so there is no snap. Starting
+        // displaced and easing back would show the end state first and jump
+        // twice per press; ending displaced would snap on every settle.
+        let pitch = metrics.pitch
+        let duration = CGFloat(CarouselMotion.switchDuration)
+        let holdEnd = duration * CarouselMotion.recoilHoldInFraction
+        let troughEnd = duration * CarouselMotion.recoilTroughFraction
+        let returnEnd = duration * CarouselMotion.recoilReturnFraction
+        let total = max(duration, returnEnd)
+        let frames = max(2, Int((total * 60).rounded(.up)) + 1)
+        var values: [NSValue] = []
+        values.reserveCapacity(frames)
+        for i in 0..<frames {
+            let t = min(CGFloat(i) / 60.0, total)
+            let translate = -CGFloat(next.step) * pitch * Self.easeOutCubic(min(t / duration, 1))
+            let scale = Self.recoilScale(at: t, holdEnd: holdEnd, troughEnd: troughEnd, returnEnd: returnEnd)
+            // Concat(S, T) applies the translation first, so an unadjusted
+            // pitch would be shrunk by the recoil scale (up to ~26 px error).
+            // Pre-dividing keeps the on-screen travel exactly one pitch.
+            values.append(NSValue(caTransform3D: CATransform3DConcat(
+                CATransform3DMakeScale(scale, scale, 1),
+                CATransform3DMakeTranslation(translate / scale, 0, 0)
+            )))
+        }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layer.transform = values[0].caTransform3DValue
+        CATransaction.commit()
+        let flight = CAKeyframeAnimation(keyPath: "transform")
+        flight.values = values
+        flight.duration = total
+        flight.calculationMode = .linear
+        CATransaction.begin()
+        CATransaction.setCompletionBlock { [weak self] in
+            layer.transform = CATransform3DIdentity
+            layer.removeAnimation(forKey: "carousel.switch")
+            self?.switchFlying = false
+            next.completion()
+            self?.drainSwitchQueue()
+        }
+        layer.add(flight, forKey: "carousel.switch")
+        CATransaction.commit()
+    }
+
+    /// easeOutCubic: U2's switch curve reduced to the closed form (the fitted
+    /// cubic 0.215,0.61,0.355,1 tracks it within probe tolerance; the keyframes
+    /// sample this, not the media function, so the two stay comparable).
+    private static func easeOutCubic(_ x: CGFloat) -> CGFloat {
+        1 - pow(1 - x, 3)
+    }
+
+    /// Row 54's envelope: hold 1.0, dip to `recoilTrough`, return to 1.0, with
+    /// absolute phase ends (hold/trough/return fractions of switchDuration).
+    private static func recoilScale(at t: CGFloat, holdEnd: CGFloat, troughEnd: CGFloat, returnEnd: CGFloat) -> CGFloat {
+        let dip = 1 - CarouselMotion.recoilTrough
+        if t < holdEnd { return 1 }
+        if t < troughEnd {
+            let x = (t - holdEnd) / max(troughEnd - holdEnd, 0.001)
+            return 1 - dip * (x * x * (3 - 2 * x))
+        }
+        if t < returnEnd {
+            let x = (t - troughEnd) / max(returnEnd - troughEnd, 0.001)
+            return CarouselMotion.recoilTrough + dip * (1 - pow(1 - x, 3))
+        }
+        return 1
+    }
+
     /// Row 55 / D-14. The centre card renders at 1.0 and every other card at 0.94;
     /// during a switch U2 ramps the entering and leaving cards between the two. The
     /// rendered scale of any card is this times ``trackScale``, which is what

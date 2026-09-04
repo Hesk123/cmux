@@ -55,25 +55,25 @@ struct CarouselMetricsTests {
 
     // MARK: - Rows 9, 19, 20, 21, 22
 
-    @Test("Row 9 and row 20: the centre card is 968 x 761 at the fidelity window")
+    @Test("Row 9 and row 20: the centre card is 848 x 667 at the fidelity window (1:1)")
     func centreCardSize() {
         let card = reference.rect(forSlot: 0)
-        #expect(abs(card.width - 968) < tolerance)
-        #expect(abs(card.height - 761) < tolerance)
+        #expect(abs(card.width - 848.06) < tolerance)
+        #expect(abs(card.height - 666.72) < tolerance)
     }
 
-    @Test("Row 19: aspect is 1.272 and survives the enlargement")
+    @Test("Row 19: aspect is 1.272")
     func cardAspect() {
         let card = reference.rect(forSlot: 0)
         #expect(abs(card.width / card.height - 1.272) < 0.01)
     }
 
-    @Test("Row 20: the height ratio the contract states separately, 0.566 * W")
+    @Test("Row 20: the height ratio the contract states separately, 0.496 * W")
     func cardHeightRatio() {
         // Height is derived from width and aspect rather than stored, so this checks
         // the derivation agrees with the row's own second figure instead of asserting
         // a number this type could not contradict.
-        #expect(abs(reference.cardHeight / reference.width - 0.566) < 0.001)
+        #expect(abs(reference.cardHeight / reference.width - 0.4961) < 0.001)
     }
 
     @Test("Row 21: the card is horizontally centred within 2 CSS px")
@@ -86,8 +86,8 @@ struct CarouselMetricsTests {
         let card = reference.rect(forSlot: 0)
         #expect(abs(card.midY - (reference.height / 2 - 20)) < tolerance)
         // D-8's own spans, which are what row 123's clearances are computed from.
-        #expect(abs(card.minY - 139.6) < tolerance)
-        #expect(abs(card.maxY - 900.4) < tolerance)
+        #expect(abs(card.minY - 186.64) < tolerance)
+        #expect(abs(card.maxY - 853.36) < tolerance)
     }
 
     // MARK: - Rows 23, 25, 26
@@ -109,9 +109,10 @@ struct CarouselMetricsTests {
         let right = reference.rect(forSlot: 1)
         #expect(abs((centre.midX - left.midX) - reference.pitch) < 0.001)
         #expect(abs((right.midX - centre.midX) - reference.pitch) < 0.001)
-        // Row 25's stated 0.739 * W, and row 52's independently stated 993.96.
-        #expect(abs(reference.pitch - 0.739 * reference.width) < tolerance)
-        #expect(abs(reference.pitch - 993.96) < tolerance)
+        // Row 25's stated 0.653 * W: at 1:1 geometry the pitch converges on the
+        // source's own measured 878.
+        #expect(abs(reference.pitch - 0.653 * reference.width) < tolerance)
+        #expect(abs(reference.pitch - 877.6) < tolerance)
         // The naive form is wrong by 25 CSS at source geometry; assert this build
         // did not silently adopt it.
         #expect(abs(reference.pitch - (reference.cardWidth + reference.gap)) > 10)

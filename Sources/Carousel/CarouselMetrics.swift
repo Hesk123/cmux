@@ -26,11 +26,15 @@ struct CarouselMetrics: Equatable, Sendable {
 
     // MARK: - Ratios (the contract, transcribed)
 
-    /// Row 9 / row 20. Dawid's "main window a little larger": 0.720 against the
-    /// source's measured 0.631.
-    static let cardWidthRatio: CGFloat = 0.720
-    /// Row 19. Preserved under the enlargement, which is what keeps row 20's
-    /// second figure (0.566 * W tall) true without storing it twice.
+    /// Row 9 / row 20. 1:1 with the reference video's measured 0.631
+    /// (Dawid's call, 2026-09-03 overnight: exact UI, no enlargement).
+    /// An earlier revision carried 0.720 ("a little larger"); the shrunken
+    /// flanks (9.9 % peek) hid the neighbouring sessions the reference shows
+    /// at ~15.6 %, so the enlargement is deleted.
+    static let cardWidthRatio: CGFloat = 0.631
+    /// Row 19. Aspect preserved across the 1:1 restoration, which is what
+    /// keeps row 20's second figure (0.496 * W tall) true without storing it
+    /// twice.
     static let cardAspect: CGFloat = 1.272
     /// Row 23, restored to the video's own measured value by D-2.
     static let sideScale: CGFloat = 0.94
@@ -120,8 +124,8 @@ struct CarouselMetrics: Equatable, Sendable {
     }
 
     /// Row 10's honest second figure: the fraction of its *own* width a flank
-    /// shows. 0.242 at source geometry, 0.146 here. That reduction is the price of
-    /// row 9's larger centre card and is reported, not engineered away.
+    /// shows. 0.242 at 1:1 geometry: the neighbouring sessions read clearly,
+    /// which is the point of the peek.
     var visibleFlankFraction: CGFloat {
         let flankWidth = Self.sideScale * cardWidth
         guard flankWidth > 0 else { return 0 }

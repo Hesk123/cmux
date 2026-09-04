@@ -183,4 +183,9 @@ enum CarouselAccessibility {
     /// Per-card identity, so a test can assert *which* session is centred rather
     /// than only that something is.
     static func card(resourceId: String) -> String { "carousel.card[\(resourceId)]" }
+
+    /// Deck navigation arrows below the centre card (reference: circular
+    /// arrow button under the centred card).
+    static let deckPrevious = "carousel.deck.previous"
+    static let deckNext = "carousel.deck.next"
 }

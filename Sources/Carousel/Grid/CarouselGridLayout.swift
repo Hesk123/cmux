@@ -20,13 +20,9 @@ import CoreGraphics
 /// * **Side margin** is `(W - blockWidth) / 2`, which computes to 76.07 CSS
 ///   against row 38's measured 76, and cannot drift out of symmetry.
 ///
-/// One measured figure does *not* survive Dawid's larger card, and it is
-/// recorded rather than engineered away: VIDEO-REVIEW section 1.7 measured the
-/// grid card at 0.438 of the carousel card. Row 9 enlarged the carousel card to
-/// 0.720 W while row 38 pinned the grid card at 0.277 W, so the effective scale
-/// here is **0.385**, and 0.438 would need a 1347-CSS block in a 1344-CSS
-/// viewport. Row 38 is the locked target; 0.438 is not reachable alongside
-/// row 9 and is not a separate assertion.
+/// At 1:1 geometry (row 9 = 0.631 W) the video's 0.438 is satisfiable again:
+/// 0.277 / 0.631 = 0.439, inside measurement tolerance. Row 38 stays the
+/// locked target; nothing here is engineered away.
 struct CarouselGridLayout: Equatable {
     static let columns = 3
     static let preferredRows = 2

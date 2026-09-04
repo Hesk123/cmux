@@ -131,6 +131,97 @@ struct CarouselTopBarView: View {
     }
 }
 
+// MARK: - Row 125 live rail
+
+/// Pushes the centred card into `CarouselTopBarViewModel.bind(routing:)`.
+///
+/// Mirrors `FakeCarouselSessionRouting` in the test harness (the reference
+/// wiring): the ViewModel follows whatever session is centred here, and the
+/// wrapper below feeds it from `CarouselCentreAdapter` — the same settle
+/// signal the prompt bar reads — rather than binding the live
+/// `CarouselRootView` directly, whose `onCentredSessionChanged` already belongs
+/// to the representable's `centreDidChange` poke. Overwriting it would break
+/// the prompt bar to fix the rail.
+@MainActor
+private final class CarouselTopBarCentreRelay: CarouselSessionRouting {
+    var centredSession: CarouselSession?
+    var sessions: [CarouselSession] = []
+    var onCentredSessionChanged: ((CarouselSession?) -> Void)?
+
+    func centre(on session: CarouselSession?, sessions: [CarouselSession] = []) {
+        centredSession = session
+        self.sessions = sessions
+        onCentredSessionChanged?(session)
+    }
+
+    func navigate(_ direction: CarouselNavigationDirection) {}
+}
+
+/// Owns the row-125 join's inputs the way the test Harness does: one
+/// `CarouselDataRoot.resolve()` (the row-118 seam, so UI tests pointing at
+/// fixtures via `CMUX_CAROUSEL_DATA_ROOT` are picked up), a
+/// `StatuslineSnapshotStore` over it, and a `CarouselSessionStateReader` over
+/// the same root, bound once. Held in a single `@State` so the store (and its
+/// watcher) survives re-renders, exactly like the chip's `SubAgentsStore`
+/// above — and kept separate from it: the two stores share nothing beyond
+/// `resolve()`.
+@MainActor
+@Observable
+private final class CarouselTopBarLiveWiring {
+    let store: StatuslineSnapshotStore
+    let relay: CarouselTopBarCentreRelay
+    let viewModel: CarouselTopBarViewModel
+
+    init() {
+        let store = StatuslineSnapshotStore(dataRoot: CarouselDataRoot.resolve())
+        let relay = CarouselTopBarCentreRelay()
+        let viewModel = CarouselTopBarViewModel(
+            store: store,
+            sessionStates: CarouselSessionStateReader(dataRoot: store.dataRoot)
+        )
+        viewModel.bind(routing: relay)
+        self.store = store
+        self.relay = relay
+        self.viewModel = viewModel
+    }
+}
+
+/// Row 125 — the rail bound to the centred card.
+///
+/// Renders the same `CarouselTopBarView` presentation (no skin change) with the
+/// ViewModel's state instead of the default. Refreshes on the prompt bar's
+/// settle signal (`CarouselCentreAdapter.generation`, published by
+/// `centreDidChange`) and on snapshot/registry updates
+/// (`StatuslineSnapshotStore.lastReloadedAt`, row 91's 2 s poll). Filesystem
+/// reads stay in those effects, never in `body`, and no state is written from
+/// `body`. The wiring sits in `@State` at the same position the static rail
+/// already occupies — below no `LazyVStack`/`List`/`ForEach` boundary — so the
+/// list-boundary rule holds.
+struct CarouselTopBarLiveView: View {
+    let centre: CarouselCentreAdapter
+    let metrics: CarouselTopBarMetrics
+
+    @State private var wiring = CarouselTopBarLiveWiring()
+
+    var body: some View {
+        CarouselTopBarView(state: wiring.viewModel.state, metrics: metrics)
+            .onAppear {
+                wiring.store.start()
+                pushCentre()
+            }
+            .onDisappear { wiring.store.stop() }
+            .onChange(of: centre.generation) { _, _ in pushCentre() }
+            .onChange(of: wiring.store.lastReloadedAt) { _, _ in wiring.viewModel.refresh() }
+    }
+
+    private func pushCentre() {
+        wiring.relay.centre(
+            on: centre.rootView?.centredSession,
+            sessions: centre.rootView?.sessions ?? []
+        )
+    }
+}
+
 #Preview("Live") {
     CarouselTopBarView(
         state: CarouselTopBarViewState(

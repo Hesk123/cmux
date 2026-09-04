@@ -107,8 +107,8 @@ final class CarouselMotionProbe: NSObject {
 
         // CONTRACT row 9 card, D-13 gap, D-2 side scale -> row 25's pitch. The
         // probe restates the arithmetic rather than the answer so a geometry
-        // change in U1 cannot leave a stale 993.96 here.
-        let card = CGSize(width: 968, height: 761)
+        // change in U1 cannot leave a stale number here (1:1 card: 848.06).
+        let card = CGSize(width: 848.06, height: 666.72)
         pitch = card.width / 2 + 55 + (card.width * CarouselMotion.flankScale) / 2
 
         let visible = NSScreen.main?.visibleFrame.size ?? CGSize(width: 1344, height: 1080)

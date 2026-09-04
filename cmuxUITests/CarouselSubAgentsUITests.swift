@@ -203,3 +203,55 @@ final class CarouselSubAgentsUITests: XCTestCase {
         )
     }
 }
+
+/// Deck chrome mounts: prompt bar, nav arrow and grid overlay. Same fixture
+/// harness as the chip suite; existence only, behaviour belongs to the units.
+final class CarouselDeckChromeUITests: XCTestCase {
+    private var fixtureRoot: URL?
+
+    override func tearDown() {
+        if let fixtureRoot {
+            try? FileManager.default.removeItem(at: fixtureRoot)
+        }
+        fixtureRoot = nil
+        super.tearDown()
+    }
+
+    func testPromptBarAndArrowAreMounted() throws {
+        let app = try launchDeck()
+        XCTAssertTrue(app.descendants(matching: .any)["carousel.promptBar"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.descendants(matching: .any)["carousel.deck.next"].exists)
+    }
+
+    func testGridOpensViaChordAndClosesViaButton() throws {
+        let app = try launchDeck()
+        XCTAssertTrue(app.descendants(matching: .any)["carousel.promptBar"].waitForExistence(timeout: 15))
+        app.typeKey("m", modifierFlags: [.control, .command])
+        let close = app.descendants(matching: .any)["carousel.grid.close"]
+        XCTAssertTrue(close.waitForExistence(timeout: 10))
+        close.click()
+        XCTAssertFalse(app.descendants(matching: .any)["carousel.grid.commit"].waitForExistence(timeout: 3))
+    }
+
+    // MARK: - Harness (mirrors the chip suite fixture shape)
+
+    private func launchDeck() throws -> XCUIApplication {
+        let root = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appendingPathComponent("cmux-carousel-uitest-\(UUID().uuidString)", isDirectory: true)
+        let directory = root
+            .appendingPathComponent("projects", isDirectory: true)
+            .appendingPathComponent("-home-dawid", isDirectory: true)
+            .appendingPathComponent("uitest-session", isDirectory: true)
+            .appendingPathComponent("subagents", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        fixtureRoot = root
+
+        let app = XCUIApplication()
+        app.launchEnvironment["CMUX_CAROUSEL_DATA_ROOT"] = root.path
+        app.launchEnvironment["CMUX_UI_TEST_CAROUSEL_SESSION_SLUG"] = "-home-dawid"
+        app.launchEnvironment["CMUX_UI_TEST_CAROUSEL_SESSION_ID"] = "uitest-session"
+        app.launchEnvironment["CMUX_CAROUSEL_DEBUG_TOGGLE"] = "1"
+        app.launch()
+        return app
+    }
+}

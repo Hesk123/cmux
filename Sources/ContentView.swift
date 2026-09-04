@@ -932,6 +932,10 @@ struct ContentView: View {
     /// workspace chrome at any time. Publish-time this wants a Settings toggle;
     /// until then the default is carousel-first for everyone on this branch.
     @State private var carouselModeActive = true
+    /// The carousel's shared centre: prompt bar, nav arrows and submitter all
+    /// read the same centred session through it (U1/U3 seam). Back-filled by
+    /// the host view on creation; reads nil-safe until then.
+    @State private var carouselCentre = CarouselCentreAdapter()
     /// H2's in-process recorder, held for the window's life while recording.
     /// Created only when CMUX_CAROUSEL_RECORD names an output path; a normal
     /// launch never constructs a stream (row 122: no Screen Recording grant).
@@ -1870,6 +1874,28 @@ struct ContentView: View {
         return FullscreenControlsPlacement(leadingPadding: 10, topPadding: 2)
     }
 
+    /// Deck nav arrow: small circular dark button below the centre card
+    /// (reference). 40 pt hit area; press feedback via opacity rather than
+    /// scale so the button never shifts its neighbours mid-press.
+    /// Previous travels by keyboard/swipe/chord; this button advances.
+    private func carouselDeckArrow(
+        _ direction: CarouselNavigationDirection,
+        centre: CarouselCentreAdapter
+    ) -> some View {
+        Button {
+            centre.navigateCarousel(direction)
+        } label: {
+            Image(systemName: "chevron.right")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.85))
+                .frame(width: 40, height: 40)
+                .background(.black.opacity(0.45), in: .circle)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(CarouselAccessibility.deckNext)
+        .accessibilityLabel("Next session")
+    }
+
     private func terminalContent(appearance: WindowAppearanceSnapshot) -> some View {
         let mountedWorkspaceIdSet = Set(mountedWorkspaceIds)
         let mountedWorkspaces = tabManager.tabs.filter { mountedWorkspaceIdSet.contains($0.id) }
@@ -1884,23 +1910,64 @@ struct ContentView: View {
             // what rows 17 and 73 need.
             if carouselModeActive {
                 GeometryReader { geometry in
-                    ZStack(alignment: .top) {
+                    let deckMetrics = CarouselMetrics(viewport: geometry.size)
+                    ZStack {
                         CarouselHostView(
                             tabManager: tabManager,
-                            mountedWorkspaceIds: mountedWorkspaceIds
+                            mountedWorkspaceIds: mountedWorkspaceIds,
+                            centre: carouselCentre
                         )
-                        // U5 top rail with the U4 sub-agents chip at its trailing
-                        // end (Twin Rails pick). Default state renders the meters
-                        // as unavailable; binding the rail to the centred card
-                        // (row 125, CarouselTopBarViewModel.bind) is the follow-up
-                        // that makes the numbers live. The chip carries its own
-                        // fixture-driven store and works unbound.
-                        CarouselTopBarView(
-                            state: CarouselTopBarViewState(),
-                            metrics: CarouselTopBarMetrics(
+                        // U5 top rail with live numbers (row 125): the LiveView
+                        // binds the ViewModel to the centred card; the U4 chip
+                        // carries its own fixture-driven store and works unbound.
+                        VStack {
+                            CarouselTopBarLiveView(
+                                centre: carouselCentre,
+                                metrics: CarouselTopBarMetrics(
+                                    windowWidth: Double(geometry.size.width)
+                                )
+                            )
+                            Spacer(minLength: 0)
+                        }
+                        // Deck nav arrow below the centre card (reference: one
+                        // circular arrow under the centred card). Centred
+                        // between the card's bottom edge and the prompt bar so
+                        // the row never collides with either at any window size.
+                        // Previous travels by keyboard/swipe/chord; the button
+                        // advances. (Two-chevron variant rejected: reference
+                        // shows a single direction-aware arrow.)
+                        VStack(spacing: 0) {
+                            let promptMetrics = CarouselPromptBarMetrics(
                                 windowWidth: Double(geometry.size.width)
                             )
-                        )
+                            let promptTop = geometry.size.height
+                                - promptMetrics.bottomInset
+                                - promptMetrics.height
+                            let arrowCentreY = (deckMetrics.rect(forSlot: 0).maxY + promptTop) / 2
+                            Spacer(minLength: 0)
+                                .frame(height: max(arrowCentreY - 20, 0))
+                            carouselDeckArrow(.next, centre: carouselCentre)
+                            Spacer(minLength: 0)
+                        }
+                        // U3 prompt bar, screen-anchored at the bottom (row 33):
+                        // bound to the centred session, re-resolved per submit.
+                        VStack {
+                            Spacer(minLength: 0)
+                            CarouselPromptBarView(
+                                sessionName: carouselCentre.centredSessionDisplayName,
+                                windowWidth: Double(geometry.size.width),
+                                composedLine: $carouselCentre.composedLine,
+                                onSubmit: { carouselCentre.submitComposedLine($0) }
+                            )
+                            .padding(.bottom, CarouselPromptBarMetrics(
+                                windowWidth: Double(geometry.size.width)
+                            ).bottomInset)
+                        }
+                        // U6 grid overlay: mini-card overview + x/G controls,
+                        // reading the live track. Last so its catchers and
+                        // buttons sit above cards but pass other hits through.
+                        CarouselGridOverlayRepresentable(centre: carouselCentre)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
                     }
                 }
             } else {

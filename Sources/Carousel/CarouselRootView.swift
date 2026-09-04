@@ -28,9 +28,9 @@ final class CarouselRootView: NSView, CarouselSessionRouting {
     /// root holds no store reference and this view can be built in a test.
     var panelForSession: (CarouselSession) -> TerminalPanel? = { _ in nil }
 
-    /// Installed by U2. Given a signed slot step it runs row 52's 300 ms ease-out and
-    /// row 54's recoil, then calls `settle`. Nil until U2 lands, and the move is
-    /// instantaneous rather than a hand-rolled tween nobody asked for.
+    /// Switch animation. U2's additive engine overwrites this when it lands;
+    /// until then the track's own keyframed flight (same curves, serialised)
+    /// is installed at init so the product moves rather than blinking.
     var trackAnimator: ((_ step: Int, _ settle: @escaping () -> Void) -> Void)?
 
     var onCentredSessionChanged: ((CarouselSession?) -> Void)?
@@ -54,6 +54,10 @@ final class CarouselRootView: NSView, CarouselSessionRouting {
         wantsLayer = true
         setAccessibilityIdentifier(CarouselAccessibility.root)
         addSubview(track)
+        trackAnimator = { [weak track] step, settle in
+            guard let track else { settle(); return }
+            track.runSwitchAnimation(step: step, completion: settle)
+        }
 
         track.onCentredSessionChanged = { [weak self] session in
             guard let self else { return }
