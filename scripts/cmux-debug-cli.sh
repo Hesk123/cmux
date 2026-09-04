@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Modified 2026-09-04 for the Genesis rename (row-129 notice for the Sep-3 product-prose sweep).
 set -euo pipefail
 
 if [[ -z "${CMUX_TAG:-}" ]]; then

@@ -451,6 +451,16 @@ final class CarouselGridOverlayView: CarouselOverlayHostView {
     private var mount: CarouselGridMount?
     private weak var centre: CarouselCentreAdapter?
 
+    /// Click-through: this view spans the whole deck even when the grid is
+    /// closed, and a frontmost catch-all would swallow every chip/popover/
+    /// prompt click beneath it (bisected via the popover UI test). The
+    /// background itself therefore never takes clicks; the x/G buttons and
+    /// card catchers (visible only in grid mode) still hit-test normally.
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        let hit = super.hitTest(point)
+        return hit === self ? nil : hit
+    }
+
     func bind(centre: CarouselCentreAdapter) {
         self.centre = centre
         if mount == nil { mount = CarouselGridMount(host: self) }

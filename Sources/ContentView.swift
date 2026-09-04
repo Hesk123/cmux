@@ -1896,6 +1896,75 @@ struct ContentView: View {
         .accessibilityLabel("Next session")
     }
 
+    /// The full-window carousel deck (reference 1:1). Lives at window level —
+    /// not inside the terminal column — so the deck spans the window with
+    /// wallpaper margins and the metrics read the real viewport width.
+    /// Carries its own lifecycle (debug entry, H2 capture, toggle receiver)
+    /// because terminalContent is not in the tree while this is shown.
+    private func carouselDeckView() -> some View {
+        GeometryReader { geometry in
+            let deckMetrics = CarouselMetrics(viewport: geometry.size)
+            ZStack {
+                CarouselHostView(
+                    tabManager: tabManager,
+                    mountedWorkspaceIds: mountedWorkspaceIds,
+                    centre: carouselCentre
+                )
+                VStack {
+                    CarouselTopBarLiveView(
+                        centre: carouselCentre,
+                        metrics: CarouselTopBarMetrics(
+                            windowWidth: Double(geometry.size.width)
+                        )
+                    )
+                    Spacer(minLength: 0)
+                }
+                VStack(spacing: 0) {
+                    let promptMetrics = CarouselPromptBarMetrics(
+                        windowWidth: Double(geometry.size.width)
+                    )
+                    let promptTop = geometry.size.height
+                        - promptMetrics.bottomInset
+                        - promptMetrics.height
+                    let arrowCentreY = (deckMetrics.rect(forSlot: 0).maxY + promptTop) / 2
+                    Spacer(minLength: 0)
+                        .frame(height: max(arrowCentreY - 20, 0))
+                    carouselDeckArrow(.next, centre: carouselCentre)
+                    Spacer(minLength: 0)
+                }
+                VStack {
+                    Spacer(minLength: 0)
+                    CarouselPromptBarView(
+                        sessionName: carouselCentre.centredSessionDisplayName,
+                        windowWidth: Double(geometry.size.width),
+                        composedLine: $carouselCentre.composedLine,
+                        onSubmit: { carouselCentre.submitComposedLine($0) }
+                    )
+                    .padding(.bottom, CarouselPromptBarMetrics(
+                        windowWidth: Double(geometry.size.width)
+                    ).bottomInset)
+                }
+                        CarouselGridOverlayRepresentable(centre: carouselCentre)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+        }
+        .task {
+            CarouselDebugEntryPoint.installIfEnabled()
+            CarouselModeState.applyTranslucency(true, to: observedWindow)
+            if #available(macOS 14.4, *), carouselRecorder == nil,
+               let url = CarouselFrameRecorder.requestedOutputURL() {
+                let recorder = CarouselFrameRecorder()
+                carouselRecorder = recorder
+                Task { try? await recorder.start(outputURL: url, titleMatch: "") }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: CarouselModeState.toggleNotification)) { notification in
+            guard CarouselModeState.toggleApplies(notification, to: observedWindow) else { return }
+            carouselModeActive.toggle()
+            CarouselModeState.applyTranslucency(carouselModeActive, to: observedWindow)
+        }
+    }
+
     private func terminalContent(appearance: WindowAppearanceSnapshot) -> some View {
         let mountedWorkspaceIdSet = Set(mountedWorkspaceIds)
         let mountedWorkspaces = tabManager.tabs.filter { mountedWorkspaceIdSet.contains($0.id) }
@@ -1909,67 +1978,7 @@ struct ContentView: View {
             // and the menu bar all sit outside this region and do not move, which is
             // what rows 17 and 73 need.
             if carouselModeActive {
-                GeometryReader { geometry in
-                    let deckMetrics = CarouselMetrics(viewport: geometry.size)
-                    ZStack {
-                        CarouselHostView(
-                            tabManager: tabManager,
-                            mountedWorkspaceIds: mountedWorkspaceIds,
-                            centre: carouselCentre
-                        )
-                        // U5 top rail with live numbers (row 125): the LiveView
-                        // binds the ViewModel to the centred card; the U4 chip
-                        // carries its own fixture-driven store and works unbound.
-                        VStack {
-                            CarouselTopBarLiveView(
-                                centre: carouselCentre,
-                                metrics: CarouselTopBarMetrics(
-                                    windowWidth: Double(geometry.size.width)
-                                )
-                            )
-                            Spacer(minLength: 0)
-                        }
-                        // Deck nav arrow below the centre card (reference: one
-                        // circular arrow under the centred card). Centred
-                        // between the card's bottom edge and the prompt bar so
-                        // the row never collides with either at any window size.
-                        // Previous travels by keyboard/swipe/chord; the button
-                        // advances. (Two-chevron variant rejected: reference
-                        // shows a single direction-aware arrow.)
-                        VStack(spacing: 0) {
-                            let promptMetrics = CarouselPromptBarMetrics(
-                                windowWidth: Double(geometry.size.width)
-                            )
-                            let promptTop = geometry.size.height
-                                - promptMetrics.bottomInset
-                                - promptMetrics.height
-                            let arrowCentreY = (deckMetrics.rect(forSlot: 0).maxY + promptTop) / 2
-                            Spacer(minLength: 0)
-                                .frame(height: max(arrowCentreY - 20, 0))
-                            carouselDeckArrow(.next, centre: carouselCentre)
-                            Spacer(minLength: 0)
-                        }
-                        // U3 prompt bar, screen-anchored at the bottom (row 33):
-                        // bound to the centred session, re-resolved per submit.
-                        VStack {
-                            Spacer(minLength: 0)
-                            CarouselPromptBarView(
-                                sessionName: carouselCentre.centredSessionDisplayName,
-                                windowWidth: Double(geometry.size.width),
-                                composedLine: $carouselCentre.composedLine,
-                                onSubmit: { carouselCentre.submitComposedLine($0) }
-                            )
-                            .padding(.bottom, CarouselPromptBarMetrics(
-                                windowWidth: Double(geometry.size.width)
-                            ).bottomInset)
-                        }
-                        // U6 grid overlay: mini-card overview + x/G controls,
-                        // reading the live track. Last so its catchers and
-                        // buttons sit above cards but pass other hits through.
-                        CarouselGridOverlayRepresentable(centre: carouselCentre)
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                    }
-                }
+                carouselDeckView()
             } else {
             ZStack {
                 ForEach(mountedWorkspaces) { tab in
@@ -2718,6 +2727,13 @@ struct ContentView: View {
     }
 
     private func contentAndSidebarLayout(appearance: WindowAppearanceSnapshot) -> AnyView {
+        // Carousel-first (Dawid's call): the deck takes the whole window, not
+        // the terminal column — the reference is full-bleed with wallpaper
+        // margins, and the column-constrained branch measured 444 pt wide.
+        // The chord toggles back to the classic layout at any time.
+        if carouselModeActive {
+            return AnyView(carouselDeckView())
+        }
         let layout: AnyView
         // The legacy SwiftUI path uses HStack while matching so both sidebar
         // and terminal sit directly on the window background.

@@ -90,7 +90,7 @@ struct CarouselTopBarView: View {
         .frame(width: metrics.pillWidth, height: metrics.pillHeight)
         // Circular, matching the prompt bar: Twin Rails frames the deck with
         // two identical rails, and row 32's radius band was fitted circularly.
-        .background(CarouselTopBarPalette.surface, in: .rect(cornerRadius: metrics.cornerRadius, style: .circular))
+        .background(CarouselTopBarPalette.surface, in: RoundedRectangle(cornerRadius: metrics.cornerRadius, style: .circular))
         // NOTE: no .accessibilityIdentifier(pill) here. A container identifier
         // shadows every child's identifier in this toolchain's a11y tree (the
         // chip's own id reads back as the pill's), which un-skips nothing and

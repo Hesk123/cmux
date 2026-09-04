@@ -60,7 +60,7 @@ struct CarouselPromptBarView: View {
             CarouselPromptBarPalette.barFill,
             // Circular: Twin Rails frames the deck with two identical rails,
             // and row 32's radius band (20.75-22.00 CSS) was fitted circularly.
-            in: .rect(cornerRadius: metrics.cornerRadius, style: .circular)
+            in: RoundedRectangle(cornerRadius: metrics.cornerRadius, style: .circular)
         )
         .accessibilityIdentifier(CarouselPromptBarAccessibility.bar)
         // Ruling D-1: the prompt bar owns keyboard focus by default in
