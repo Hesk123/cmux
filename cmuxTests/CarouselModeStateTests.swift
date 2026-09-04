@@ -51,6 +51,7 @@ struct CarouselModeStateTests {
     @Test("Entering carousel mode hides title and traffic lights, exit restores them")
     func chromeHiddenAndRestored() {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 600), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
+        window.orderBack(nil)
         defer { window.close() }
         let wasTitle = window.titleVisibility
         CarouselModeState.applyTranslucency(true, to: window)
