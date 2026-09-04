@@ -78,20 +78,20 @@ struct CarouselGridLayout: Equatable {
         let blockHeight = cardSize.height * CGFloat(rowCount) + self.rowGap * CGFloat(rowCount - 1)
         // Row 39: the block's vertical centre is the carousel card's, exactly.
         let centreY = geometry.centreCardRect.midY
-        self.blockRect = CGRect(
-            x: (geometry.viewport.width - blockWidth) / 2,
-            y: centreY - blockHeight / 2,
-            width: blockWidth,
-            height: blockHeight
-        )
         // Overflow clamp: scale-to-fit bounds the height, but the row-39
         // centring can still push an edge past the band when the card centre
         // sits off the band centre. Clamp inside; the shift stays within H1
         // tolerance and is a no-op whenever the block already fits.
-        if self.blockRect.height <= available {
-            let clampedY = min(max(self.blockRect.minY, band.lowerBound), band.upperBound - self.blockRect.height)
-            self.blockRect.origin.y = clampedY
+        var originY = centreY - blockHeight / 2
+        if blockHeight <= available {
+            originY = min(max(originY, band.lowerBound), band.upperBound - blockHeight)
         }
+        self.blockRect = CGRect(
+            x: (geometry.viewport.width - blockWidth) / 2,
+            y: originY,
+            width: blockWidth,
+            height: blockHeight
+        )
     }
 
     /// Row-major, matching the reference's reading order and CONTRACT row 51's
