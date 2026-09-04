@@ -191,7 +191,7 @@ extension TerminalController {
                 code: "method_not_found",
                 message: String(
                     localized: "mobile.panel.artifact.error.methodNotFound",
-                    defaultValue: "cmux doesn't recognize that panel file request."
+                    defaultValue: "Genesis doesn't recognize that panel file request."
                 ),
                 data: nil
             )
@@ -280,7 +280,7 @@ extension TerminalController {
                 return mobilePanelArtifactFileError(
                     code: "permission_denied",
                     key: "mobile.chat.artifact.error.permissionDenied",
-                    defaultValue: "cmux does not have permission to read that file.",
+                    defaultValue: "Genesis does not have permission to read that file.",
                     path: v2RawString(params, "path")
                 )
             case .notRegularFile:
@@ -363,7 +363,7 @@ extension TerminalController {
                 code: "invalid_params",
                 message: String(
                     localized: "mobile.panel.artifact.error.invalidParams",
-                    defaultValue: "cmux couldn't tell which panel or file was requested."
+                    defaultValue: "Genesis couldn't tell which panel or file was requested."
                 ),
                 data: nil
             ))
@@ -465,7 +465,7 @@ extension TerminalController {
             code: "internal_error",
             message: String(
                 localized: "mobile.panel.artifact.error.internal",
-                defaultValue: "cmux couldn't complete the panel file request."
+                defaultValue: "Genesis couldn't complete the panel file request."
             ),
             data: nil
         )

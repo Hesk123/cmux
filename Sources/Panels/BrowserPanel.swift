@@ -1127,7 +1127,7 @@ private func browserPresentExternalNavigationPrompt(
     )
     alert.informativeText = String(
         localized: "browser.externalOpenPrompt.message",
-        defaultValue: "A web page in cmux wants to open a link in another app. You can stay in the browser instead."
+        defaultValue: "A web page in Genesis wants to open a link in another app. You can stay in the browser instead."
     )
     alert.addButton(withTitle: String(
         localized: "browser.externalOpenPrompt.openApp",
@@ -1160,7 +1160,7 @@ func browserPresentExternalNavigationFailure(
     )
     alert.informativeText = String(
         localized: "browser.externalOpenFailure.message",
-        defaultValue: "cmux could not open this link. You can copy it and open it in another app."
+        defaultValue: "Genesis could not open this link. You can copy it and open it in another app."
     )
     alert.addButton(withTitle: String(localized: "common.ok", defaultValue: "OK"))
     alert.addButton(withTitle: String(
@@ -5726,12 +5726,12 @@ final class BrowserPanel: Panel, ObservableObject {
         let alert = insecureHTTPAlertFactory()
         alert.alertStyle = .warning
         alert.messageText = String(localized: "browser.error.insecure.title", defaultValue: "Connection isn\u{2019}t secure")
-        alert.informativeText = String(localized: "browser.error.insecure.message", defaultValue: "\(host) uses plain HTTP, so traffic can be read or modified on the network.\n\nOpen this URL in your default browser, or proceed in cmux.")
+        alert.informativeText = String(localized: "browser.error.insecure.message", defaultValue: "\(host) uses plain HTTP, so traffic can be read or modified on the network.\n\nOpen this URL in your default browser, or proceed in Genesis.")
         alert.addButton(withTitle: String(localized: "browser.openInDefaultBrowser", defaultValue: "Open in Default Browser"))
-        alert.addButton(withTitle: String(localized: "browser.proceedInCmux", defaultValue: "Proceed in cmux"))
+        alert.addButton(withTitle: String(localized: "browser.proceedInCmux", defaultValue: "Proceed in Genesis"))
         alert.addButton(withTitle: String(localized: "common.cancel", defaultValue: "Cancel"))
         alert.showsSuppressionButton = true
-        alert.suppressionButton?.title = String(localized: "browser.alwaysAllowHost", defaultValue: "Always allow this host in cmux")
+        alert.suppressionButton?.title = String(localized: "browser.alwaysAllowHost", defaultValue: "Always allow this host in Genesis")
 
         let buttons = [
             MobileBrowserDialogButton(
@@ -8904,13 +8904,13 @@ enum BrowserImportPlanRealizationError: LocalizedError {
         case .missingDestinationProfile:
             return String(
                 localized: "browser.import.error.destinationMissing",
-                defaultValue: "The selected cmux browser profile no longer exists. Pick a destination profile again."
+                defaultValue: "The selected Genesis browser profile no longer exists. Pick a destination profile again."
             )
         case .profileCreationFailed(let name):
             return String(
                 format: String(
                     localized: "browser.import.error.destinationCreateFailed",
-                    defaultValue: "cmux could not create the destination profile \"%@\"."
+                    defaultValue: "Genesis could not create the destination profile \"%@\"."
                 ),
                 name
             )
@@ -10283,7 +10283,7 @@ final class BrowserDataImportCoordinator {
             )
             alert.informativeText = String(
                 localized: "browser.import.noBrowsers.message",
-                defaultValue: "cmux could not find browser profiles to import from on this Mac."
+                defaultValue: "Genesis could not find browser profiles to import from on this Mac."
             )
             alert.addButton(withTitle: String(localized: "common.ok", defaultValue: "OK"))
             alert.runModal()

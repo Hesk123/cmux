@@ -157,7 +157,7 @@ struct ComputerUseOnboardingView: View {
         }
         return String(
             localized: "computerUse.onboarding.hero.detail",
-            defaultValue: "cmux Computer Use needs these permissions to use apps on your Mac.\nThese permissions are used when you ask cmux to perform tasks."
+            defaultValue: "Genesis Computer Use needs these permissions to use apps on your Mac.\nThese permissions are used when you ask Genesis to perform tasks."
         )
     }
 
@@ -169,7 +169,7 @@ struct ComputerUseOnboardingView: View {
 
                 Text(String(
                     localized: "computerUse.onboarding.hero.title",
-                    defaultValue: "Enable cmux Computer Use"
+                    defaultValue: "Enable Genesis Computer Use"
                 ))
                 .font(.system(size: 25, weight: .bold))
                 .padding(.top, 18)
@@ -189,7 +189,7 @@ struct ComputerUseOnboardingView: View {
 
                 Text(String(
                     localized: "computerUse.onboarding.hero.helperNote",
-                    defaultValue: "Permissions go to the separate cmux Computer Use helper — the cmux terminal itself never receives them."
+                    defaultValue: "Permissions go to the separate Genesis Computer Use helper — the Genesis terminal itself never receives them."
                 ))
                 .font(.system(size: 11))
                 .foregroundStyle(Color(nsColor: .tertiaryLabelColor))
@@ -221,14 +221,14 @@ struct ComputerUseOnboardingView: View {
 
             Text(String(
                 localized: "computerUse.onboarding.done.title",
-                defaultValue: "cmux Computer Use Is Ready"
+                defaultValue: "Genesis Computer Use Is Ready"
             ))
             .font(.system(size: 25, weight: .bold))
             .padding(.top, 20)
 
             Text(String(
                 localized: "computerUse.onboarding.done.detailReady",
-                defaultValue: "Setup is complete. You can now ask cmux to use apps on your Mac."
+                defaultValue: "Setup is complete. You can now ask Genesis to use apps on your Mac."
             ))
             .font(.system(size: 13))
             .foregroundStyle(overviewSecondaryText)
@@ -286,7 +286,7 @@ struct ComputerUseOnboardingView: View {
                 ),
                 detail: String(
                     localized: "computerUse.onboarding.accessibility.cardDetail",
-                    defaultValue: "Allows cmux to access app interfaces"
+                    defaultValue: "Allows Genesis to access app interfaces"
                 )
             )
             permissionCard(
@@ -313,7 +313,7 @@ struct ComputerUseOnboardingView: View {
         }
         return String(
             localized: "computerUse.onboarding.screenshots.cardDetail",
-            defaultValue: "cmux uses screenshots to know where to click"
+            defaultValue: "Genesis uses screenshots to know where to click"
         )
     }
 

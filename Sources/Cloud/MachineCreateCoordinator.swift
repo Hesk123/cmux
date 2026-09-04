@@ -128,7 +128,7 @@ final class MachineCreateCoordinator {
             if let failedIndex = operations.firstIndex(where: { $0.id == id }) {
                 operations[failedIndex].phase = .failed(output: String(
                     localized: "machines.new.error.launch",
-                    defaultValue: "cmux could not start the create command. Sign in and try again."
+                    defaultValue: "Genesis could not start the create command. Sign in and try again."
                 ))
                 postDidChange(finished: nil)
             }

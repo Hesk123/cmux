@@ -7,7 +7,7 @@ import Foundation
 @MainActor
 final class ComputerUseMenuBarController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
-    private let menu = NSMenu(title: String(localized: "computerUse.menu.title", defaultValue: "cmux Computer Use"))
+    private let menu = NSMenu(title: String(localized: "computerUse.menu.title", defaultValue: "Genesis Computer Use"))
     private let snapshotStore: ComputerUseMenuBarSnapshotStore
     private let isRunningInBackground: (String, String) -> Bool
     private let onContinueInBackground:
@@ -265,7 +265,7 @@ final class ComputerUseMenuBarController: NSObject, NSMenuDelegate {
                 systemSymbolName: "cursorarrow.motionlines",
                 accessibilityDescription: String(
                     localized: "computerUse.menu.title",
-                    defaultValue: "cmux Computer Use"
+                    defaultValue: "Genesis Computer Use"
                 )
             )
             image?.isTemplate = true
@@ -316,9 +316,9 @@ final class ComputerUseMenuBarController: NSObject, NSMenuDelegate {
         } == true
             ? String(
                 localized: "computerUse.menu.backgroundStatus",
-                defaultValue: "cmux Computer Use — Running in Background"
+                defaultValue: "Genesis Computer Use — Running in Background"
             )
-            : String(localized: "computerUse.menu.title", defaultValue: "cmux Computer Use")
+            : String(localized: "computerUse.menu.title", defaultValue: "Genesis Computer Use")
         let label = activeRow?.targetAppName.map { targetName in
             String(
                 localized: "computerUse.menu.statusWithTarget",

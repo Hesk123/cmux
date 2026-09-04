@@ -681,7 +681,7 @@ struct CloudTreeOutlineView: NSViewRepresentable {
                         nodeActions.project(SurfaceResourceID(machine: .cloud(id), kind: .display, key: SurfaceResourceID.desktopDisplayKey), .split, true)
                     })
                 }
-                items.append(item(String(localized: "cloudTree.menu.openFullClient", defaultValue: "Open Full cmux-tui Client")) { actions.runCommand(id, ["vm", "tui"]) })
+                items.append(item(String(localized: "cloudTree.menu.openFullClient", defaultValue: "Open Full Genesis-tui Client")) { actions.runCommand(id, ["vm", "tui"]) })
             }
             items.append(item(String(localized: "cloudTree.menu.refresh", defaultValue: "Refresh")) { nodeActions.refresh() })
             items.append(.separator())

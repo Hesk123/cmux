@@ -481,7 +481,7 @@ struct RightSidebarPanelView: View {
                 .foregroundStyle(.secondary)
                 Text(String(
                     localized: "rightSidebar.customSidebar.emptyHint",
-                    defaultValue: "Pick one with: cmux right-sidebar set custom <name>"
+                    defaultValue: "Pick one with: Genesis right-sidebar set custom <name>"
                 ))
                 .font(.caption)
                 .foregroundStyle(.tertiary)

@@ -268,12 +268,12 @@ final class PhonePushClient {
             kind: .notify,
             title: String(
                 localized: "push.test.title",
-                defaultValue: "cmux Notification Test"
+                defaultValue: "Genesis Notification Test"
             ),
             subtitle: "",
             body: String(
                 localized: "push.test.body",
-                defaultValue: "Your Mac sent a test alert to cmux."
+                defaultValue: "Your Mac sent a test alert to Genesis."
             ),
             replyShape: "",
             workspaceId: nil,

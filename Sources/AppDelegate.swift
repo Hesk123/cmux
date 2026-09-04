@@ -2191,7 +2191,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         )
         alert.informativeText = String(
             localized: "dialog.simulatorCameraCleanupFailed.message",
-            defaultValue: "cmux stayed open because it could not restore a Simulator app’s camera state. Quit again to retry cleanup."
+            defaultValue: "Genesis stayed open because it could not restore a Simulator app’s camera state. Quit again to retry cleanup."
         )
         alert.addButton(withTitle: String(localized: "common.ok", defaultValue: "OK"))
         _ = alert.runCmuxModal()
@@ -2532,7 +2532,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                 surfaceId: nil,
                 title: String(
                     localized: "crashBreadcrumb.title",
-                    defaultValue: "cmux crashed during your last session"
+                    defaultValue: "Genesis crashed during your last session"
                 ),
                 subtitle: String(
                     localized: "crashBreadcrumb.subtitle",
@@ -7566,7 +7566,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             }
             if let name {
                 guard CmuxExtensionSidebarSelection.customSidebarFileURL(forName: name) != nil else {
-                    return .failure(String(localized: "rightSidebar.remote.error.customSidebarNotFound", defaultValue: "ERROR: No custom sidebar named '\(name)' in ~/.config/cmux/sidebars"))
+                    return .failure(String(localized: "rightSidebar.remote.error.customSidebarNotFound", defaultValue: "ERROR: No custom sidebar named '\(name)' in ~/.config/Genesis/sidebars"))
                 }
                 state.selectCustomSidebar(name: name)
             }
@@ -8932,7 +8932,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                     clearConfiguration: true,
                     disconnectedDetail: String(
                         localized: "machines.signOut.disconnectedDetail",
-                        defaultValue: "Cloud VM access ended because cmux signed out."
+                        defaultValue: "Cloud VM access ended because Genesis signed out."
                     )
                 )
                 if manager.tabs.count > 1 {

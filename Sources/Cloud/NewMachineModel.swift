@@ -220,7 +220,7 @@ final class NewMachineModel {
         guard submit(createRequest) else {
             errorText = String(
                 localized: "machines.new.error.launch",
-                defaultValue: "cmux could not start the create command. Sign in and try again."
+                defaultValue: "Genesis could not start the create command. Sign in and try again."
             )
             return
         }

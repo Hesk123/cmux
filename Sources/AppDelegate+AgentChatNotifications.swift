@@ -12,7 +12,7 @@ extension AppDelegate {
         if let startCommand = agentChat.startCommand {
             let format = String(
                 localized: "notification.agentChat.serverUnavailable.bodyWithCommand",
-                defaultValue: "cmux couldn't reach %@. Start it with: %@"
+                defaultValue: "Genesis couldn't reach %@. Start it with: %@"
             )
             body = String(format: format, agentChat.url.absoluteString, startCommand)
         } else {

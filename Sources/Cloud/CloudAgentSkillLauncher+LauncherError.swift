@@ -9,7 +9,7 @@ extension CloudAgentSkillLauncher {
             case .skillResourceMissing:
                 return String(
                     localized: "machines.agent.error.missingSkill",
-                    defaultValue: "This build is missing the bundled cmux Cloud skill file."
+                    defaultValue: "This build is missing the bundled Genesis Cloud skill file."
                 )
             }
         }

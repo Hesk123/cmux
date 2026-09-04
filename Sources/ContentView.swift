@@ -926,7 +926,12 @@ struct ContentView: View {
     /// workspace and the canvas is scoped to one workspace's panels, but the
     /// carousel's cards come from agent surfaces across every mounted workspace in
     /// this window, so a workspace-scoped flag would make row 105 unsatisfiable.
-    @State private var carouselModeActive = false
+    ///
+    /// ON by default (Dawid's call, 2026-09-03): the carousel is the primary
+    /// view, not an opt-in mode. The ⌃⌘K chord toggles back to the classic
+    /// workspace chrome at any time. Publish-time this wants a Settings toggle;
+    /// until then the default is carousel-first for everyone on this branch.
+    @State private var carouselModeActive = true
     /// H2's in-process recorder, held for the window's life while recording.
     /// Created only when CMUX_CAROUSEL_RECORD names an output path; a normal
     /// launch never constructs a stream (row 122: no Screen Recording grant).
@@ -7161,7 +7166,7 @@ struct ContentView: View {
         contributions.append(
             CommandPaletteCommandContribution(
                 commandId: "palette.installCLI",
-                title: constant(String(localized: "command.installCLI.title", defaultValue: "Shell Command: Install 'cmux' in PATH")),
+                title: constant(String(localized: "command.installCLI.title", defaultValue: "Shell Command: Install 'Genesis' in PATH")),
                 subtitle: constant(String(localized: "command.installCLI.subtitle", defaultValue: "CLI")),
                 keywords: ["install", "cli", "path", "shell", "command", "symlink"],
                 when: { !$0.bool(CommandPaletteContextKeys.cliInstalledInPATH) }
@@ -7170,7 +7175,7 @@ struct ContentView: View {
         contributions.append(
             CommandPaletteCommandContribution(
                 commandId: "palette.uninstallCLI",
-                title: constant(String(localized: "command.uninstallCLI.title", defaultValue: "Shell Command: Uninstall 'cmux' from PATH")),
+                title: constant(String(localized: "command.uninstallCLI.title", defaultValue: "Shell Command: Uninstall 'Genesis' from PATH")),
                 subtitle: constant(String(localized: "command.uninstallCLI.subtitle", defaultValue: "CLI")),
                 keywords: ["uninstall", "remove", "cli", "path", "shell", "command", "symlink"],
                 when: { $0.bool(CommandPaletteContextKeys.cliInstalledInPATH) }
@@ -7429,7 +7434,7 @@ struct ContentView: View {
                 title: constant(
                     String(
                         localized: "command.makeDefaultTerminal.title",
-                        defaultValue: "Make cmux the Default Terminal"
+                        defaultValue: "Make Genesis the Default Terminal"
                     )
                 ),
                 subtitle: constant(
@@ -7481,7 +7486,7 @@ struct ContentView: View {
         contributions.append(
             CommandPaletteCommandContribution(
                 commandId: "palette.disableBrowser",
-                title: constant(String(localized: "command.disableBrowser.title", defaultValue: "Disable cmux Browser")),
+                title: constant(String(localized: "command.disableBrowser.title", defaultValue: "Disable Genesis Browser")),
                 subtitle: constant(String(localized: "command.browserAvailability.subtitle", defaultValue: "Browser")),
                 keywords: ["browser", "disable", "external", "default", "open", "auth"],
                 when: {
@@ -7493,7 +7498,7 @@ struct ContentView: View {
         contributions.append(
             CommandPaletteCommandContribution(
                 commandId: "palette.enableBrowser",
-                title: constant(String(localized: "command.enableBrowser.title", defaultValue: "Enable cmux Browser")),
+                title: constant(String(localized: "command.enableBrowser.title", defaultValue: "Enable Genesis Browser")),
                 subtitle: constant(String(localized: "command.browserAvailability.subtitle", defaultValue: "Browser")),
                 keywords: ["browser", "enable", "embedded", "open"],
                 when: {
@@ -15262,14 +15267,14 @@ private struct SidebarHelpMenuButton: View {
     private var helpPopover: some View {
         VStack(alignment: .leading, spacing: 2) {
             helpOptionButton(
-                title: String(localized: "sidebar.help.welcome", defaultValue: "Welcome to cmux!"),
+                title: String(localized: "sidebar.help.welcome", defaultValue: "Welcome to Genesis!"),
                 action: .welcome,
                 accessibilityIdentifier: "SidebarHelpMenuOptionWelcome",
                 isExternalLink: false
             )
             if CmuxFeatureFlags.shared.isProUpgradeUIEnabled {
                 helpOptionButton(
-                    title: String(localized: "menu.help.upgradeToPro", defaultValue: "Upgrade to cmux Pro…"),
+                    title: String(localized: "menu.help.upgradeToPro", defaultValue: "Upgrade to Genesis Pro…"),
                     action: .upgrade,
                     accessibilityIdentifier: "SidebarHelpMenuOptionUpgrade",
                     isExternalLink: false,

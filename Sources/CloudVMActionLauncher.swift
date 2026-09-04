@@ -78,7 +78,7 @@ final class CloudVMActionLauncher {
                 presentStartFailure(
                     summary: String(
                         localized: "command.cloudVM.failed.missingCLI",
-                        defaultValue: "The bundled cmux CLI is missing from this app build."
+                        defaultValue: "The bundled Genesis CLI is missing from this app build."
                     ),
                     output: "",
                     action: String(

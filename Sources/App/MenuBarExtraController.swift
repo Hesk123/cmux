@@ -6,7 +6,7 @@ import Foundation
 @MainActor
 final class MenuBarExtraController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
-    private let menu = NSMenu(title: "cmux")
+    private let menu = NSMenu(title: "Genesis")
     private let notificationStore: TerminalNotificationStore
     private let caffeineController: CaffeineController
     private let onShowGlobalSearch: (NSStatusBarButton, (() -> Void)?) -> Void
@@ -26,7 +26,7 @@ final class MenuBarExtraController: NSObject, NSMenuDelegate {
     private let stateHintItem = NSMenuItem(title: String(localized: "statusMenu.noUnread", defaultValue: "No unread notifications"), action: nil, keyEquivalent: "")
     private let buildHintItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private let globalSearchItem = NSMenuItem(title: String(localized: "statusMenu.searchAllWindows", defaultValue: "Search All Windows..."), action: nil, keyEquivalent: "")
-    private let showMainWindowItem = NSMenuItem(title: String(localized: "statusMenu.showCmux", defaultValue: "Show cmux"), action: nil, keyEquivalent: "")
+    private let showMainWindowItem = NSMenuItem(title: String(localized: "statusMenu.showCmux", defaultValue: "Show Genesis"), action: nil, keyEquivalent: "")
     private let taskManagerItem = NSMenuItem(title: String(localized: "statusMenu.taskManager", defaultValue: "Task Manager..."), action: nil, keyEquivalent: "")
     private let sleepyModeItem = NSMenuItem(title: String(localized: "statusMenu.sleepyMode", defaultValue: "Sleepy Mode"), action: nil, keyEquivalent: "")
     private let caffeineItem = NSMenuItem(title: String(localized: "statusMenu.keepMacAwake", defaultValue: "Keep Mac Awake"), action: nil, keyEquivalent: "")
@@ -38,7 +38,7 @@ final class MenuBarExtraController: NSObject, NSMenuDelegate {
     private let clearAllItem = NSMenuItem(title: String(localized: "statusMenu.clearAll", defaultValue: "Clear All"), action: nil, keyEquivalent: "")
     private let checkForUpdatesItem = NSMenuItem(title: String(localized: "menu.checkForUpdates", defaultValue: "Check for Updates…"), action: nil, keyEquivalent: "")
     private let preferencesItem = NSMenuItem(title: String(localized: "menu.preferences", defaultValue: "Preferences…"), action: nil, keyEquivalent: "")
-    private let quitItem = NSMenuItem(title: String(localized: "menu.quitCmux", defaultValue: "Quit cmux"), action: nil, keyEquivalent: "")
+    private let quitItem = NSMenuItem(title: String(localized: "menu.quitCmux", defaultValue: "Quit Genesis"), action: nil, keyEquivalent: "")
 
     private var notificationItems: [NSMenuItem] = []
     init(

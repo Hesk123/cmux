@@ -76,7 +76,7 @@ enum ProUpgradePresenter {
             workspaceReuseState.clear()
         }
 
-        let title = String(localized: "pricing.pro.workspace.title", defaultValue: "cmux Pro")
+        let title = String(localized: "pricing.pro.workspace.title", defaultValue: "Genesis Pro")
         guard let workspace = appDelegate.performProUpgradeWorkspaceAction(
             title: title,
             url: url,
@@ -151,7 +151,7 @@ private final class NativePricingWindowController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = String(localized: "pricing.native.window.title", defaultValue: "cmux Upgrade")
+        window.title = String(localized: "pricing.native.window.title", defaultValue: "Genesis Upgrade")
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true
         window.minSize = NSSize(width: 760, height: 520)
@@ -419,7 +419,7 @@ private struct NativePricingPlansView: View {
                     String(localized: "pricing.native.pro.feature.vms", defaultValue: "Cloud agents on isolated Cloud VMs"),
                     String(localized: "pricing.native.pro.feature.hours", defaultValue: "Up to 50 Cloud VMs, each with 5 vCPU, 20 GB RAM, and 200 GB disk"),
                     String(localized: "pricing.native.pro.feature.gateway", defaultValue: "Unlimited workspaces"),
-                    String(localized: "pricing.native.pro.feature.ios", defaultValue: "cmux iOS app and email support"),
+                    String(localized: "pricing.native.pro.feature.ios", defaultValue: "Genesis iOS app and email support"),
                 ]
             )
             NativePricingPlanCard(
