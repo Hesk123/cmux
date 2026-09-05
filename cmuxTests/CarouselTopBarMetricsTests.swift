@@ -83,6 +83,7 @@ struct CarouselTopBarMetricsTests {
 
 /// Row 75's thresholds. H1 asserts a colour at the 50 %, 80 % and 95 % fixtures,
 /// so each of those points must fall in a distinct band from its neighbour.
+@Suite("Carousel usage severity")
 struct CarouselUsageSeverityTests {
     @Test("Row 75: 50, 80 and 95 each begin a distinct band")
     func thresholdsAreDistinct() {
