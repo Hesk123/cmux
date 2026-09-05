@@ -1,5 +1,5 @@
 {
-  "originHash" : "2565647770c7d8bd4febd1c24cc66a7e250072c2334100f7169e8555d5b1ee5e",
+  "originHash" : "dce5fd1049d62293e56b8667bd1fdb49c46734296dd8eb00bcba0aa5ef8832a3",
   "pins" : [
     {
       "identity" : "aexml",
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",
       "state" : {
-        "revision" : "a9a5efd40eaf558a2bcd48d64b1d1646be686008",
-        "version" : "1.7.1"
+        "revision" : "d9a5b37470adc940d22c3bcd5ca6953a516b727f",
+        "version" : "1.7.2"
       }
     },
     {
